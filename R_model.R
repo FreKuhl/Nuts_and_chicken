@@ -1,5 +1,7 @@
 library(decisionSupport)
 library (DiagrammeR)
+library(tidyverse)
+librarreadxl
 
 # Impact Pathway ####
 mermaid("graph LR
@@ -25,20 +27,11 @@ mermaid("graph LR
         linkStyle 8 stroke:green, stroke-width:2px
         ")
 
+input_estimates <- read.csv("input_estimates.csv", sep=";", dec=".")
 
 
-input_estimates <- data.frame(variable = c("Yield", "Market_price", "Establishment_cost", "Management_cost"),
-                              lower = c(6000, 3, 500, 100),
-                              median = NA,
-                              upper = c(14000, 8, 1000, 2000),
-                              distribution = c("posnorm", "posnorm", "posnorm", "posnorm"),
-                              label = c("Yield (kg/ha)", "Price (USD/kg)", "Establishment cost (USD)", "Management cost(USD/ha)"),
-                              Description = c("Yield of the plot under normal conditions",
-                                              "Price for crops in a normal season",
-                                              "Establishment cost of the intervention",
-                                              "Management cost in a normal season"))
 
-input_estimates
+# Just for testing ####
 
 # make_variables <- function(est,n=1)
 # { x<-random(rho=est, n=n)
@@ -52,14 +45,25 @@ input_estimates
 # Model Function ####
 
 model_function <- function(){
+  # Estimate the baseline income in a normal season
+    baseline_profit <- read_excel("input_estimates")
   
-  # Estimate the income in a normal season
-  income <- Yield * Market_price
-  
-  overall_costs <- Labor_cost + Management_cost
-  
+  # Estimate the total revenue
+    truffle_profit <-
+    nuts_profit <-
+    eggs_profit <-
+    wood_profit <-
+      total_profit <-
+    
+  # Estimate the total costs
+    establishment_cost <- 
+    management_costs <- 
+    work_cost <- 
+      total_cost <-
+ 
+    
   # Estimate the final results from the model
-  final_result <- income - overall_costs
+  final_result <- total_profit - total_cost - baseline_profit
   
   # Generate the list of outputs from the Monte Carlo simulation
   return(list(final_result = final_result))

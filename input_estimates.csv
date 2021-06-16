@@ -1,0 +1,30 @@
+variable;lower;median;upper;distribution;label;Description
+grass_planting_cost;1;NA;15;posnorm;€;Cost for establishing grassland
+protective_animal_cost;1;NA;15;posnorm;€;Cost for getting protective animals
+initial_fences_cost;1;NA;15;posnorm;€;Cost for putting up fences
+initial_truffle_cost;1;NA;15;posnorm;€;Cost for getting initial truffles
+planting_tree_cost;1;NA;15;posnorm;€;Cost for getting planting trees
+initial_chicken_cost;1;NA;15;posnorm;€;Cost for getting initial chicken
+chicken_mobile_cost;1;NA;15;posnorm;€;Cost for getting chicken mobile
+maintaining_trees_cost;1;NA;15;posnorm;€;Cost for maintaining trees
+maintaining_fences_cost;1;NA;15;posnorm;€;Cost for maintaining fences
+maintaining_chicken_mobile_cost;1;NA;15;posnorm;€;Cost formaintaining chicken mobile
+replacing_chicken_cost;1;NA;15;posnorm;€;Cost for replacing chickens
+replacing_trees_cost;1;NA;15;posnorm;€;Cost for replacing trees
+nut_harvest_cost;1;NA;15;posnorm;€;Cost for harvesting nuts
+tree_harvest_cost;1;NA;15;posnorm;€;Cost for harvesting trees
+feed_cost;1;NA;15;posnorm;€;Cost for feeding the chicken
+crop_cost;1;NA;15;posnorm;€;Cost for maintaining the baseline option
+working_hours;1;NA;15;posnorm;h;Time spent on the plot
+working_cost;1;NA;15;posnorm;€/h;Costs for one hour of work
+subsidies;1;NA;15;posnorm;€;Subsidies for establishing grassland
+truffle_yield;1;NA;15;posnorm;kg;Yield of truffle
+truffle_price;1;NA;15;posnorm;€/kg;Market price for truffle
+nut_yield;1;NA;15;posnorm;kg;Yield of nuts
+nut_price;1;NA;15;posnorm;€/kg;Market price for nuts
+eggs_yield;1;NA;15;posnorm;eggs;Number of eggs per Year
+eggs_price;1;NA;15;posnorm;€/egg;Market price for eggs
+wood_yield;1;NA;15;posnorm;m^3;Yield of wood
+wood_price;1;NA;15;posnorm;€/m^3;Market price for wood
+crop_yield;1;NA;15;posnorm;dt;Yield of the baseline option
+crop_price;1;NA;15;posnorm;€/dt;Market price for the baseline option
