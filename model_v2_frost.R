@@ -89,10 +89,12 @@ model_function <- function(){
   
   nuts_frost <- chance_event(chance = 0.1,
                              value_if = 0,
-                             value_if_not = nuts,
+                             value_if_not = 1,
                              n = 20)
   
-  for (value in nuts_frost){
+  nuts_frost_yield <- Map("*", nuts, nuts_frost)
+  
+  for (value in nuts_frost_yield){
     nut_income =+ value * nut_price 
     if (value != 0){
       harvest_count =+ 1
