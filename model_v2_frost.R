@@ -53,8 +53,8 @@ model_function <- function(){
   
   
   # Income ----
-
-  truffle <- gompertz_yield(max_harvest = 50,
+  
+  truffle <- gompertz_yield(max_harvest = 10,
                             time_to_first_yield_estimate = 1,
                             first_yield_estimate_percent = 50,
                             time_to_second_yield_estimate = 3,
@@ -66,7 +66,7 @@ model_function <- function(){
   }
   
   
-  eggs <- vv(var_mean = eggs_yield,
+  eggs <- vv(var_mean = 8000,
              var_CV = 5, 
              n = 20)
   for (value in eggs){
@@ -83,17 +83,31 @@ model_function <- function(){
                          second_yield_estimate_percent = 100,
                          n_years = 20,
                          var_CV = 20)
-  for (value in nuts){
-    nut_income =+ value * nut_price
+  
+  
+  # Frost chance ----
+  
+  nuts_frost <- chance_event(chance = 0.1,
+                             value_if = 0,
+                             value_if_not = nuts,
+                             n = 20)
+  
+  for (value in nuts_frost){
+    nut_income =+ value * nut_price 
+    if (value != 0){
+      harvest_count =+ 1
+    }
   }
   
-    
+  nut_harvest_cost_final <- harvest_count * nut_harvest_cost
+  
+  
   # Final----
   
   final_income <- nut_income + truffle_income + egg_income + subsidies
   
   final_maintenance <- maintaining_trees_final + maintaining_fences_final + maintaining_chicken_mobile_final +
-    replacing_chicken_final + replacing_trees_final + feed_final
+    replacing_chicken_final + replacing_trees_final + feed_final + nut_harvest_cost_final
   
   final_result <- final_income - final_maintenance - investment_cost
   
