@@ -1,9 +1,10 @@
+# Libraries and fixed variables ----
 library(decisionSupport)
 library (DiagrammeR)
 library("readxl")
 
 input_estimates <- read_excel("input_estimates_lukas.xlsx")
-
+years <- 20
 
 # Model Function ----
 
@@ -17,19 +18,19 @@ model_function <- function(){
   # Maintenance ----
   maintaining_trees <- vv(var_mean = maintaining_trees_cost,
                           var_CV = 15,
-                          n = 20)
+                          n = years)
   maintaining_trees_final <- Reduce("+", maintaining_trees)
   
   
   maintaining_fences <- vv(var_mean = maintaining_fences_cost,
                            var_CV = 15,
-                           n = 20)
+                           n = years)
   maintaining_fences_final <- Reduce("+", maintaining_fences)
   
   
   maintaining_chicken_mobile <- vv(var_mean = maintaining_chicken_mobile_cost,
                                    var_CV = 15,
-                                   n = 20)
+                                   n = years)
   maintaining_chicken_mobile_final <- Reduce("+", maintaining_chicken_mobile)
   
   
@@ -38,28 +39,30 @@ model_function <- function(){
   
   trees_to_replace_var <- vv(var_mean = trees_to_replace,
                              var_CV = 100,
-                             n = 20)
+                             n = years)
+  
   replacing_trees <- vv(var_mean = replacing_trees_cost,
                         var_CV = 20,
-                        n = 20)
+                        n = years)
+  
   replacing_trees_sum <- Map("*", trees_to_replace_var, replacing_trees)
   replacing_trees_final <- Reduce("+", replacing_trees_sum)
   
   
   feed <- vv(var_mean = feed_cost,
              var_CV = 20,
-             n = 20)
+             n = years)
   feed_final <- Reduce("+", feed)
   
   
   # Income ----
-
+  
   truffle <- gompertz_yield(max_harvest = 50,
                             time_to_first_yield_estimate = 1,
                             first_yield_estimate_percent = 50,
                             time_to_second_yield_estimate = 3,
                             second_yield_estimate_percent = 100,
-                            n_years = 20,
+                            n_years = years,
                             var_CV = 20)
   for (value in truffle){
     truffle_income =+ value * truffle_price
@@ -68,7 +71,7 @@ model_function <- function(){
   
   eggs <- vv(var_mean = eggs_yield,
              var_CV = 5, 
-             n = 20)
+             n = years)
   for (value in eggs){
     egg_income =+ value * eggs_price
   }
@@ -81,13 +84,13 @@ model_function <- function(){
                          first_yield_estimate_percent = 50,
                          time_to_second_yield_estimate = 10,
                          second_yield_estimate_percent = 100,
-                         n_years = 20,
+                         n_years = years,
                          var_CV = 20)
   for (value in nuts){
     nut_income =+ value * nut_price
   }
   
-    
+  
   # Final----
   
   final_income <- nut_income + truffle_income + egg_income + subsidies
