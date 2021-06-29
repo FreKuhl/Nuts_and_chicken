@@ -5,7 +5,7 @@ library("readxl")
 input_estimates <- read_excel("input_estimates_lukas.xlsx")
 years <- 40
 
-# Model Function ----
+# Model Function
 
 model_function <- function(){
   
