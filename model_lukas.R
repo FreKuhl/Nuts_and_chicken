@@ -3,7 +3,7 @@ library (DiagrammeR)
 library("readxl")
 
 input_estimates <- read_excel("input_estimates_v2.xlsx")
-years <- 40
+years <- 20
 
 # Model Function ----
 
@@ -198,8 +198,8 @@ model_function <- function(){
   
   crop <- years * deckungsbeitrag
   
-  return(list(nuts_chicken = nuts_chicken_final, 
-              nuts = nuts_final, 
+  return(list(nuts = nuts_final,
+              nuts_chicken = nuts_chicken_final,
               nuts_chicken_truffle = nuts_truffle_chicken_final,
               chicken = final_chicken_income,
               crop = crop))
@@ -236,8 +236,26 @@ plot_cashflow(mcSimulation_object = simulation, cashflow_var_name = "nuts_chicke
 
 # PLS
 
-pls <- plsr.mcSimulation(object = simulation,
-                         resultName = names(simulation$y))
+pls_result <- plsr.mcSimulation(object = simulation,
+                         resultName = names(simulation$y)[1], ncomp = 1)
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0)
+
+
+
+# EVPI
+
+mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
+
+evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "nuts")
+
+plot_evpi(evpi, decision_vars = "NPV_decision_do")
+
+compound_figure(mcSimulation_object = mcSimulation_results, 
+                input_table = input_table, plsrResults = pls_result, 
+                EVPIresults = evpi, decision_var_name = "NPV_decision_do", 
+                cashflow_var_name = "Cashflow_decision_do", 
+                base_size = 7)
 
 
 
