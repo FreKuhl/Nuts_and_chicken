@@ -3,7 +3,7 @@ library(decisionSupport)
 library(tidyverse)
 library("readxl")
 
-input_estimates <- read_excel("input_estimates_v2.xlsx")
+input_estimates <- read_excel("input_estimates.xlsx")
 years <- 20
 
 
@@ -335,6 +335,7 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
 
 
 # EVPI ----
+# Use with caution!!! takes really long time to calculate!!!
 
 mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
 
