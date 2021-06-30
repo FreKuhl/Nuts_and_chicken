@@ -1,0 +1,14 @@
+---
+title: "Nuts and chicken"
+author: "Lukas Gürtler & Frederik Kuhl"
+date: "30.6.2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Under Construction!
