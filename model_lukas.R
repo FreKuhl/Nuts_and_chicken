@@ -245,7 +245,7 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0)
 
 # EVPI
 
-mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
+mcSimulation_table <- data.frame(simulation$x, simulation$y[1])
 
 evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "nuts")
 
