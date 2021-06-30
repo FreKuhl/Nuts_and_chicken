@@ -1,5 +1,5 @@
 library(decisionSupport)
-library (DiagrammeR)
+library(tidyverse)
 library("readxl")
 
 input_estimates <- read_excel("input_estimates_v2.xlsx")
@@ -231,15 +231,42 @@ plot_cashflow(mcSimulation_object = simulation, cashflow_var_name = "nuts_chicke
               color_median = "red")
 
 
+# (PLS) Projection to Latent Structures analysis ----
 
-
-
-# PLS
-
+# nuts_final 
 pls_result <- plsr.mcSimulation(object = simulation,
-                         resultName = names(simulation$y)[1], ncomp = 1)
+                                resultName = names(simulation$y)[1], ncomp = 1)
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0)
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + ggtitle("Nuts only")
+
+#nuts_chicken_final
+pls_result <- plsr.mcSimulation(object = simulation,
+                                resultName = names(simulation$y)[2], ncomp = 1)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + ggtitle("Nuts and chicken")
+
+#nuts_truffle_chicken_final
+pls_result <- plsr.mcSimulation(object = simulation,
+                                resultName = names(simulation$y)[3], ncomp = 1)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + ggtitle("Nuts, chicken & truffle")
+
+#final_chicken_income
+pls_result <- plsr.mcSimulation(object = simulation,
+                                resultName = names(simulation$y)[4], ncomp = 1)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + ggtitle("Chicken only")
+
+#crop
+pls_result <- plsr.mcSimulation(object = simulation,
+                                resultName = names(simulation$y)[5], ncomp = 1)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + ggtitle("Baseline")
 
 
 
