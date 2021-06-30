@@ -188,17 +188,19 @@ model_function <- function(){
   
   # Final Results
   
-  final_result <- hazelnuts - general_investments - irrigation_costs + chicken_income
+  nuts_final <- hazelnuts - general_investments - irrigation_costs
   
-  final_result_w_truffle <- hazelnuts - general_investments - irrigation_costs + truffle_final + chicken_income
+  nuts_chicken_final <- hazelnuts + chicken_income - general_investments - irrigation_costs
+  
+  nuts_truffle_chicken_final <- hazelnuts - general_investments - irrigation_costs + truffle_final + chicken_income
   
   final_chicken_income <- chicken_income - general_investments
   
   crop <- years * deckungsbeitrag
   
-  return(list(nuts_chicken = final_result, 
-              irrigation = irrigation_costs, 
-              nuts_chicken_truffle = final_result_w_truffle,
+  return(list(nuts_chicken = nuts_chicken_final, 
+              nuts = nuts_final, 
+              nuts_chicken_truffle = nuts_truffle_chicken_final,
               chicken = final_chicken_income,
               crop = crop))
 }
@@ -214,7 +216,7 @@ simulation <- mcSimulation(estimate = as.estimate(input_estimates),
 
 # plot_distributions ----
 plot_distributions(mcSimulation_object = simulation,
-                   vars = c("nuts_chicken", "nuts_chicken_truffle", "chicken"),
+                   vars = c("nuts_chicken", "nuts_chicken_truffle", "nuts"),
                    method = "smooth_simple_overlay",)
 
 
