@@ -89,24 +89,24 @@ model_function <- function(){
   
   # Irrigation ----
   
-  days_irrigation <- chance_event(chance = 0.99,
-                                  value_if = 30,
-                                  value_if_not = 0,
-                                  n = years,
-                                  CV_if = 80)
+  
+  days_irrigation <- vv(var_mean = days_to_irrigate,
+                        var_CV = 80,
+                        n = years)
+
   
   for (i in 1:length(days_irrigation)){
     if ((days_irrigation[i]) < 10){
       days_irrigation[i] <- 10
     }
-    if (days_irrigation[i] > 55){
-      days_irrigation[i] <- 55
+    if (days_irrigation[i] > 60){
+      days_irrigation[i] <- 60
     }
   }
   
   days_to_irrigate <- sum(days_irrigation)
   
-  irrigation_work_costs <- work_per_irrigation * days_to_irrigate
+  irrigation_work_costs <- (work_per_irrigation * working_hours_costs) * days_to_irrigate
   
   water <- days_to_irrigate * water_per_day
   
@@ -127,8 +127,8 @@ model_function <- function(){
   # Yield
   
   truffle <- gompertz_yield(max_harvest = truffle_yield,
-                            time_to_first_yield_estimate = 10,
-                            first_yield_estimate_percent = 50,
+                            time_to_first_yield_estimate = 9,
+                            first_yield_estimate_percent = 20,
                             time_to_second_yield_estimate = 17,
                             second_yield_estimate_percent = 100,
                             n_years = years,
@@ -142,60 +142,100 @@ model_function <- function(){
   
   truffle_income <- Reduce("+", truffle_income)
   
-  truffle_harvest_cost <- (years - 10) * truffle_harvest_cost
+  truffle_harvest_cost <- (years - 8) * truffle_harvest_cost
   
   truffle_final <- truffle_income - truffle_harvest_cost - truffle_planting_cost
   
+  # Chicken ----
   
+  initial_chicken_costs <- initial_chicken_cost + initial_chicken_mobile_cost
   
+  maintaining_chicken_mobile <- sum(vv(var_mean = maintaining_chicken_mobile,
+                                       var_CV = 40,
+                                       n = years))
   
+  chicken_feed <- vv(var_mean = chicken_feed,
+                     var_CV = 15,
+                     n = years)
   
+  chicken_feed_cost <- vv(var_mean = feed_costs,
+                          var_CV = 20,
+                          n = years)
   
+  feed_cost_total <- Map("*", chicken_feed, chicken_feed_cost)
   
+  feed_cost_total <- Reduce("+", feed_cost_total)
   
+  working_hours_chicken <- sum(vv(var_mean = working_hours_chicken,
+                          var_CV = 5,
+                          n = years))
   
+  working_costs_chicken <- working_hours_chicken * working_hours_costs
   
+  chicken_replacement <- (years * 133) * chicken_replacement_cost
   
+  eggs <- sum(vv(var_mean = eggs,
+                 var_CV = 5,
+                 n = years))
   
+  eggs_income <- eggs * eggs_price
   
-  final_result <- hazelnuts - general_investments - irrigation_costs
+  chicken_income <- eggs_income - 
+    chicken_replacement - 
+    working_costs_chicken - 
+    feed_cost_total - 
+    initial_chicken_costs
   
-  final_result_w_truffle <- hazelnuts - general_investments - irrigation_costs + truffle_final
+  # Final Results
   
-  return(list(final_result = final_result, 
+  final_result <- hazelnuts - general_investments - irrigation_costs + chicken_income
+  
+  final_result_w_truffle <- hazelnuts - general_investments - irrigation_costs + truffle_final + chicken_income
+  
+  final_chicken_income <- chicken_income - general_investments
+  
+  crop <- years * deckungsbeitrag
+  
+  return(list(nuts_chicken = final_result, 
               irrigation = irrigation_costs, 
-              w_truffle = final_result_w_truffle))
+              nuts_chicken_truffle = final_result_w_truffle,
+              chicken = final_chicken_income,
+              crop = crop))
 }
-
-
-
-
-
-
-
-
 
 
 
 # Run the Monte Carlo simulation using the model function ----
 simulation <- mcSimulation(estimate = as.estimate(input_estimates),
                            model_function = model_function,
-                           numberOfModelRuns = 3000,
+                           numberOfModelRuns = 10000,
                            functionSyntax = "plainNames")
 
 
 # plot_distributions ----
 plot_distributions(mcSimulation_object = simulation,
-                   vars = c("final_result", "w_truffle"),
+                   vars = c("nuts_chicken", "nuts_chicken_truffle", "chicken"),
                    method = "smooth_simple_overlay",)
 
 
 
 
+# Plot the cashflow distribution over time
+
+plot_cashflow(mcSimulation_object = simulation, cashflow_var_name = "nuts_chicken",
+              x_axis_name = "Years with intervention",
+              y_axis_name = "Annual cashflow in USD",
+              color_25_75 = "green4", color_5_95 = "green1",
+              color_median = "red")
 
 
 
 
+
+# PLS
+
+pls <- plsr.mcSimulation(object = simulation,
+                         resultName = names(simulation$y))
 
 
 
