@@ -5,13 +5,12 @@ library("readxl")
 input_estimates <- read_excel("input_estimates_lukas.xlsx")
 years <- 40
 
-# Model Function
+# Model Function ----
 
 model_function <- function(){
   
   # Initial investment costs ----
-  investment_cost <- grass_planting_cost + protective_animal_cost + initial_fences_cost + 
-    initial_truffle_cost + planting_tree_cost + initial_chicken_cost + chicken_mobile_cost
+  investment_cost <- initial_fences_cost + planting_tree_cost
   
   
   # Maintenance ----
@@ -26,16 +25,6 @@ model_function <- function(){
                            n = years)
   maintaining_fences_final <- Reduce("+", maintaining_fences)
   
-  
-  maintaining_chicken_mobile <- vv(var_mean = maintaining_chicken_mobile_cost,
-                                   var_CV = 15,
-                                   n = years)
-  maintaining_chicken_mobile_final <- Reduce("+", maintaining_chicken_mobile)
-  
-  
-  replacing_chicken_final <- 39 * (133 * replacing_chicken_cost)
-  
-  
   trees_to_replace_var <- vv(var_mean = trees_to_replace,
                              var_CV = 100,
                              n = years)
@@ -44,39 +33,13 @@ model_function <- function(){
                         n = years)
   replacing_trees_sum <- Map("*", trees_to_replace_var, replacing_trees)
   replacing_trees_final <- Reduce("+", replacing_trees_sum)
-  
-  
-  feed <- vv(var_mean = feed_cost,
-             var_CV = 20,
-             n = years)
-  feed_final <- Reduce("+", feed)
+
   
   
   # Income ----
+
   
-  truffle <- gompertz_yield(max_harvest = 10,
-                            time_to_first_yield_estimate = 10,
-                            first_yield_estimate_percent = 50,
-                            time_to_second_yield_estimate = 17,
-                            second_yield_estimate_percent = 100,
-                            n_years = years,
-                            var_CV = 20)
-  for (value in truffle){
-    truffle_income =+ value * truffle_price
-  }
-  
-  
-  eggs <- vv(var_mean = eggs_yield,
-             var_CV = 5, 
-             n = years)
-  for (value in eggs){
-    egg_income =+ value * eggs_price
-  }
-  
-  #wood_income <- 2 * wood_yield
-  
-  
-  nuts <- gompertz_yield(max_harvest = nut_yield,
+  nuts <- gompertz_yield(max_harvest = 1000,
                          time_to_first_yield_estimate = 4,
                          first_yield_estimate_percent = 50,
                          time_to_second_yield_estimate = 10,
@@ -95,7 +58,7 @@ model_function <- function(){
   nuts_frost_yield <- Map("*", nuts, nuts_frost)
   
   for (value in nuts_frost_yield){
-    nut_income =+ value * nut_price 
+    nut_income =+ value * 20 
     if (value != 0){
       harvest_count =+ 1
     }
@@ -106,10 +69,10 @@ model_function <- function(){
   
   # Final----
   
-  final_income <- nut_income + truffle_income + egg_income + subsidies
+  final_income <- nut_income + subsidies
   
-  final_maintenance <- maintaining_trees_final + maintaining_fences_final + maintaining_chicken_mobile_final +
-    replacing_chicken_final + replacing_trees_final + feed_final + nut_harvest_cost_final
+  final_maintenance <- maintaining_trees_final + maintaining_fences_final + 
+    replacing_trees_final + nut_harvest_cost_final
   
   final_result <- final_income - final_maintenance - investment_cost
   
