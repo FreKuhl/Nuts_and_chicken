@@ -3,8 +3,9 @@ library(decisionSupport)
 library(tidyverse)
 library("readxl")
 
+
 input_estimates <- read_excel("input_estimates.xlsx")
-years <- 20
+years <- 40
 
 
 # Model Function ----
@@ -238,8 +239,8 @@ model_function <- function() {
 }
 
 
-
-# Run the Monte Carlo simulation using the model function ----
+# Monte Carlo ----
+# Run the Monte Carlo simulation using the model function
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
@@ -247,8 +248,8 @@ simulation <- mcSimulation(
   functionSyntax = "plainNames"
 )
 
-
 # Plots ----
+# * Distributions ====
 
 # plot_distributions
 
@@ -260,21 +261,21 @@ plot_distributions(
 
 
 
-
+# * Cashflow ----
 # Plot the cashflow distribution over time
 
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = "nuts_chicken",
+  cashflow_var_name = "nuts",
   x_axis_name = "Years with intervention",
-  y_axis_name = "Annual cashflow in USD",
+  y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red"
 )
 
 
-# PLS ----
+# * PLS ----
 #Projection to Latent Structures analysis
 
 # nuts_final
@@ -307,9 +308,6 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-
-mcSimulation_table <- data.frame(simulation$x, simulation$y[1])
-
 plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
   ggtitle("Nuts, chicken & truffle")
 
@@ -338,21 +336,21 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
 
 
 
-# EVPI ----
-# Use with caution!!! takes really long time to calculate!!!
-
-mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
-
-evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "nuts")
-
-plot_evpi(evpi, decision_vars = "NPV_decision_do")
-
-compound_figure(
-  mcSimulation_object = mcSimulation_results,
-  input_table = input_table,
-  plsrResults = pls_result,
-  EVPIresults = evpi,
-  decision_var_name = "NPV_decision_do",
-  cashflow_var_name = "Cashflow_decision_do",
-  base_size = 7
-)
+# * EVPI ----
+# # Use with caution!!! takes really long time to calculate!!!
+# 
+# mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
+# 
+# evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "nuts")
+# 
+# plot_evpi(evpi, decision_vars = "nuts")
+# 
+# compound_figure(
+#   mcSimulation_object = mcSimulation_results,
+#   input_table = input_table,
+#   plsrResults = pls_result,
+#   EVPIresults = evpi,
+#   decision_var_name = "NPV_decision_do",
+#   cashflow_var_name = "Cashflow_decision_do",
+#   base_size = 7
+# )
