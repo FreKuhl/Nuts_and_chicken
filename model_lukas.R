@@ -4,11 +4,8 @@ library(tidyverse)
 library("readxl")
 
 input_estimates <- read_excel("input_estimates.xlsx")
-<<<<<<< HEAD
+
 years <- 30
-=======
-years <- 40
->>>>>>> 60eabe0f54108093a10ed342d2ad6090b8e44c77
 
 
 # Model Function ----
@@ -65,19 +62,23 @@ model_function <- function() {
   initial_haselnut_costs <-
     tree_planting_cost + ((years / 10) * harvest_nets)
   
-  maintaining_trees <- sum(vv(
-    var_mean = maintaining_trees_cost,
-    var_CV = 20,
+  maintaining_trees_hours <- sum(vv(
+    var_mean = maintaining_trees_hours,
+    var_CV = 5,
     n = years
   ))
   
+  maintaining_trees <- maintaining_trees_hours * working_hours_costs
+  
   harvest_count <- sum(nuts_frost_yield > 20)
   
-  nut_harvest_cost <- sum(vv(
-    var_mean = nut_harvest_cost,
-    var_CV = 20,
-    n = harvest_count
+  nut_harvest_hours <- sum(vv(
+    var_mean = nut_harvest_hours,
+    var_CV = 5,
+    n = years
   ))
+  
+  nut_harvest_cost <- nut_harvest_hours * working_hours_costs
   
   # Replacing Trees
   
@@ -133,10 +134,16 @@ model_function <- function() {
     n = years
   ))
   
+  work_irrigation_installation_annual <- work_irrigation_installation_annual * working_hours_costs
+
+  
+  
   irrigation_costs <- water_costs +
     irrigation_work_costs +
     installation_irrigation +
-    irrigation_maintanence
+    irrigation_maintanence +
+    work_irrigation_installation_annual
+  
   # Final irrigation Value
   
   # Truffle ----
@@ -305,10 +312,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 60eabe0f54108093a10ed342d2ad6090b8e44c77
 plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
   ggtitle("Nuts, chicken & truffle")
 
@@ -337,7 +341,6 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
 
 
 
-<<<<<<< HEAD
 # EVPI ----
 # Use with caution!!! takes really long time to calculate!!!
 
@@ -356,7 +359,7 @@ compound_figure(
   cashflow_var_name = "Cashflow_decision_do",
   base_size = 7
 )
-=======
+
 # # EVPI ----
 # # Use with caution!!! takes really long time to calculate!!!
 # 
@@ -375,4 +378,4 @@ compound_figure(
 #   cashflow_var_name = "Cashflow_decision_do",
 #   base_size = 7
 # )
->>>>>>> 60eabe0f54108093a10ed342d2ad6090b8e44c77
+
