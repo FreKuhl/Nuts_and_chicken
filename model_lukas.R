@@ -4,7 +4,7 @@ library(tidyverse)
 library("readxl")
 
 input_estimates <- read_excel("input_estimates.xlsx")
-years <- 20
+years <- 30
 
 
 # Model Function ----
@@ -110,15 +110,9 @@ model_function <- function() {
                         var_CV = 80,
                         n = years)
   
+  days_irrigation[days_irrigation<10] <- 10
   
-  for (i in 1:length(days_irrigation)) {
-    if ((days_irrigation[i]) < 10) {
-      days_irrigation[i] <- 10
-    }
-    if (days_irrigation[i] > 60) {
-      days_irrigation[i] <- 60
-    }
-  }
+  days_irrigation[days_irrigation<55] <- 55
   
   days_to_irrigate <- sum(days_irrigation)
   
@@ -211,7 +205,7 @@ model_function <- function() {
   chicken_income <- eggs_income - chicken_replacement - working_costs_chicken -
     feed_cost_total - initial_chicken_costs
   
-  # Final Results
+  # Final Results ----
   
   nuts_final <- hazelnuts - general_investments - irrigation_costs
   
@@ -308,8 +302,6 @@ pls_result <- plsr.mcSimulation(
 
 
 
-mcSimulation_table <- data.frame(simulation$x, simulation$y[1])
-
 plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
   ggtitle("Nuts, chicken & truffle")
 
@@ -341,11 +333,11 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
 # EVPI ----
 # Use with caution!!! takes really long time to calculate!!!
 
-mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
+mcSimulation_table <- data.frame(simulation$x, simulation$y[1:3])
 
 evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "nuts")
 
-plot_evpi(evpi, decision_vars = "NPV_decision_do")
+plot_evpi(evpi, decision_vars = "nuts")
 
 compound_figure(
   mcSimulation_object = mcSimulation_results,
