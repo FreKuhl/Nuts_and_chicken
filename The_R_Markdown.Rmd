@@ -1,14 +1,51 @@
 ---
 title: "Nuts and chicken"
 author: "Lukas Gürtler & Frederik Kuhl"
-date: "30.6.2021"
 output: html_document
+bibliography: 
+  - bib/references.bib 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(decisionSupport)
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(rmarkdown)
 ```
 
-## R Markdown
+```{r add_R_bib, include=FALSE}
+knitr::write_bib(c(.packages(),
+                   'knitr', 'decisionSupport'), 'bib/packages.bib')
+```
 
-Under Construction!
+This supplementary is available under <https://github.com/FreKuhl/Nuts_and_chicken.git> and outlines the Decision Analysis approaches used in Model-based evaluation of management options in ornamental plant nurseries [@ruett_model-based_2020]. Here we provide our input table, code and results to allow for transparent reproduction of the model.
+
+All other applied `R` packages are cited and listed in the [References].
+
+## Input table
+The input table `Input_estimates.xlsx` (attached) contains: Variable names, unit, distributions (posnorm = positive normal distribution, const = constant, tnorm_0_1= truncated normal distribution, norm = normal distribution), lower bound, mean, upper bound and definition of variables.
+
+## Implementing the model in R
+
+Here we provide our mathematical model that enables simulation of decision outcomes.
+The calculations in this document are based on random draws from the distributions in the input table `Input_estimates.csv`. Explanations for code chunks are not part of the actual simulation. 
+
+Load the input table `Input_file.csv` and make variables.
+```{r eval= FALSE}
+input_estimates <- read_excel("input_estimates.xlsx")
+
+make_variables <- function(est,n=1)
+{ x <- random(rho=est, n=n)
+for(i in colnames(x)) assign(i, as.numeric(x[1,i]),envir = .GlobalEnv)}
+
+make_variables(as.estimate(input_estimates))
+```
+
+We generated a function called `model_function` to evaluate the decision options in `decisionSupport` [@luedelingDecisionSupportQuantitativeSupport2019]. The following calculations are part of this function (see the entire function below). 
+```{r eval= FALSE}
+model_function <- function() {}
+```
+
+# References
