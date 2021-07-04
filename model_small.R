@@ -3,9 +3,8 @@ library(decisionSupport)
 library(tidyverse)
 library("readxl")
 
-input_estimates <- read_excel("input_estimates.xlsx")
 
-input_estimates_small <- read_excel("input_nuts_small.xlsx")
+input_estimates <- read_excel("input_nuts-small.xlsx")
 
 years <- 30
 
@@ -30,8 +29,8 @@ model_function <- function() {
   # Frost chance_event
   
   nuts_frost <- chance_event(
-    chance = 0.1,
-    value_if = 0,
+    chance = 0.2,
+    value_if = 0.3,
     value_if_not = 1,
     n = years
   )
@@ -40,12 +39,12 @@ model_function <- function() {
   
   nuts <- gompertz_yield(
     max_harvest = nut_yield,
-    time_to_first_yield_estimate = 4,
+    time_to_first_yield_estimate = 6,
     first_yield_estimate_percent = 50,
     time_to_second_yield_estimate = 10,
     second_yield_estimate_percent = 100,
     n_years = years,
-    var_CV = 20
+    var_CV = 10
   )
   
   nuts_frost_yield <- Map("*", nuts, nuts_frost)
@@ -64,13 +63,12 @@ model_function <- function() {
   initial_haselnut_costs <-
     tree_planting_cost + ((years / 10) * harvest_nets)
   
+  
   maintaining_trees_hours <- sum(vv(
     var_mean = maintaining_trees_hours,
     var_CV = 5,
     n = years
   ))
-  
-  maintaining_trees <- maintaining_trees_hours * working_hours_costs
   
   harvest_count <- sum(nuts_frost_yield > 20)
   
@@ -80,17 +78,23 @@ model_function <- function() {
     n = years
   ))
   
-  nut_harvest_cost <- nut_harvest_hours * working_hours_costs
+  nuts_hours_cost <- (maintaining_trees_hours + tree_planting_hours + nut_harvest_hours) * working_hours_costs
+  
+  nut_var_costs <- sum(vv(var_mean = nut_var_costs,
+                          var_CV = 20,
+                          n = years))
   
   # Replacing Trees
   
   replacing_trees <- chance_event(
     chance = 0.3,
-    value_if = 10,
+    value_if = 3,
     value_if_not = 0,
     n = years,
     CV_if = 50
   )
+  
+  replacing_trees[replacing_trees < 0] <- 0
   
   trees_to_replace <- Reduce("+", replacing_trees)
   
@@ -103,48 +107,48 @@ model_function <- function() {
   ))
   
   nut_costs <- initial_haselnut_costs +
-    maintaining_trees +
-    nut_harvest_cost +
+    nuts_hours_cost +
     replacing_trees_cost +
-    nut_fertilizer_cost # Finale Hazelnut costs
+    nut_fertilizer_cost + 
+    nut_var_costs +
+    ((years / 5) * soil_analysis) # Finale Hazelnut costs
   
   hazelnuts <- nut_income - nut_costs
   
   # Irrigation ----
   
-  
-  days_irrigation <- vv(var_mean = days_to_irrigate,
-                        var_CV = 80,
-                        n = years)
-  
-  days_irrigation[days_irrigation<10] <- 10
-  
-  days_irrigation[days_irrigation<55] <- 55
+  days_irrigation <- chance_event(chance = 0.5,
+                                  value_if = 1,
+                                  value_if_not = 0,
+                                  n = 60)
   
   days_to_irrigate <- sum(days_irrigation)
   
-  irrigation_work_costs <-
-    (work_per_irrigation * working_hours_costs) * days_to_irrigate
+  water_per_days <- vv(var_mean = water_per_day,
+                       var_CV = 10,
+                       n = 60)
   
-  water <- days_to_irrigate * water_per_day
+  water_per_days <- Map("*", days_irrigation, water_per_days)
   
-  water_costs <- (water / 1000) * water_price
+  water_per_year <- Reduce("+", water_per_days)
   
-  irrigation_maintanence <- sum(vv(
-    var_mean = maintaining_irrigation,
-    var_CV = 10,
-    n = years
-  ))
+  refill_trailer <- (water_per_year / trailer_capacity) + 3
   
-  work_irrigation_installation_annual <- work_irrigation_installation_annual * working_hours_costs
-
+  irrigation_work <- ((work_per_irrigation * days_to_irrigate) + 
+    (refill_trailer * work_per_trailer)) * working_hours_costs
   
+  water_costs <- (water_per_year / 1000) * water_price
   
-  irrigation_costs <- water_costs +
-    irrigation_work_costs +
+  irrigation_anually <- water_costs + irrigation_work + maintaining_irrigation
+  
+  irrigation_cost <- sum(vv(var_mean = irrigation_anually,
+                            var_CV = 35,
+                            n = years))
+  
+  irrigation_costs <-
     installation_irrigation +
-    irrigation_maintanence +
-    work_irrigation_installation_annual
+    irrigation_cost +
+    water_trailer
   
   # Final irrigation Value
   
@@ -186,11 +190,11 @@ model_function <- function() {
   ))
   
   chicken_feed <- vv(var_mean = chicken_feed,
-                     var_CV = 15,
+                     var_CV = 10,
                      n = years)
   
   chicken_feed_cost <- vv(var_mean = feed_costs,
-                          var_CV = 20,
+                          var_CV = 15,
                           n = years)
   
   feed_cost_total <- Map("*", chicken_feed, chicken_feed_cost)
