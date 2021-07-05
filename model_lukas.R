@@ -62,8 +62,10 @@ model_function <- function() {
   initial_haselnut_costs <-
     tree_planting_cost + ((years / 10) * harvest_nets)
   
+  
+  
   maintaining_trees <- sum(vv(
-    var_mean = maintaining_trees_cost,
+    var_mean = maintaining_trees_hours,
     var_CV = 20,
     n = years
   ))
@@ -71,7 +73,7 @@ model_function <- function() {
   harvest_count <- sum(nuts_frost_yield > 20)
   
   nut_harvest_cost <- sum(vv(
-    var_mean = nut_harvest_cost,
+    var_mean = nut_harvest_hours,
     var_CV = 20,
     n = harvest_count
   ))
@@ -148,9 +150,9 @@ model_function <- function() {
   
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
-    time_to_first_yield_estimate = 9,
+    time_to_first_yield_estimate = 10,
     first_yield_estimate_percent = 20,
-    time_to_second_yield_estimate = 17,
+    time_to_second_yield_estimate = 15,
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 20
@@ -213,7 +215,6 @@ model_function <- function() {
     feed_cost_total - initial_chicken_costs
   
   # Final Results
-  
   nuts_final <- hazelnuts - general_investments - irrigation_costs
   
   nuts_chicken_final <- hazelnuts + chicken_income - general_investments -
@@ -227,6 +228,7 @@ model_function <- function() {
   
   crop <- years * deckungsbeitrag
   
+
   return(
     list(
       nuts = nuts_final,
@@ -244,7 +246,7 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 10000,
+  numberOfModelRuns = 1000,
   functionSyntax = "plainNames"
 )
 
@@ -256,10 +258,10 @@ simulation <- mcSimulation(
 plot_distributions(
   mcSimulation_object = simulation,
   vars = c("nuts_chicken", "nuts_chicken_truffle", "nuts"),
-  method = "smooth_simple_overlay",
-)
-
-
+  method = "smooth_simple_overlay") +
+  labs(title = "Distribution of income for three different interventions",
+       subtitle = "Accumulated values for 40 years"
+       )
 
 # * Cashflow ----
 # Plot the cashflow distribution over time
