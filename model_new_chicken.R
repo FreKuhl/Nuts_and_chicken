@@ -299,9 +299,11 @@ plot_distributions(
   mcSimulation_object = simulation,
   vars = c("nuts_chicken", "nuts_chicken_truffle", "chicken_only","nuts"),
   method = "smooth_simple_overlay") +
-  labs(title = "Distribution of income for three different interventions",
-       subtitle = "Accumulated values for 40 years"
-  )
+  labs(title = "Distribution of income for four different interventions",
+       subtitle = "Accumulated values for 40 years") +
+  scale_fill_manual( values = c("red","blue", "green", "orange"), name = "Decision Options:") + 
+  theme(legend.position="bottom")
+
 
 # * Cashflow ----
 # Plot the cashflow distribution over time
@@ -328,7 +330,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Nuts only")
 
 # nuts_chicken_final
@@ -339,7 +341,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Nuts and chicken")
 
 # nuts_truffle_chicken_final
@@ -350,7 +352,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Nuts, chicken & truffle")
 
 
