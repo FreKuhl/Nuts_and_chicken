@@ -75,7 +75,7 @@ model_function <- function() {
   nut_harvest_hours <- sum(vv(
     var_mean = nut_harvest_hours,
     var_CV = 5,
-    n = years
+    n = harvest_count
   ))
   
   nuts_hours_cost <- (maintaining_trees_hours + tree_planting_hours + nut_harvest_hours) * working_hours_costs
