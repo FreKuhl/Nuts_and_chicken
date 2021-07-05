@@ -4,14 +4,10 @@ library(tidyverse)
 library("readxl")
 
 
-<<<<<<< HEAD
-input_estimates_small <- read_excel("input_nuts_small.xlsx")
 
-years <- 30
-=======
 input_estimates <- read_excel("input_estimates.xlsx")
 years <- 40
->>>>>>> a5604ec03bdf725a89b4eaade9e104e6218af269
+
 
 
 # Model Function ----
@@ -257,7 +253,7 @@ simulation <- mcSimulation(
 )
 
 # Plots ----
-# * Distributions ====
+
 
 # plot_distributions
 
