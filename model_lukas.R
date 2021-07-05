@@ -3,11 +3,15 @@ library(decisionSupport)
 library(tidyverse)
 library("readxl")
 
-input_estimates <- read_excel("input_estimates.xlsx")
 
+<<<<<<< HEAD
 input_estimates_small <- read_excel("input_nuts_small.xlsx")
 
 years <- 30
+=======
+input_estimates <- read_excel("input_estimates.xlsx")
+years <- 40
+>>>>>>> a5604ec03bdf725a89b4eaade9e104e6218af269
 
 
 # Model Function ----
@@ -64,23 +68,21 @@ model_function <- function() {
   initial_haselnut_costs <-
     tree_planting_cost + ((years / 10) * harvest_nets)
   
-  maintaining_trees_hours <- sum(vv(
+  
+  
+  maintaining_trees <- sum(vv(
     var_mean = maintaining_trees_hours,
-    var_CV = 5,
+    var_CV = 20,
     n = years
   ))
-  
-  maintaining_trees <- maintaining_trees_hours * working_hours_costs
   
   harvest_count <- sum(nuts_frost_yield > 20)
   
-  nut_harvest_hours <- sum(vv(
+  nut_harvest_cost <- sum(vv(
     var_mean = nut_harvest_hours,
-    var_CV = 5,
-    n = years
+    var_CV = 20,
+    n = harvest_count
   ))
-  
-  nut_harvest_cost <- nut_harvest_hours * working_hours_costs
   
   # Replacing Trees
   
@@ -117,9 +119,15 @@ model_function <- function() {
                         var_CV = 80,
                         n = years)
   
-  days_irrigation[days_irrigation<10] <- 10
   
-  days_irrigation[days_irrigation<55] <- 55
+  for (i in 1:length(days_irrigation)) {
+    if ((days_irrigation[i]) < 10) {
+      days_irrigation[i] <- 10
+    }
+    if (days_irrigation[i] > 60) {
+      days_irrigation[i] <- 60
+    }
+  }
   
   days_to_irrigate <- sum(days_irrigation)
   
@@ -136,16 +144,10 @@ model_function <- function() {
     n = years
   ))
   
-  work_irrigation_installation_annual <- work_irrigation_installation_annual * working_hours_costs
-
-  
-  
   irrigation_costs <- water_costs +
     irrigation_work_costs +
     installation_irrigation +
-    irrigation_maintanence +
-    work_irrigation_installation_annual
-  
+    irrigation_maintanence
   # Final irrigation Value
   
   # Truffle ----
@@ -154,9 +156,9 @@ model_function <- function() {
   
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
-    time_to_first_yield_estimate = 9,
+    time_to_first_yield_estimate = 10,
     first_yield_estimate_percent = 20,
-    time_to_second_yield_estimate = 17,
+    time_to_second_yield_estimate = 15,
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 20
@@ -218,8 +220,7 @@ model_function <- function() {
   chicken_income <- eggs_income - chicken_replacement - working_costs_chicken -
     feed_cost_total - initial_chicken_costs
   
-  # Final Results ----
-  
+  # Final Results
   nuts_final <- hazelnuts - general_investments - irrigation_costs
   
   nuts_chicken_final <- hazelnuts + chicken_income - general_investments -
@@ -233,6 +234,7 @@ model_function <- function() {
   
   crop <- years * deckungsbeitrag
   
+
   return(
     list(
       nuts = nuts_final,
@@ -250,24 +252,24 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 10000,
+  numberOfModelRuns = 1000,
   functionSyntax = "plainNames"
 )
 
-
-# Distributions----
+# Plots ----
+# * Distributions ====
 
 # plot_distributions
 
 plot_distributions(
   mcSimulation_object = simulation,
   vars = c("nuts_chicken", "nuts_chicken_truffle", "nuts"),
-  method = "smooth_simple_overlay",
-)
+  method = "smooth_simple_overlay") +
+  labs(title = "Distribution of income for three different interventions",
+       subtitle = "Accumulated values for 40 years"
+       )
 
-
-
-# Cashflow ----
+# * Cashflow ----
 # Plot the cashflow distribution over time
 
 plot_cashflow(
@@ -281,7 +283,7 @@ plot_cashflow(
 )
 
 
-# PLS ----
+# * PLS ----
 #Projection to Latent Structures analysis
 
 # nuts_final
@@ -314,7 +316,6 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-
 plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
   ggtitle("Nuts, chicken & truffle")
 
@@ -343,26 +344,7 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
 
 
 
-# EVPI ----
-# Use with caution!!! takes really long time to calculate!!!
-
-mcSimulation_table <- data.frame(simulation$x, simulation$y[1:3])
-
-evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "nuts")
-
-plot_evpi(evpi, decision_vars = "nuts")
-
-compound_figure(
-  mcSimulation_object = mcSimulation_results,
-  input_table = input_table,
-  plsrResults = pls_result,
-  EVPIresults = evpi,
-  decision_var_name = "NPV_decision_do",
-  cashflow_var_name = "Cashflow_decision_do",
-  base_size = 7
-)
-
-# # EVPI ----
+# * EVPI ----
 # # Use with caution!!! takes really long time to calculate!!!
 # 
 # mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
@@ -380,4 +362,3 @@ compound_figure(
 #   cashflow_var_name = "Cashflow_decision_do",
 #   base_size = 7
 # )
-
