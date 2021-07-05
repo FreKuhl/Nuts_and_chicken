@@ -8,7 +8,6 @@ library("readxl")
 input_estimates <- read_excel("input_nuts-small.xlsx")
 years <- 40
 number_of_chicken <- 225
-replacement <- c(0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225)
 
 # Make variables----
 make_variables <- function(est,n=1)
@@ -62,10 +61,14 @@ working_hours_chicken <- vv(
 working_costs_chicken_final <- working_hours_chicken * working_hours_costs
 
 #
-chicken_replacement <- vv(var_mean = replacement,
+chicken_replacement <- vv(var_mean = number_of_chicken,
                           var_CV = 10,
-                          n = years
+                          n = years,
+                          lower_limit = 225
 )
+
+# setting every second year to zero starting with the first 
+chicken_replacement[] <- chicken_replacement * c(FALSE, TRUE)
 
 #
 chicken_replacement_cost_final <- chicken_replacement * chicken_replacement_cost

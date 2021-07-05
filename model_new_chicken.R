@@ -6,9 +6,7 @@ library("readxl")
 
 input_estimates <- read_excel("input_nuts-small.xlsx")
 years <- 40
-number_of_chicken <- 500
-replacement <- c(0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225, 0, 225)
-
+number_of_chicken <- 225
 
 
 # Model Function ----
@@ -214,29 +212,36 @@ model_function <- function() {
     working_hours_chicken * working_hours_costs
   
   #
-  chicken_replacement <- vv(var_mean = replacement,
+  chicken_replacement <- vv(var_mean = number_of_chicken,
                             var_CV = 10,
-                            n = years)
+                            n = years,
+                            lower_limit = 225)
+  
+  # setting every second year to zero starting with the first 
+  chicken_replacement[] <- chicken_replacement * c(FALSE, TRUE)
   
   #
   chicken_replacement_cost_final <-
     chicken_replacement * chicken_replacement_cost
   
   # * Income ----
-  # Number of eggs per year
-  
-  eggs <- vv(
+  # Variation of laying performance per hen
+    eggs <- vv(
     var_mean = eggs,
-    var_CV = 5,
-    n = years
+    var_CV = 10,
+    n = years,
+    lower_limit = 170
   )
+  
+  # Number of eggs per Year
   eggs_per_year <- eggs * number_of_chicken
   
+  #
   eggs_price <- vv(
     var_mean = eggs_price,
     var_CV = 5,
     n = years,
-    lower_limit = 0.20
+    lower_limit = 0.25
   )
   
   eggs_income <- eggs_per_year * eggs_price
@@ -265,6 +270,7 @@ model_function <- function() {
   
   return(
     list(
+      chicken_only = chicken_income_final,
       nuts = nuts_final,
       nuts_chicken = nuts_chicken_final,
       nuts_chicken_truffle = nuts_truffle_chicken_final,
@@ -280,7 +286,7 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 1000,
+  numberOfModelRuns = 10000,
   functionSyntax = "plainNames"
 )
 
@@ -291,7 +297,7 @@ simulation <- mcSimulation(
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("nuts_chicken", "nuts_chicken_truffle", "nuts"),
+  vars = c("nuts_chicken", "nuts_chicken_truffle", "chicken_only","nuts"),
   method = "smooth_simple_overlay") +
   labs(title = "Distribution of income for three different interventions",
        subtitle = "Accumulated values for 40 years"
