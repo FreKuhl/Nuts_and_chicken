@@ -173,8 +173,8 @@ model_function <- function() {
     truffle_income - truffle_harvest_cost - truffle_planting_cost
   
   # Chicken ----
-  # *Costs----
-  # * * Initial costs ----
+  # Costs
+  # Initial costs
   # initial Investment for setting up the chicken mobile
   initial_chicken_costs_final <-
     number_of_chicken * chicken_replacement_cost + initial_chicken_mobile_cost
@@ -188,7 +188,8 @@ model_function <- function() {
   maintaining_chicken_mobile[1] <-
     maintaining_chicken_mobile[1] + initial_chicken_costs_final
   
-  # * * Operating costs  ----
+  
+  # Operating costs
   # Amount of feed needed for the number_of_chicken each year
   chicken_feed <- vv(var_mean = chicken_feed,
                      var_CV = 5,
@@ -224,7 +225,7 @@ model_function <- function() {
   chicken_replacement_cost_final <-
     chicken_replacement * chicken_replacement_cost
   
-  # * Income ----
+  # Income
   # Variation of laying performance per hen
     eggs <- vv(
     var_mean = eggs,
@@ -246,7 +247,7 @@ model_function <- function() {
   
   eggs_income <- eggs_per_year * eggs_price
   
-  # Adding Values ----
+  # Adding Values
   # 
   chicken_income <- eggs_income - maintaining_chicken_mobile - feed_cost_final - working_costs_chicken_final - chicken_replacement_cost_final
   
@@ -291,7 +292,7 @@ simulation <- mcSimulation(
 )
 
 # Plots ----
-# * Distributions ====
+# Distributions
 
 # plot_distributions
 
@@ -305,7 +306,7 @@ plot_distributions(
   theme(legend.position="bottom")
 
 
-# * Cashflow ----
+# Cashflow
 # Plot the cashflow distribution over time
 
 plot_cashflow(
@@ -319,7 +320,7 @@ plot_cashflow(
 )
 
 
-# * PLS ----
+# PLS
 #Projection to Latent Structures analysis
 
 # nuts_final
@@ -379,8 +380,7 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
   ggtitle("Baseline")
 
 
-
-# * EVPI ----
+# EVPI 
 # # Use with caution!!! takes really long time to calculate!!!
 # 
 # mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
