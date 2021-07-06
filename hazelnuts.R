@@ -4,12 +4,21 @@ library(tidyverse)
 library("readxl")
 
 
-input_estimates <- read_excel("input_nuts-small.xlsx")
+input_estimates <- read_excel("input_nuts.xlsx")
 
 years <- 30
 
+'make_variables <- function(est,n=1)
+{ x<-random(rho=est, n=n)
+for(i in colnames(x)) assign(i,
+                             as.numeric(x[1,i]),envir=.GlobalEnv)
+}
 
-# 3 Szenarios: Trees without harvest, nuts+hay (70 trees) nuts only (200 trees)
+make_variables(as.estimate(input_estimates))'
+
+
+
+# 2 Szenarios: 1: nuts+hay (70 trees); 2: nuts only (300 trees)
 
 # Model Function ----
 
@@ -17,9 +26,11 @@ model_function <- function() {
   
   # General ----
   
+  full_yield_period <- years - 8
+  
   nuts_frost <- chance_event(
-    chance = 0.2,
-    value_if = 0.2,
+    chance = late_frost,
+    value_if = 0.3,
     value_if_not = 1,
     n = years
   )
@@ -27,11 +38,6 @@ model_function <- function() {
   nut_price <- vv(var_mean = nut_price,
                     var_CV = 20,
                     n = years)
-  
-  days_irrigation <- chance_event(chance = 0.5,
-                                  value_if = 1,
-                                  value_if_not = 0,
-                                  n = 60)
   
   general_investments_vec <- vv(var_mean = maintaining_fences_cost,
                            var_CV = 30,
@@ -45,100 +51,162 @@ model_function <- function() {
   # Version 1
   
   nuts_1 <- gompertz_yield(
-    max_harvest = nut_yield,
+    max_harvest = nut_yield_1,
     time_to_first_yield_estimate = 6,
-    first_yield_estimate_percent = 50,
+    first_yield_estimate_percent = 40,
     time_to_second_yield_estimate = 10,
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 10)
     
-  nuts_yield_vec_1 <- Map("*", nuts_1, nuts_frost)
+  nuts_yield_vec_1 <- nuts_1 * nuts_frost
   
   harvest_count_1 <- ifelse(nuts_yield_vec_1 < 20, 0, 1)
   
+  amount_bales <- vv(var_mean = amount_bales_1,
+                     var_CV = 10,
+                     n = years)
+  
+  income_per_bale <- vv(var_mean = income_bale_1,
+                        var_CV = 10,
+                        n = years)
+  
+  income_hay <- amount_bales * income_per_bale
+  
   ###
-  nut_income_vec_1 <- Map("*", nuts_yield_vec_1, nut_price_1)
+  nut_income_vec_1 <- (nuts_yield_vec_1 * nut_price) + income_hay + subsidies
   ###
     
   # Version 2
     
   nuts_2 <- gompertz_yield(
-    max_harvest = nut_yield,
+    max_harvest = nut_yield_2,
     time_to_first_yield_estimate = 6,
-    first_yield_estimate_percent = 50,
+    first_yield_estimate_percent = 40,
     time_to_second_yield_estimate = 10,
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 10)
     
-  nuts_yield_vec_2 <- Map("*", nuts_2, nuts_frost)
+  nuts_yield_vec_2 <-nuts_2 * nuts_frost
   
   harvest_count_2 <- ifelse(nuts_yield_vec_2 < 20, 0, 1)
   
   ###
-  nut_income_vec_2 <- Map("*", nuts_yield_vec_2, nut_price)
+  nut_income_vec_2 <- (nuts_yield_vec_2 * nut_price) + subsidies
   ###
     
   # Nuts Costs ----
   # Version 1
   
-  maintaining_tree_h_vec_1 <- vv(var_mean = maintaining_trees_hours,
+  maintaining_tree_h_vec_1 <- vv(var_mean = maintaining_trees_h_1,
                                var_CV = 15,
                                n = years)
   
-  nut_harvest_h_vec_1 <- vv(var_mean = nut_harvest_hours,
+  maintaining_tree_h_vec_1[8:full_yield_period] <- 
+    maintaining_tree_h_vec_1[8:full_yield_period] * maintaining_trees_factor
+  
+  nut_harvest_h_vec_1 <- vv(var_mean = nut_harvest_hours_1,
                             var_CV = 5,
                             n = years)
   
-  nut_harvest_h_vec_1 <- Map("*", nut_harvest_h_vec_1, harvest_count_1)
+  nut_harvest_h_vec_1 <- nut_harvest_h_vec_1 * harvest_count_1
   
-  nut_h_vec_1 <- maintaining_tree_h_vec_1 + nut_harvest_h_vec_1
+  nut_mulch_h_vec_1 <- vv(var_mean = mulch_h_1,
+                          var_CV = 5,
+                          n = years)
   
-  nut_h_vec_1[1] <- nut_h_vec_1[1] + tree_planting_hours
+  other_nut_h_1 <- vv(var_mean = other_nut_h_1,
+                      var_CV = 5,
+                      n = years)
+  
+  nut_h_vec_1 <- maintaining_tree_h_vec_1 + nut_harvest_h_vec_1 + 
+    nut_mulch_h_vec_1 + other_nut_h_1
+  
+  nut_h_vec_1[1] <- nut_h_vec_1[1] + tree_planting_hours_1
   
   nut_workcosts_vec_1 <- nut_h_vec_1 * working_hours_costs
   
-  nut_var_costs_vec_1 <- vv(var_mean = nut_var_costs,
+  nut_other_costs_vec_1 <- vv(var_mean = nut_var_costs_1,
                             var_CV = 20,
                             n = years)
   
-  nut_var_costs_vec_1[1] <- nut_var_costs_vec_1[1] + tree_planting_cost
+  nut_other_costs_vec_1[1] <- nut_other_costs_vec_1[1] + tree_planting_costs_1
+  
+  nut_other_costs_vec_1[1] <- nut_other_costs_vec_1[1] + ((years / 10) * harvest_nets_1)
+  
+  hay_costs <- vv(var_mean = hay_costs_1,
+                  var_CV = 5,
+                  n = years)
+  
+  replace_trees_1 <- chance_event(chance = 0.2,
+                                  value_if = 3,
+                                  value_if_not = 0,
+                                  n = years,
+                                  CV_if = 30)
+  
+  replace_trees_1 <- replace_trees_1 * replacing_trees_cost
+  
   ###
-  nut_costs_vec_1 <- nut_workcosts_vec_1 + nut_var_costs_vec_1
+  nut_costs_vec_1 <- nut_workcosts_vec_1 + nut_other_costs_vec_1 + 
+    hay_costs + soil_analysis +replace_trees_1
   ###
   
   # Version 2
   
-  maintaining_tree_h_vec_2 <- vv(var_mean = maintaining_trees_hours,
+  maintaining_tree_h_vec_2 <- vv(var_mean = maintaining_trees_h_2,
                                  var_CV = 15,
                                  n = years)
   
-  nut_harvest_h_vec_2 <- vv(var_mean = nut_harvest_hours,
+  maintaining_tree_h_vec_2[8:full_yield_period] <- 
+    maintaining_tree_h_vec_2[8:full_yield_period] * maintaining_trees_factor
+  
+  nut_harvest_h_vec_2 <- vv(var_mean = nut_harvest_hours_2,
                             var_CV = 5,
                             n = years)
   
-  nut_harvest_h_vec_2 <- Map("*", nut_harvest_h_vec_2, harvest_count_2)
+  nut_harvest_h_vec_2 <- nut_harvest_h_vec_2 * harvest_count_2
   
-  nut_h_vec_2 <- maintaining_tree_h_vec_2 + nut_harvest_h_vec_2
+  nut_mulch_h_vec_2 <- vv(var_mean = mulch_h_2,
+                          var_CV = 5,
+                          n = years)
   
-  nut_h_vec_2[1] <- nut_h_vec_2[1] + tree_planting_hours
+  other_nut_h_2 <- vv(var_mean = other_nut_h_2,
+                      var_CV = 5,
+                      n = years)
+  
+  nut_h_vec_2 <- maintaining_tree_h_vec_2 + nut_harvest_h_vec_2 + 
+    nut_mulch_h_vec_2 + other_nut_h_2
+  
+  nut_h_vec_2[1] <- nut_h_vec_2[1] + tree_planting_hours_2
   
   nut_workcosts_vec_2 <- nut_h_vec_2 * working_hours_costs
   
-  nut_var_costs_vec_2 <- vv(var_mean = nut_var_costs,
+  nut_other_costs_vec_2 <- vv(var_mean = nut_var_costs_2,
                             var_CV = 20,
                             n = years)
   
-  nut_var_costs_vec_2[1] <- nut_var_costs_vec_2[1] + tree_planting_cost
+  nut_other_costs_vec_2[1] <- nut_other_costs_vec_2[1] + tree_planting_costs_2
+  
+  nut_other_costs_vec_2[1] <- nut_other_costs_vec_2[1] + ((years / 10) * harvest_nets_2)
+  
+  replace_trees_2 <- chance_event(chance = 0.2,
+                                  value_if = 10,
+                                  value_if_not = 0,
+                                  n = years,
+                                  CV_if = 30)
+  
+  replace_trees_2 <- replace_trees_2 * replacing_trees_cost
+  
   ###
-  nut_costs_vec_2 <- nut_workcosts_vec_2 + nut_var_costs_vec_2
+  nut_costs_vec_2 <- nut_workcosts_vec_2 + nut_other_costs_vec_2 + 
+    soil_analysis + replace_trees_2
   ###
   
   # Irrigation ----
   
   days_irrigation <- vv(var_mean = days_to_irrigate,
-                        var_CV = 80,
+                        var_CV = 60,
                         n = years)
   
   days_irrigation[days_irrigation < 10] <- 10
@@ -147,11 +215,11 @@ model_function <- function() {
   
   irrigation_h_vec <- days_irrigation * work_per_irrigation
   
-  irrigation_installation <- water_trailer + installation_irrigation
-  
   # Version 1
   
-  water_usage_vec_1 <- days_irrigation * water_per_day
+  irrigation_installation_1 <- water_trailer + installation_irrigation_1
+  
+  water_usage_vec_1 <- days_irrigation * water_per_day_1
   
   trailer_refills_vec_1 <- water_usage_vec_1 / trailer_capacity
   
@@ -163,13 +231,23 @@ model_function <- function() {
   
   irrigation_costs_1 <- irrigation_h_vec_1 * working_hours_costs
   
+  maintaining_irrigation_1 <- vv(var_mean = maintaining_irrigation_1,
+                                 var_CV = 10,
+                                 n = years)
+  
+  water_costs_1 <- water_usage_vec_1 * water_price
+  
+  irrigation_costs_1 <- irrigation_costs_1 + maintaining_irrigation_1 + water_costs_1
+  
   ###
-  irrigation_costs_1[1] <- irrigation_costs_1[1] + irrigation_installation
+  irrigation_costs_1[1] <- irrigation_costs_1[1] + irrigation_installation_1
   ###
   
   # Version 2
   
-  water_usage_vec_2 <- days_irrigation * water_per_day
+  irrigation_installation_2 <- water_trailer + installation_irrigation_2
+  
+  water_usage_vec_2 <- days_irrigation * water_per_day_2
   
   trailer_refills_vec_2 <- water_usage_vec_2 / trailer_capacity
   
@@ -181,8 +259,16 @@ model_function <- function() {
   
   irrigation_costs_2 <- irrigation_h_vec_2 * working_hours_costs
   
+  maintaining_irrigation_2 <- vv(var_mean = maintaining_irrigation_2,
+                                 var_CV = 10,
+                                 n = years)
+  
+  water_costs_2 <- water_usage_vec_2 * water_price
+  
+  irrigation_costs_2 <- irrigation_costs_2 + maintaining_irrigation_2 + water_costs_2
+  
   ###
-  irrigation_costs_2[1] <- irrigation_costs_2[1] + irrigation_installation
+  irrigation_costs_2[1] <- irrigation_costs_2[1] + irrigation_installation_2
   ###
   
   # Nuts Final ----
@@ -193,6 +279,8 @@ model_function <- function() {
   
   ###
   nut_profit_vec_1 <- nut_income_vec_1 - nuts_costs_vec_1
+  
+  nut_profit_1 <- Reduce("+", nut_profit_vec_1)
   ###
   
   # Version 2
@@ -201,10 +289,84 @@ model_function <- function() {
   
   ###
   nut_profit_vec_2 <- nut_income_vec_2 - nuts_costs_vec_2
+  
+  nut_profit_2 <- Reduce("+", nut_profit_vec_2)
   ###
+  
+  # Decision
+  
+  ####
+  nut_diff <- nut_profit_2 - nut_profit_1
+  ####
+  
+  return(list(nuts_small = nut_profit_1, 
+              nuts_big = nut_profit_2, 
+              nuts_decision = nut_diff, 
+              nuts_small_vec = nut_profit_vec_1, 
+              nuts_big_vec = nut_profit_vec_2))
   
 }
 
 
+# Monte Carlo ----
+# Run the Monte Carlo simulation using the model function
+simulation <- mcSimulation(
+  estimate = as.estimate(input_estimates),
+  model_function = model_function,
+  numberOfModelRuns = 1000,
+  functionSyntax = "plainNames"
+)
 
+# Plots ----
+
+
+# plot_distributions
+
+plot_distributions(
+  mcSimulation_object = simulation,
+  vars = c("nuts_small", "nuts_big"),
+  method = "smooth_simple_overlay") +
+  labs(title = "Distribution of income for three different interventions",
+       subtitle = "Accumulated values for 30 years"
+  )
+
+
+# Plot the cashflow distribution over time
+
+# This seems weird...
+
+plot_cashflow(
+  mcSimulation_object = simulation,
+  cashflow_var_name = c("nuts_small", "nuts_big"),
+  x_axis_name = "Years with intervention",
+  y_axis_name = "Annual cashflow in €",
+  color_25_75 = "green4",
+  color_5_95 = "green1",
+  color_median = "red"
+)
+
+# PLS ----
+#Projection to Latent Structures analysis
+
+# nuts_small
+pls_result <- plsr.mcSimulation(
+  object = simulation,
+  resultName = names(simulation$y)[1],
+  ncomp = 1
+)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+  ggtitle("Nuts small")
+
+# nuts_big
+pls_result <- plsr.mcSimulation(
+  object = simulation,
+  resultName = names(simulation$y)[2],
+  ncomp = 1
+)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+  ggtitle("Full nuts")
 
