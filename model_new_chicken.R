@@ -4,13 +4,9 @@ library(tidyverse)
 library("readxl")
 
 
-input_estimates_small <- read_excel("input_nuts_small.xlsx")
-
-years <- 30
-
-input_estimates <- read_excel("input_estimates.xlsx")
+input_estimates <- read_excel("input_nuts-small.xlsx")
 years <- 40
-
+number_of_chicken <- 225
 
 
 # Model Function ----
@@ -177,65 +173,105 @@ model_function <- function() {
     truffle_income - truffle_harvest_cost - truffle_planting_cost
   
   # Chicken ----
+  # Costs
+  # Initial costs
+  # initial Investment for setting up the chicken mobile
+  initial_chicken_costs_final <-
+    number_of_chicken * chicken_replacement_cost + initial_chicken_mobile_cost
   
-  initial_chicken_costs <- initial_chicken_cost + initial_chicken_mobile_cost
+  # Maintenance costs for the chicken mobile
+  maintaining_chicken_mobile <- vv(var_mean = maintaining_chicken_mobile,
+                                   var_CV = 20,
+                                   n = years)
   
-  maintaining_chicken_mobile <- sum(vv(
-    var_mean = maintaining_chicken_mobile,
-    var_CV = 40,
-    n = years
-  ))
+  # adding the initial cost to the first year of maintenance
+  maintaining_chicken_mobile[1] <-
+    maintaining_chicken_mobile[1] + initial_chicken_costs_final
   
+  
+  # Operating costs
+  # Amount of feed needed for the number_of_chicken each year
   chicken_feed <- vv(var_mean = chicken_feed,
-                     var_CV = 15,
+                     var_CV = 5,
                      n = years)
   
-  chicken_feed_cost <- vv(var_mean = feed_costs,
-                          var_CV = 20,
-                          n = years)
+  # Yearly costs for feed
+  feed_cost <- vv(var_mean = feed_costs,
+                  var_CV = 5,
+                  n = years)
   
-  feed_cost_total <- Map("*", chicken_feed, chicken_feed_cost)
+  #
+  feed_cost_final <- chicken_feed * feed_cost
   
-  feed_cost_total <- Reduce("+", feed_cost_total)
+  #
+  working_hours_chicken <- vv(var_mean = working_hours_chicken,
+                              var_CV = 10,
+                              n = years)
   
-  working_hours_chicken <- sum(vv(
-    var_mean = working_hours_chicken,
-    var_CV = 5,
-    n = years
-  ))
+  #
+  working_costs_chicken_final <-
+    working_hours_chicken * working_hours_costs
   
-  working_costs_chicken <- working_hours_chicken * working_hours_costs
+  #
+  chicken_replacement <- vv(var_mean = number_of_chicken,
+                            var_CV = 10,
+                            n = years,
+                            lower_limit = 225)
   
-  chicken_replacement <- (years * 133) * chicken_replacement_cost
+  # setting every second year to zero starting with the first 
+  chicken_replacement[] <- chicken_replacement * c(FALSE, TRUE)
   
-  eggs <- sum(vv(
+  #
+  chicken_replacement_cost_final <-
+    chicken_replacement * chicken_replacement_cost
+  
+  # Income
+  # Variation of laying performance per hen
+    eggs <- vv(
     var_mean = eggs,
+    var_CV = 10,
+    n = years,
+    lower_limit = 170
+  )
+  
+  # Number of eggs per Year
+  eggs_per_year <- eggs * number_of_chicken
+  
+  #
+  eggs_price <- vv(
+    var_mean = eggs_price,
     var_CV = 5,
-    n = years
-  ))
+    n = years,
+    lower_limit = 0.25
+  )
   
-  eggs_income <- eggs * eggs_price
+  eggs_income <- eggs_per_year * eggs_price
   
-  chicken_income <- eggs_income - chicken_replacement - working_costs_chicken -
-    feed_cost_total - initial_chicken_costs
+  # Adding Values
+  # 
+  chicken_income <- eggs_income - maintaining_chicken_mobile - feed_cost_final - working_costs_chicken_final - chicken_replacement_cost_final
   
-  # Final Results
+  chicken_income_final <- sum(chicken_income)
+  
+  
+  # Final Results ----
   nuts_final <- hazelnuts - general_investments - irrigation_costs
   
-  nuts_chicken_final <- hazelnuts + chicken_income - general_investments -
+  nuts_chicken_final <- hazelnuts + chicken_income_final - general_investments -
     irrigation_costs
   
   nuts_truffle_chicken_final <-
     hazelnuts - general_investments - irrigation_costs + truffle_final + 
-    chicken_income
+    chicken_income_final
   
-  final_chicken_income <- chicken_income - general_investments
+  final_chicken_income <- chicken_income_final - general_investments
   
   crop <- years * deckungsbeitrag
   
-
+  
   return(
     list(
+      chicken_only = chicken_income_final,
       nuts = nuts_final,
       nuts_chicken = nuts_chicken_final,
       nuts_chicken_truffle = nuts_truffle_chicken_final,
@@ -251,24 +287,26 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 1000,
+  numberOfModelRuns = 10000,
   functionSyntax = "plainNames"
 )
 
 # Plots ----
-# * Distributions ====
+# Distributions
 
 # plot_distributions
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("nuts_chicken", "nuts_chicken_truffle", "nuts"),
+  vars = c("nuts_chicken", "nuts_chicken_truffle", "chicken_only","nuts"),
   method = "smooth_simple_overlay") +
-  labs(title = "Distribution of income for three different interventions",
-       subtitle = "Accumulated values for 40 years"
-       )
+  labs(title = "Distribution of income for four different interventions",
+       subtitle = "Accumulated values for 40 years") +
+  scale_fill_manual( values = c("red","blue", "green", "orange"), name = "Decision Options:") + 
+  theme(legend.position="bottom")
 
-# * Cashflow ----
+
+# Cashflow
 # Plot the cashflow distribution over time
 
 plot_cashflow(
@@ -282,7 +320,7 @@ plot_cashflow(
 )
 
 
-# * PLS ----
+# PLS
 #Projection to Latent Structures analysis
 
 # nuts_final
@@ -293,7 +331,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Nuts only")
 
 # nuts_chicken_final
@@ -304,7 +342,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Nuts and chicken")
 
 # nuts_truffle_chicken_final
@@ -315,7 +353,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Nuts, chicken & truffle")
 
 
@@ -342,8 +380,7 @@ plot_pls(pls_result, input_table = input_estimates, threshold = 0) +
   ggtitle("Baseline")
 
 
-
-# * EVPI ----
+# EVPI 
 # # Use with caution!!! takes really long time to calculate!!!
 # 
 # mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
