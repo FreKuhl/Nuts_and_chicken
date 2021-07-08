@@ -6,15 +6,16 @@ library("readxl")
 
 input_estimates <- read_excel("input_estimates.xlsx")
 
+discount_rate = 3
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 
-'make_variables <- function(est,n=1)
+make_variables <- function(est,n=1)
 { x<-random(rho=est, n=n)
 for(i in colnames(x)) assign(i,
                              as.numeric(x[1,i]),envir=.GlobalEnv)
 }
 
-make_variables(as.estimate(input_estimates))'
+make_variables(as.estimate(input_estimates))
 
 
 
@@ -331,12 +332,12 @@ model_function <- function() {
   
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
-    time_to_first_yield_estimate = 10,
-    first_yield_estimate_percent = 30,
-    time_to_second_yield_estimate = 15,
+    time_to_first_yield_estimate = 5,
+    first_yield_estimate_percent = 50,
+    time_to_second_yield_estimate = 10,
     second_yield_estimate_percent = 100,
     n_years = years,
-    var_CV = 20
+    var_CV = 40,
   )
   
   truffle_price <- vv(var_mean = truffle_price,
@@ -416,20 +417,21 @@ model_function <- function() {
   
   eggs_income <- eggs_per_year * eggs_price
   
-  chicken_total_costs <- maintaining_chicken_mobile_vec + feed_cost_final + 
-    working_costs_chicken_final + chicken_replacement_cost_final
-  
-  chicken_income <- eggs_income - chicken_total_costs
+  chicken_income <- eggs_income - (maintaining_chicken_mobile_vec + feed_cost_final + 
+                                     working_costs_chicken_final + chicken_replacement_cost_final)
   
   # Decision / Final ----
   
   nut_profit_vec_1 <- nut_profit_vec_1 + truffle_final_vec + chicken_income
+  nut_profit_vec_1 <- discount(nut_profit_vec_1, discount_rate)
   nut_profit_1 <- Reduce("+", nut_profit_vec_1)
   
   nut_profit_vec_2 <- nut_profit_vec_2 + truffle_final_vec + chicken_income
+  nut_profit_vec_2 <- discount(nut_profit_vec_2, discount_rate)
   nut_profit_2 <- Reduce("+", nut_profit_vec_2)
   
   truffle_trees_final_vec <- truffle_final_vec - truffle_tree_costs + chicken_income
+  truffle_trees_final_vec <- discount(truffle_trees_final_vec, discount_rate)
   truffle_profit <- Reduce("+", truffle_trees_final_vec)
   
   ###
@@ -439,7 +441,6 @@ model_function <- function() {
   
   nut_big_truffle_dec <- nut_profit_2 - truffle_profit
   ###
-  
   
   
   return(list(nuts_small = nut_profit_1, 
@@ -460,37 +461,44 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 10000,
+  numberOfModelRuns = 1000,
   functionSyntax = "plainNames"
 )
 
 # Plots ----
 
-
 # plot_distributions
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("nuts_small", "nuts_big", "truffle"),
-  method = "smooth_simple_overlay") +
+  vars = c("nuts_big", "nuts_small", "truffle"),
+  method = "smooth_simple_overlay"
+) +
   labs(title = "Distribution of income for three different interventions",
-       subtitle = "Accumulated values for 30 years"
-  )
+       subtitle = "Accumulated values for 30 years - 10000 model runs") +
+  scale_fill_manual(
+    labels = c("Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation"),
+    values = c("red", "blue", "green", "orange"),
+    name = "Decision Options:"
+  ) +
+  theme(legend.position = "bottom")
 
 
 # Plot the cashflow distribution over time
-
 # This seems weird...
 
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = c("nuts_small_vec", "nuts_big_vec", "truffle_vec"),
+  cashflow_var_name = c("nuts_big_vec", "nuts_small_vec", "truffle_vec"),
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
-  color_median = "red"
-)
+  color_median = "red",
+  facet_labels = c("Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation")
+) +
+  labs(title = "Cashflow in three different interventions",
+       subtitle = "Values for the first 10 years - 10000 model runs")
 
 # PLS ----
 #Projection to Latent Structures analysis
@@ -502,9 +510,9 @@ pls_result <- plsr.mcSimulation(
   ncomp = 1
 )
 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
+  ggtitle("Small Nut Plantation")
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
-  ggtitle("Nuts small")
 
 # nuts_big
 pls_result <- plsr.mcSimulation(
@@ -513,6 +521,17 @@ pls_result <- plsr.mcSimulation(
   ncomp = 1
 )
 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
+  ggtitle("Big Nut Plantation")
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
-  ggtitle("Full nuts")
+
+# no_nuts
+pls_result <- plsr.mcSimulation(
+  object = simulation,
+  resultName = names(simulation$y)[3],
+  ncomp = 1
+)
+
+
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
+  ggtitle("No Nut Plantation")
