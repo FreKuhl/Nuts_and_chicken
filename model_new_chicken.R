@@ -320,7 +320,7 @@ plot_cashflow(
 )
 
 
-# PLS
+# PLS ----
 #Projection to Latent Structures analysis
 
 # nuts_final
@@ -332,7 +332,7 @@ pls_result <- plsr.mcSimulation(
 
 
 plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle("Nuts only")
+  ggtitle("chicken only")
 
 # nuts_chicken_final
 pls_result <- plsr.mcSimulation(
@@ -343,7 +343,7 @@ pls_result <- plsr.mcSimulation(
 
 
 plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle("Nuts and chicken")
+  ggtitle("Nuts")
 
 # nuts_truffle_chicken_final
 pls_result <- plsr.mcSimulation(
@@ -354,7 +354,7 @@ pls_result <- plsr.mcSimulation(
 
 
 plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle("Nuts, chicken & truffle")
+  ggtitle("Nuts and chicken")
 
 
 # final_chicken_income
@@ -365,22 +365,22 @@ pls_result <- plsr.mcSimulation(
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
-  ggtitle("Chicken only")
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
+  ggtitle("Nuts, chicken & truffle")
 
 # crop
 pls_result <- plsr.mcSimulation(
   object = simulation,
-  resultName = names(simulation$y)[5],
+  resultName = names(simulation$y)[6],
   ncomp = 1
 )
 
 
-plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
+plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
   ggtitle("Baseline")
 
 
-# EVPI 
+# EVPI ----
 # # Use with caution!!! takes really long time to calculate!!!
 # 
 # mcSimulation_table <- data.frame(simulation$x, simulation$y[1:5])
