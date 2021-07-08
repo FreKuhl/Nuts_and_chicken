@@ -8,13 +8,13 @@ input_estimates <- read_excel("input_estimates.xlsx")
 
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 
-'make_variables <- function(est,n=1)
+make_variables <- function(est,n=1)
 { x<-random(rho=est, n=n)
 for(i in colnames(x)) assign(i,
                              as.numeric(x[1,i]),envir=.GlobalEnv)
 }
 
-make_variables(as.estimate(input_estimates))'
+make_variables(as.estimate(input_estimates))
 
 
 
@@ -416,8 +416,8 @@ model_function <- function() {
   
   eggs_income <- eggs_per_year * eggs_price
   
-  chicken_income <- eggs_income - maintaining_chicken_mobile - feed_cost_final - 
-    working_costs_chicken_final - chicken_replacement_cost_final
+  chicken_income <- eggs_income - (maintaining_chicken_mobile + feed_cost_final + 
+    working_costs_chicken_final + chicken_replacement_cost_final)
   
   # Decision / Final ----
   
