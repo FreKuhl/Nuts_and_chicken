@@ -4,7 +4,7 @@ library(tidyverse)
 library("readxl")
 
 
-input_estimates <- read_excel("input_nuts.xlsx")
+input_estimates <- read_excel("input_estimates.xlsx")
 
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 
@@ -381,7 +381,7 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 1000,
+  numberOfModelRuns = 10000,
   functionSyntax = "plainNames"
 )
 

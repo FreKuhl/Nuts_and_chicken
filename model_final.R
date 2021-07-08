@@ -349,7 +349,7 @@ model_function <- function() {
                               var_CV = 5,
                               n = years)
   
-  truffle_harvest_costs[1:8] <- 0
+  truffle_harvest_costs[1:9] <- 0
   
   truffle_final_vec <- truffle_income - truffle_harvest_costs
   
@@ -359,7 +359,7 @@ model_function <- function() {
     (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost
   
   maintaining_chicken_mobile_vec <- vv(var_mean = maintaining_chicken_mobile,
-                                       var_CV = 20,
+                                       var_CV = 15,
                                        n = years)
   
   maintaining_chicken_mobile_vec[1] <-
@@ -370,7 +370,7 @@ model_function <- function() {
                      n = years)
   
   feed_cost <- vv(var_mean = feed_cost,
-                  var_CV = 5,
+                  var_CV = 10,
                   n = years)
   
   feed_cost_final <- chicken_feed * feed_cost
@@ -402,7 +402,9 @@ model_function <- function() {
   )
   
   # Number of eggs per Year
-  eggs_per_year <- eggs * number_of_chicken
+  eggs_per_year <- vv(var_mean = eggs,
+                      var_CV = 2,
+                      n = years)
   
   #
   eggs_price <- vv(
@@ -456,7 +458,7 @@ model_function <- function() {
 simulation <- mcSimulation(
   estimate = as.estimate(input_estimates),
   model_function = model_function,
-  numberOfModelRuns = 1000,
+  numberOfModelRuns = 10000,
   functionSyntax = "plainNames"
 )
 
@@ -467,7 +469,7 @@ simulation <- mcSimulation(
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("nuts_small", "nuts_big"),
+  vars = c("nuts_small", "nuts_big", "truffle"),
   method = "smooth_simple_overlay") +
   labs(title = "Distribution of income for three different interventions",
        subtitle = "Accumulated values for 30 years"
