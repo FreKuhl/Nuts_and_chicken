@@ -482,7 +482,7 @@ plot_distributions(
 
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = c("nuts_small", "nuts_big"),
+  cashflow_var_name = c("nuts_small_vec", "nuts_big_vec", "truffle_vec"),
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
