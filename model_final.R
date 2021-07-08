@@ -4,7 +4,7 @@ library(tidyverse)
 library("readxl")
 
 
-input_estimates <- read_excel("input_nuts.xlsx")
+input_estimates <- read_excel("input_estimates.xlsx")
 
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 
@@ -18,7 +18,7 @@ make_variables(as.estimate(input_estimates))'
 
 
 
-# 2 Szenarios: 1: nuts+hay (70 trees); 2: nuts only (300 trees)
+# 3 Szenarios: 1: nuts+hay (70 trees); 2: nuts only (300 trees); 3: Only Truffle Trees
 
 # Model Function ----
 
@@ -36,12 +36,12 @@ model_function <- function() {
   )
   
   nut_price <- vv(var_mean = nut_price,
-                    var_CV = 20,
-                    n = years)
+                  var_CV = 20,
+                  n = years)
   
   general_investments_vec <- vv(var_mean = maintaining_fences_cost,
-                           var_CV = 30,
-                           n = years)
+                                var_CV = 30,
+                                n = years)
   ###
   general_investments_vec[1] <- general_investments_vec[1] + 
     grass_planting_cost + initial_fences_cost
@@ -58,7 +58,7 @@ model_function <- function() {
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 10)
-    
+  
   nuts_yield_vec_1 <- nuts_1 * nuts_frost
   
   harvest_count_1 <- ifelse(nuts_yield_vec_1 < 20, 0, 1)
@@ -76,9 +76,9 @@ model_function <- function() {
   ###
   nut_income_vec_1 <- (nuts_yield_vec_1 * nut_price) + income_hay + subsidies
   ###
-    
+  
   # Version 2
-    
+  
   nuts_2 <- gompertz_yield(
     max_harvest = nut_yield_2,
     time_to_first_yield_estimate = 6,
@@ -87,7 +87,7 @@ model_function <- function() {
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 10)
-    
+  
   nuts_yield_vec_2 <-nuts_2 * nuts_frost
   
   harvest_count_2 <- ifelse(nuts_yield_vec_2 < 20, 0, 1)
@@ -95,13 +95,13 @@ model_function <- function() {
   ###
   nut_income_vec_2 <- (nuts_yield_vec_2 * nut_price) + subsidies
   ###
-    
+  
   # Nuts Costs ----
   # Version 1
   
   maintaining_tree_h_vec_1 <- vv(var_mean = maintaining_trees_h_1,
-                               var_CV = 15,
-                               n = years)
+                                 var_CV = 15,
+                                 n = years)
   
   maintaining_tree_h_vec_1[8:full_yield_period] <- 
     maintaining_tree_h_vec_1[8:full_yield_period] * maintaining_trees_factor
@@ -128,8 +128,8 @@ model_function <- function() {
   nut_workcosts_vec_1 <- nut_h_vec_1 * working_hours_costs
   
   nut_other_costs_vec_1 <- vv(var_mean = nut_var_costs_1,
-                            var_CV = 20,
-                            n = years)
+                              var_CV = 20,
+                              n = years)
   
   nut_other_costs_vec_1[1] <- nut_other_costs_vec_1[1] + tree_planting_costs_1
   
@@ -190,8 +190,8 @@ model_function <- function() {
   nut_workcosts_vec_2 <- nut_h_vec_2 * working_hours_costs
   
   nut_other_costs_vec_2 <- vv(var_mean = nut_var_costs_2,
-                            var_CV = 20,
-                            n = years)
+                              var_CV = 20,
+                              n = years)
   
   nut_other_costs_vec_2[1] <- nut_other_costs_vec_2[1] + tree_planting_costs_2
   
@@ -293,8 +293,6 @@ model_function <- function() {
   
   ###
   nut_profit_vec_1 <- nut_income_vec_1 - nuts_costs_vec_1
-  
-  nut_profit_1 <- Reduce("+", nut_profit_vec_1)
   ###
   
   # Version 2
@@ -303,8 +301,6 @@ model_function <- function() {
   
   ###
   nut_profit_vec_2 <- nut_income_vec_2 - nuts_costs_vec_2
-  
-  nut_profit_2 <- Reduce("+", nut_profit_vec_2)
   ###
   
   # Truffle only Trees ----
@@ -322,8 +318,8 @@ model_function <- function() {
   tree_h_vec[1] <- tree_h_vec[1] + tree_planting_hours_3
   
   tree_other_costs_vec <- vv(var_mean = tree_var_costs,
-                              var_CV = 20,
-                              n = years)
+                             var_CV = 20,
+                             n = years)
   
   tree_other_costs_vec[1] <- tree_other_costs_vec[1] + tree_planting_costs_3
   
@@ -355,23 +351,102 @@ model_function <- function() {
   
   truffle_harvest_costs[1:8] <- 0
   
-  truffle_final <- truffle_income - truffle_harvest_costs
+  truffle_final_vec <- truffle_income - truffle_harvest_costs
   
-  truffle_trees_final_vec <- truffle_final - truffle_tree_costs
+  # Chicken ----
+  
+  initial_chicken_costs_final <-
+    (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost
+  
+  maintaining_chicken_mobile_vec <- vv(var_mean = maintaining_chicken_mobile,
+                                       var_CV = 20,
+                                       n = years)
+  
+  maintaining_chicken_mobile_vec[1] <-
+    maintaining_chicken_mobile_vec[1] + initial_chicken_costs_final
+  
+  chicken_feed <- vv(var_mean = chicken_feed,
+                     var_CV = 5,
+                     n = years)
+  
+  feed_cost <- vv(var_mean = feed_cost,
+                  var_CV = 5,
+                  n = years)
+  
+  feed_cost_final <- chicken_feed * feed_cost
+  
+  working_hours_chicken <- vv(var_mean = working_hours_chicken,
+                              var_CV = 10,
+                              n = years)
+  
+  working_costs_chicken_final <-
+    working_hours_chicken * working_hours_costs
+  
+  chicken_replacement <- vv(var_mean = number_of_chicken,
+                            var_CV = 10,
+                            n = years,
+                            lower_limit = 225)
+  
+  # setting every second year to zero starting with the first 
+  chicken_replacement[] <- chicken_replacement * c(FALSE, TRUE)
+  
+  chicken_replacement_cost_final <-
+    chicken_replacement * chicken_replacement_cost
+  
+  # Income
+  eggs <- vv(
+    var_mean = eggs,
+    var_CV = 10,
+    n = years,
+    lower_limit = 170
+  )
+  
+  # Number of eggs per Year
+  eggs_per_year <- eggs * number_of_chicken
+  
+  #
+  eggs_price <- vv(
+    var_mean = eggs_price,
+    var_CV = 5,
+    n = years,
+    lower_limit = 0.25
+  )
+  
+  eggs_income <- eggs_per_year * eggs_price
+  
+  chicken_income <- eggs_income - maintaining_chicken_mobile - feed_cost_final - 
+    working_costs_chicken_final - chicken_replacement_cost_final
   
   # Decision / Final ----
   
+  nut_profit_vec_1 <- nut_profit_vec_1 + truffle_final_vec + chicken_income
+  nut_profit_1 <- Reduce("+", nut_profit_vec_1)
+  
+  nut_profit_vec_2 <- nut_profit_vec_2 + truffle_final_vec + chicken_income
+  nut_profit_2 <- Reduce("+", nut_profit_vec_2)
+  
+  truffle_trees_final_vec <- truffle_final_vec - truffle_tree_costs + chicken_income
+  truffle_profit <- Reduce("+", truffle_trees_final_vec)
+  
   ###
   nut_diff <- nut_profit_2 - nut_profit_1
+  
+  nut_small_truffle_dec <- nut_profit_1 - truffle_profit
+  
+  nut_big_truffle_dec <- nut_profit_2 - truffle_profit
   ###
   
   
   
   return(list(nuts_small = nut_profit_1, 
-              nuts_big = nut_profit_2, 
-              nuts_decision = nut_diff, 
+              nuts_big = nut_profit_2,
+              truffle = truffle_profit,
+              nuts_decision = nut_diff,
+              nut_small_truffle_dec = nut_small_truffle_dec,
+              nut_big_truffle_dec = nut_big_truffle_dec,
               nuts_small_vec = nut_profit_vec_1, 
-              nuts_big_vec = nut_profit_vec_2))
+              nuts_big_vec = nut_profit_vec_2,
+              truffle_vec = truffle_trees_final_vec))
   
 }
 
@@ -437,4 +512,3 @@ pls_result <- plsr.mcSimulation(
 
 plot_pls(pls_result, input_table = input_estimates, threshold = 0) + 
   ggtitle("Full nuts")
-
