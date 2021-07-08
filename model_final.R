@@ -1,21 +1,22 @@
 # Libraries and inputs ----
+
 library(decisionSupport)
 library(tidyverse)
 library(ggpubr)
 library("readxl")
 
 input_estimates <- read_excel("input_estimates.xlsx")
-discount_rate = 0
+discount_rate = 3
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 
 # make variables ----
-# make_variables <- function(est,n=1)
-# { x<-random(rho=est, n=n)
-# for(i in colnames(x)) assign(i,
-#                              as.numeric(x[1,i]),envir=.GlobalEnv)
-# }
-# 
-# make_variables(as.estimate(input_estimates))
+make_variables <- function(est,n=1)
+{ x<-random(rho=est, n=n)
+for(i in colnames(x)) assign(i,
+                             as.numeric(x[1,i]),envir=.GlobalEnv)
+}
+
+make_variables(as.estimate(input_estimates))
 
 
 
@@ -506,7 +507,6 @@ plot_distributions(
 
 # Plot the cashflow distribution over time
 # This seems weird...
-
 plot_cashflow(
   mcSimulation_object = simulation,
   cashflow_var_name = c("nuts_big_vec", "nuts_small_vec", "truffle_vec"),
@@ -554,7 +554,7 @@ Pls_3 <- plot_pls(pls_result3, input_table = input_estimates, threshold = 0.8) +
   ggtitle(label= "No Nut Plantation")
 
 # final plot
-Pls_combined <- ggarrange(Pls_1, Pls_2, Pls_3 + rremove("x.text"), 
+Pls_combined <- ggarrange(Pls_2, Pls_1, Pls_3 + rremove("x.text"), 
           labels = c(" ", " ", " "),
           ncol = 3, nrow = 1)
 annotate_figure(Pls_combined,
