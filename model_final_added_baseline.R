@@ -4,26 +4,24 @@ library(tidyverse)
 library(ggpubr)
 library("readxl")
 
-
 input_estimates <- read_excel("input_estimates.xlsx")
+discount_rate = 0
+years <- 30 # IMPORTANT! Select ONLY steps of 10
 
-discount_rate = 3
-years <- 40 # IMPORTANT! Select ONLY steps of 10
-
-make_variables <- function(est,n=1)
-{ x<-random(rho=est, n=n)
-for(i in colnames(x)) assign(i,
-                             as.numeric(x[1,i]),envir=.GlobalEnv)
-}
-
-make_variables(as.estimate(input_estimates))
+# make variables ----
+# make_variables <- function(est,n=1)
+# { x<-random(rho=est, n=n)
+# for(i in colnames(x)) assign(i,
+#                              as.numeric(x[1,i]),envir=.GlobalEnv)
+# }
+# 
+# make_variables(as.estimate(input_estimates))
 
 
-
-# 3 Szenarios: 1: nuts+hay (70 trees); 2: nuts only (300 trees); 3: Only Truffle Trees
 
 # Model Function ----
 
+# 3 Szenarios: 1: nuts+hay (70 trees); 2: nuts only (300 trees); 3: Only Truffle Trees
 model_function <- function() {
   
   # General ----
@@ -424,31 +422,6 @@ model_function <- function() {
         working_costs_chicken_final + chicken_replacement_cost_final
     )
   
-  # Baseline ----
-  crop_yield <- vv(
-    var_mean = crop_yield,
-    var_CV = 20,
-    n = years,
-    )
-  
-  crop_price <-vv(
-    var_mean = crop_price,
-    var_CV = 20,
-    n = years,
-  )
-  
-  working_hours_crop <- vv(
-    var_mean = working_hours_crop,
-    var_CV = 20,
-    n = years,
-  )
-  
-  baseline_vec <- ((crop_yield * crop_price) - (working_hours_crop * working_hours_costs))
-  baseline_vec <- discount(baseline_vec, discount_rate)
-  baseline <- Reduce("+", baseline_vec)
-  
-  
-  
   # Decision / Final ----
   # discounting for inflation
   nut_profit_vec_1 <-
@@ -484,8 +457,7 @@ model_function <- function() {
               nut_big_truffle_dec = nut_big_truffle_dec,
               nuts_small_vec = nut_profit_vec_1, 
               nuts_big_vec = nut_profit_vec_2,
-              truffle_vec = truffle_trees_final_vec,
-              baseline = baseline_vec))
+              truffle_vec = truffle_trees_final_vec))
   
 }
 
@@ -499,20 +471,34 @@ simulation <- mcSimulation(
   functionSyntax = "plainNames"
 )
 
-# Plots ----
 
-# plot_distributions
+# Plot distributions ----
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("baseline","nuts_big", "nuts_small", "truffle"),
+  vars = c("nuts_big", "nuts_small", "truffle"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Distribution of income for four different interventions",
+  labs(title = "Distribution of income for three different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Baseline","Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation"),
-    values = c("blue", "blue", "green", "orange"),
+    labels = c("Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation"),
+    values = c("red", "blue", "green", "orange"),
+    name = "Decision Options:"
+  ) +
+  theme(legend.position = "bottom")
+
+# v2
+plot_distributions(
+  mcSimulation_object = simulation,
+  vars = c("nut_big_truffle_dec", "nut_small_truffle_dec","nuts_decision"),
+  method = "smooth_simple_overlay"
+) +
+  labs(title = "Distribution of income for three different interventions",
+       subtitle = "Accumulated values for 30 years - 10000 model runs") +
+  scale_fill_manual(
+    labels = c("Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation"),
+    values = c("red", "blue", "green", "orange"),
     name = "Decision Options:"
   ) +
   theme(legend.position = "bottom")
@@ -544,12 +530,18 @@ pls_result <- plsr.mcSimulation(
   ncomp = 1
 )
 
+Pls_1 <- plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
+  ggtitle(label= "Small Nut Plantation")
+
 # nuts_big
 pls_result2 <- plsr.mcSimulation(
   object = simulation,
   resultName = names(simulation$y)[2],
   ncomp = 1
 )
+
+Pls_2 <- plot_pls(pls_result2, input_table = input_estimates, threshold = 0.8) + 
+  ggtitle(label= "Big Nut Plantation")
 
 # no_nuts
 pls_result3 <- plsr.mcSimulation(
@@ -558,27 +550,18 @@ pls_result3 <- plsr.mcSimulation(
   ncomp = 1
 )
 
-
-Pls_1 <- plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "Small Nut Plantation")
-
-Pls_2 <- plot_pls(pls_result2, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "Big Nut Plantation")
-
 Pls_3 <- plot_pls(pls_result3, input_table = input_estimates, threshold = 0.8) + 
   ggtitle(label= "No Nut Plantation")
 
-Pls_combined <-ggarrange(Pls_1, Pls_2, Pls_3 + rremove("x.text"), 
-          ncol = 2, nrow = 2)
-
+# final plot
+Pls_combined <- ggarrange(Pls_1, Pls_2, Pls_3 + rremove("x.text"), 
+                          labels = c(" ", " ", " "),
+                          ncol = 3, nrow = 1)
 annotate_figure(Pls_combined,
-                top = text_grob(
-                  "Projection to Latent Structures analysis",
-                  face = "bold",
-                  size = 14
-                ),)
+                top = text_grob("Projection to Latent Structures analysis", face = "bold", size = 14),
+)
 # EVPI ----
-
+# Use with caution!!! takes really long time to calculate!!!
 
 mcSimulation_table <- data.frame(simulation$x, simulation$y[4:6])
 
