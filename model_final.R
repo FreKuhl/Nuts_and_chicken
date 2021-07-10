@@ -498,7 +498,7 @@ plot_distributions(
   labs(title = "Distribution of income for three different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
  scale_fill_manual(
-  labels = c("Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation"),
+  labels = c("Big Nut Plantation instead of truffle only", "Small Nut Plantation instead of truffle only", "Big nut plantation instead of small one"),
   values = c("red", "blue", "green", "orange"),
   name = "Decision Options:"
   ) +
