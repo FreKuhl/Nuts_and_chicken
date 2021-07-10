@@ -22,7 +22,14 @@ make_variables(as.estimate(input_estimates))
 
 # Model Function ----
 
-# 3 Szenarios: 1: nuts+hay (70 trees); 2: nuts only (300 trees); 3: Only Truffle Trees
+# 5 Szenarios: 
+# 1: nuts+hay+chicken (70 trees)
+# 2: nuts+chicken (200 trees)
+# 3: Truffle Trees + chicken (200 trees)
+# 4: nuts+hay+chicken+truffle (70 trees)
+# 5: nuts+chicken+truffle (200 trees)
+
+
 model_function <- function() {
   
   # General ----
@@ -49,7 +56,7 @@ model_function <- function() {
   ###
   
   # Yield Nuts ----
-  # Version 1
+  # For Versions 1 and 4
   
   nuts_1 <- gompertz_yield(
     max_harvest = nut_yield_1,
@@ -75,10 +82,10 @@ model_function <- function() {
   income_hay <- amount_bales * income_per_bale
   
   ###
-  nut_income_vec_1 <- (nuts_yield_vec_1 * nut_price) + income_hay + subsidies
+  nut_income_vec_1_4 <- (nuts_yield_vec_1 * nut_price) + income_hay + subsidies
   ###
   
-  # Version 2
+  # For Versions 2 and 5
   
   nuts_2 <- gompertz_yield(
     max_harvest = nut_yield_2,
@@ -94,11 +101,11 @@ model_function <- function() {
   harvest_count_2 <- ifelse(nuts_yield_vec_2 < 20, 0, 1)
   
   ###
-  nut_income_vec_2 <- (nuts_yield_vec_2 * nut_price) + subsidies
+  nut_income_vec_2_5 <- (nuts_yield_vec_2 * nut_price) + subsidies
   ###
   
   # Nuts Costs ----
-  # Version 1
+  # For Versions 1 and 4
   
   maintaining_tree_h_vec_1 <- vv(var_mean = maintaining_trees_h_1,
                                  var_CV = 15,
@@ -143,11 +150,17 @@ model_function <- function() {
   
   nut_other_costs_vec_1 <- nut_other_costs_vec_1 + harvest_nets_1
   
+  nut_other_costs_vec_1[1] <- nut_other_costs_vec_1[1] + tree_planting_costs_1
+  
+  nut_other_costs_vec_4 <- nut_other_costs_vec_1
+  
+  nut_other_costs_vec_4[1] <- nut_other_costs_vec_4[1] + truffle_tree_planting_costs_1
+  
   hay_costs <- vv(var_mean = hay_costs_1,
                   var_CV = 5,
                   n = years)
   
-  replace_trees_1 <- chance_event(chance = 0.2,
+  replace_trees_1 <- chance_event(chance = 0.1,
                                   value_if = 3,
                                   value_if_not = 0,
                                   n = years,
@@ -155,12 +168,17 @@ model_function <- function() {
   
   replace_trees_1 <- replace_trees_1 * replacing_trees_cost
   
+  replace_trees_4 <- replace_trees_1 * replacing_truffle_trees_cost
+  
   ###
   nut_costs_vec_1 <- nut_workcosts_vec_1 + nut_other_costs_vec_1 + 
     hay_costs + soil_analysis +replace_trees_1
+  
+  nut_costs_vec_4 <- nut_workcosts_vec_1 + nut_other_costs_vec_4 + 
+    hay_costs + soil_analysis +replace_trees_4
   ###
   
-  # Version 2
+  # For Versions 2 and 5
   
   maintaining_tree_h_vec_2 <- vv(var_mean = maintaining_trees_h_2,
                                  var_CV = 15,
@@ -194,8 +212,6 @@ model_function <- function() {
                               var_CV = 20,
                               n = years)
   
-  nut_other_costs_vec_2[1] <- nut_other_costs_vec_2[1] + tree_planting_costs_2
-  
   harvest_nets_2 <- vv(var_mean = harvest_nets_2,
                        var_CV = 1,
                        n = years)
@@ -205,17 +221,28 @@ model_function <- function() {
   
   nut_other_costs_vec_2 <- nut_other_costs_vec_2 + harvest_nets_2
   
-  replace_trees_2 <- chance_event(chance = 0.2,
-                                  value_if = 10,
+  nut_other_costs_vec_2[1] <- nut_other_costs_vec_2[1] + tree_planting_costs_2
+  
+  nut_other_costs_vec_5 <- nut_other_costs_vec_2
+  
+  nut_other_costs_vec_5[1] <- nut_other_costs_vec_5[1] + truffle_tree_planting_costs_2
+  
+  replace_trees_2 <- chance_event(chance = 0.1,
+                                  value_if = 9,
                                   value_if_not = 0,
                                   n = years,
                                   CV_if = 30)
   
   replace_trees_2 <- replace_trees_2 * replacing_trees_cost
   
+  replace_trees_5 <- replace_trees_2 * replacing_truffle_trees_cost
+  
   ###
   nut_costs_vec_2 <- nut_workcosts_vec_2 + nut_other_costs_vec_2 + 
     soil_analysis + replace_trees_2
+  
+  nut_costs_vec_5 <- nut_workcosts_vec_2 + nut_other_costs_vec_5 + 
+    soil_analysis + replace_trees_5
   ###
   
   # Irrigation ----
@@ -230,7 +257,7 @@ model_function <- function() {
   
   irrigation_h_vec <- days_irrigation * work_per_irrigation
   
-  # Version 1
+  # For Versions 1 and 4
   
   irrigation_installation_1 <- water_trailer + installation_irrigation_1
   
@@ -252,13 +279,13 @@ model_function <- function() {
   
   water_costs_1 <- water_usage_vec_1 * water_price
   
-  irrigation_costs_1 <- irrigation_costs_1 + maintaining_irrigation_1 + water_costs_1
+  irrigation_costs_1_4 <- irrigation_costs_1 + maintaining_irrigation_1 + water_costs_1
   
   ###
-  irrigation_costs_1[1] <- irrigation_costs_1[1] + irrigation_installation_1
+  irrigation_costs_1_4[1] <- irrigation_costs_1_4[1] + irrigation_installation_1
   ###
   
-  # Version 2
+  # For Versions 2 and 5
   
   irrigation_installation_2 <- water_trailer + installation_irrigation_2
   
@@ -280,31 +307,40 @@ model_function <- function() {
   
   water_costs_2 <- water_usage_vec_2 * water_price
   
-  irrigation_costs_2 <- irrigation_costs_2 + maintaining_irrigation_2 + water_costs_2
+  irrigation_costs_2_5 <- irrigation_costs_2 + maintaining_irrigation_2 + water_costs_2
   
   ###
-  irrigation_costs_2[1] <- irrigation_costs_2[1] + irrigation_installation_2
+  irrigation_costs_2_5[1] <- irrigation_costs_2_5[1] + irrigation_installation_2
   ###
   
   # Nuts Final ----
   
-  # Version 1
+  # For Versions 1 and 4
   
-  nuts_costs_vec_1 <- nut_costs_vec_1 + irrigation_costs_1
+  nuts_costs_vec_1 <- nut_costs_vec_1 + irrigation_costs_1_4
   
-  ###
-  nut_profit_vec_1 <- nut_income_vec_1 - nuts_costs_vec_1
-  ###
-  
-  # Version 2
-  
-  nuts_costs_vec_2 <- nut_costs_vec_2 + irrigation_costs_2
+  nut_costs_vec_4 <- nut_costs_vec_4 + irrigation_costs_1_4
   
   ###
-  nut_profit_vec_2 <- nut_income_vec_2 - nuts_costs_vec_2
+  nut_profit_vec_1 <- nut_income_vec_1_4 - nuts_costs_vec_1
+  
+  nut_profit_vec_4 <- nut_income_vec_1_4 - nut_costs_vec_4
+  ###
+  
+  # For Versions 2 and 5
+  
+  nuts_costs_vec_2 <- nut_costs_vec_2 + irrigation_costs_2_5
+  
+  nut_costs_vec_5 <- nut_costs_vec_5 + irrigation_costs_2_5
+  
+  ###
+  nut_profit_vec_2 <- nut_income_vec_2_5 - nuts_costs_vec_2
+  
+  nut_profit_vec_5 <- nut_income_vec_2_5 - nut_costs_vec_5
   ###
   
   # Truffle only Trees ----
+  # Version 3
   
   maintaining_tree_h_vec_3 <- vv(var_mean = maintaining_trees_h_3,
                                  var_CV = 15,
@@ -329,6 +365,7 @@ model_function <- function() {
   ###
   
   # Truffle ----
+  # For Version 3, 4 and 5
   
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
@@ -352,9 +389,10 @@ model_function <- function() {
   
   truffle_harvest_costs[1:9] <- 0
   
-  truffle_final_vec <- truffle_income - truffle_harvest_costs
+  truffle_final_vec_3_4_5 <- truffle_income - truffle_harvest_costs
   
   # Chicken ----
+  # For Version 1, 2, 3, 4 and 5
   
   initial_chicken_costs_final <-
     (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost
@@ -395,16 +433,10 @@ model_function <- function() {
     chicken_replacement * chicken_replacement_cost
   
   # Income
-  eggs <- vv(
-    var_mean = eggs,
-    var_CV = 10,
-    n = years,
-    lower_limit = 170
-  )
   
   # Number of eggs per Year
   eggs_per_year <- vv(var_mean = eggs,
-                      var_CV = 2,
+                      var_CV = 7,
                       n = years)
   
   #
@@ -412,7 +444,7 @@ model_function <- function() {
     var_mean = eggs_price,
     var_CV = 5,
     n = years,
-    lower_limit = 0.25
+    lower_limit = 0.2
   )
   
   eggs_income <- eggs_per_year * eggs_price
@@ -425,40 +457,89 @@ model_function <- function() {
   
   # Decision / Final ----
   # discounting for inflation
-  nut_profit_vec_1 <-
-    nut_profit_vec_1 + truffle_final_vec + chicken_income
-  nut_profit_vec_1 <- discount(nut_profit_vec_1, discount_rate)
-  nut_profit_1 <- Reduce("+", nut_profit_vec_1)
   
-  nut_profit_vec_2 <-
-    nut_profit_vec_2 + truffle_final_vec + chicken_income
-  nut_profit_vec_2 <- discount(nut_profit_vec_2, discount_rate)
-  nut_profit_2 <- Reduce("+", nut_profit_vec_2)
+  # Version 1
+  small_nut_chicken_profit_vec_1 <-
+    nut_profit_vec_1 + chicken_income
   
-  truffle_trees_final_vec <-
-    truffle_final_vec - truffle_tree_costs + chicken_income
-  truffle_trees_final_vec <-
-    discount(truffle_trees_final_vec, discount_rate)
-  truffle_profit <- Reduce("+", truffle_trees_final_vec)
+  small_nut_chicken_profit_vec_1 <- 
+    discount(small_nut_chicken_profit_vec_1, discount_rate)
+  
+  small_nut_chicken_profit_1 <- Reduce("+", small_nut_chicken_profit_vec_1)
+  
+  
+  #Version 2
+  big_nut_chicken_profit_vec_2 <-
+    nut_profit_vec_2 + chicken_income
+  
+  big_nut_chicken_profit_vec_2 <- 
+    discount(big_nut_chicken_profit_vec_2, discount_rate)
+  
+  big_nut_chicken_profit_2 <- Reduce("+", big_nut_chicken_profit_vec_2)
+  
+  # Version 3
+  truffle_chicken_profit_vec_3 <-
+    truffle_final_vec_3_4_5 - truffle_tree_costs + chicken_income
+  
+  truffle_chicken_profit_vec_3 <-
+    discount(truffle_chicken_profit_vec_3, discount_rate)
+  
+  truffle_chicken_profit_3 <- Reduce("+", truffle_chicken_profit_vec_3)
+  
+  # Version 4
+  small_nut_chicken_truffle_profit_vec_4 <-
+    nut_profit_vec_1 + chicken_income + (truffle_final_vec_3_4_5/2.8)
+  
+  small_nut_chicken_truffle_profit_vec_4 <- 
+    discount(small_nut_chicken_truffle_profit_vec_4, discount_rate)
+  
+  small_nut_chicken_truffle_profit_4 <- Reduce("+", small_nut_chicken_truffle_profit_vec_4)
+  
+  # Version 5
+  big_nut_chicken_truffle_profit_vec_5 <-
+    nut_profit_vec_2 + chicken_income + truffle_final_vec_3_4_5
+  
+  big_nut_chicken_truffle_profit_vec_5 <- 
+    discount(big_nut_chicken_truffle_profit_vec_5, discount_rate)
+  
+  big_nut_chicken_truffle_profit_5 <- Reduce("+", big_nut_chicken_truffle_profit_vec_5)
+  
+  
+  # Decisions
   
   ###
-  nut_diff <- nut_profit_2 - nut_profit_1
   
-  nut_small_truffle_dec <- nut_profit_1 - truffle_profit
+  d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
   
-  nut_big_truffle_dec <- nut_profit_2 - truffle_profit
+  d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
+  
+  d_4_inst_1 <- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
+  
+  d_5_inst_2 <- big_nut_chicken_truffle_profit_5 -big_nut_chicken_profit_2
+  
+  d_1_inst_3 <- small_nut_chicken_profit_1 - truffle_chicken_profit_3
+  
+  d_4_inst_3 <-  small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
+  
   ###
   
   
-  return(list(nuts_small = nut_profit_1, 
-              nuts_big = nut_profit_2,
-              truffle = truffle_profit,
-              nuts_decision = nut_diff,
-              nut_small_truffle_dec = nut_small_truffle_dec,
-              nut_big_truffle_dec = nut_big_truffle_dec,
-              nuts_small_vec = nut_profit_vec_1, 
-              nuts_big_vec = nut_profit_vec_2,
-              truffle_vec = truffle_trees_final_vec))
+  return(list(outcome_1 = small_nut_chicken_profit_1,
+              outcome_2 = big_nut_chicken_profit_2,
+              outcome_3 = truffle_chicken_profit_3,
+              outcome_4 = small_nut_chicken_truffle_profit_4,
+              outcome_5 = big_nut_chicken_truffle_profit_5,
+              vec_outcome_1 = small_nut_chicken_profit_vec_1,
+              vec_outcome_2 = big_nut_chicken_profit_vec_2,
+              vec_outcome_3 = truffle_chicken_profit_vec_3,
+              vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
+              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5,
+              d_2_inst_1 = d_2_inst_1,
+              d_5_inst_4 = d_5_inst_4,
+              d_4_inst_1 = d_4_inst_1,
+              d_5_inst_2 = d_5_inst_2,
+              d_1_inst_3 = d_1_inst_3,
+              d_4_inst_3 = d_4_inst_3))
   
 }
 
@@ -477,14 +558,14 @@ simulation <- mcSimulation(
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("nuts_big", "nuts_small", "truffle"),
+  vars = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Distribution of income for three different interventions",
+  labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Big Nut Plantation", "Small Nut Plantation", "No Nut Plantation"),
-    values = c("red", "blue", "green", "orange"),
+    labels = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
+    values = c("red", "blue", "green", "orange", "purple"),
     name = "Decision Options:"
   ) +
   theme(legend.position = "bottom")
@@ -492,14 +573,14 @@ plot_distributions(
 # v2
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("nut_big_truffle_dec", "nut_small_truffle_dec","nuts_decision"),
+  vars = c("d_1_inst_3", "d_2_inst_1", "d_4_inst_1", "d_4_inst_3"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Distribution of income for three different interventions",
+  labs(title = "Differences between the sceanrios",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
  scale_fill_manual(
-  labels = c("Big Nut Plantation instead of truffle only", "Small Nut Plantation instead of truffle only", "Big nut plantation instead of small one"),
-  values = c("red", "blue", "green", "orange"),
+  labels = c("d_1_inst_3", "d_2_inst_1", "d_4_inst_1", "d_4_inst_3"),
+  values = c("red", "blue", "green", "orange", "purple", "grey"),
   name = "Decision Options:"
   ) +
   theme(legend.position = "bottom")
