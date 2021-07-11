@@ -521,6 +521,10 @@ model_function <- function() {
   
   d_4_inst_3 <-  small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
   
+  d_2_inst_3 <- big_nut_chicken_profit_2 - truffle_chicken_profit_3
+  
+  d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
+  
   ###
   
   
@@ -535,6 +539,8 @@ model_function <- function() {
               d_5_inst_2 = d_5_inst_2,
               d_1_inst_3 = d_1_inst_3,
               d_4_inst_3 = d_4_inst_3,
+              d_2_inst_3 = d_2_inst_3,
+              d_5_inst_3 = d_5_inst_3,
               vec_outcome_1 = small_nut_chicken_profit_vec_1,
               vec_outcome_2 = big_nut_chicken_profit_vec_2,
               vec_outcome_3 = truffle_chicken_profit_vec_3,
@@ -648,9 +654,9 @@ mcSimulation_table <- data.frame(simulation$x, simulation$y[6:11])
 
 evpi <- multi_EVPI(mc = mcSimulation_table, write_table = F, first_out_var = "d_2_inst_1")
 
-plot_evpi(evpi, decision_vars = "d_2_inst_1") + 
-  plot_evpi(evpi, decision_vars = "d_5_inst_4") +
-  plot_evpi(evpi, decision_vars = "d_4_inst_1") +
-  plot_evpi(evpi, decision_vars = "d_5_inst_2") +
-  plot_evpi(evpi, decision_vars = "d_1_inst_3") +
-  plot_evpi(evpi, decision_vars = "d_4_inst_3")
+plot_evpi(evpi, decision_vars = "d_2_inst_1")
+plot_evpi(evpi, decision_vars = "d_5_inst_4")
+  #plot_evpi(evpi, decision_vars = "d_4_inst_1") +
+  #plot_evpi(evpi, decision_vars = "d_5_inst_2") +
+  #plot_evpi(evpi, decision_vars = "d_1_inst_3") +
+  #plot_evpi(evpi, decision_vars = "d_4_inst_3")
