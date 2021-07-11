@@ -618,7 +618,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 Pls_1 <- plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_1")
+  ggtitle(label= "1: Few Nuttrees + Chicken")
 
 # outcome_2
 pls_result2 <- plsr.mcSimulation(
@@ -628,7 +628,7 @@ pls_result2 <- plsr.mcSimulation(
 )
 
 Pls_2 <- plot_pls(pls_result2, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_2")
+  ggtitle(label= "2: Many Nuttrees + Chicken")
 
 # outcome_3
 pls_result3 <- plsr.mcSimulation(
@@ -638,7 +638,7 @@ pls_result3 <- plsr.mcSimulation(
 )
 
 Pls_3 <- plot_pls(pls_result3, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_2")
+  ggtitle(label= "3: Truffle Trees + Chicken")
 
 # outcome_4
 pls_result4 <- plsr.mcSimulation(
@@ -648,7 +648,7 @@ pls_result4 <- plsr.mcSimulation(
 )
 
 Pls_4 <- plot_pls(pls_result4, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_4")
+  ggtitle(label= "4: Few Nuttrees + Truffle + Chicken")
 
 # outcome_5
 pls_result5 <- plsr.mcSimulation(
@@ -658,7 +658,7 @@ pls_result5 <- plsr.mcSimulation(
 )
 
 Pls_5 <- plot_pls(pls_result5, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_5")
+  ggtitle(label= "5: Many Nuttrees + Truffle + Chicken")
 
 # final plot
 Pls_combined <- ggarrange(Pls_2, Pls_1, Pls_3, Pls_4, Pls_5 + rremove("x.text"), 
