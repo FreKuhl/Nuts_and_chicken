@@ -529,17 +529,17 @@ model_function <- function() {
               outcome_3 = truffle_chicken_profit_3,
               outcome_4 = small_nut_chicken_truffle_profit_4,
               outcome_5 = big_nut_chicken_truffle_profit_5,
-              vec_outcome_1 = small_nut_chicken_profit_vec_1,
-              vec_outcome_2 = big_nut_chicken_profit_vec_2,
-              vec_outcome_3 = truffle_chicken_profit_vec_3,
-              vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
-              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5,
               d_2_inst_1 = d_2_inst_1,
               d_5_inst_4 = d_5_inst_4,
               d_4_inst_1 = d_4_inst_1,
               d_5_inst_2 = d_5_inst_2,
               d_1_inst_3 = d_1_inst_3,
-              d_4_inst_3 = d_4_inst_3))
+              d_4_inst_3 = d_4_inst_3,
+              vec_outcome_1 = small_nut_chicken_profit_vec_1,
+              vec_outcome_2 = big_nut_chicken_profit_vec_2,
+              vec_outcome_3 = truffle_chicken_profit_vec_3,
+              vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
+              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5))
   
 }
 
@@ -644,10 +644,13 @@ annotate_figure(Pls_combined,
 # EVPI ----
 # Use with caution!!! takes really long time to calculate!!!
 
-mcSimulation_table <- data.frame(simulation$x, simulation$y[4:6])
+mcSimulation_table <- data.frame(simulation$x, simulation$y[6:11])
 
-evpi <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "nuts_decision")
+evpi <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_2_inst_1")
 
-plot_evpi(evpi, decision_vars = "nuts_decision") +
-  plot_evpi(evpi, decision_vars =   "nut_small_truffle_dec") +
-  plot_evpi(evpi, decision_vars = "nut_big_truffle_dec")
+plot_evpi(evpi, decision_vars = "d_2_inst_1") +
+  plot_evpi(evpi, decision_vars = "d_5_inst_4") +
+  plot_evpi(evpi, decision_vars = "d_4_inst_1") +
+  plot_evpi(evpi, decision_vars = "d_5_inst_2") +
+  plot_evpi(evpi, decision_vars = "d_1_inst_3") +
+  plot_evpi(evpi, decision_vars = "d_4_inst_3")
