@@ -646,9 +646,9 @@ annotate_figure(Pls_combined,
 
 mcSimulation_table <- data.frame(simulation$x, simulation$y[6:11])
 
-evpi <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_2_inst_1")
+evpi <- multi_EVPI(mc = mcSimulation_table, write_table = F, first_out_var = "d_2_inst_1")
 
-plot_evpi(evpi, decision_vars = "d_2_inst_1") +
+plot_evpi(evpi, decision_vars = "d_2_inst_1") + 
   plot_evpi(evpi, decision_vars = "d_5_inst_4") +
   plot_evpi(evpi, decision_vars = "d_4_inst_1") +
   plot_evpi(evpi, decision_vars = "d_5_inst_2") +
