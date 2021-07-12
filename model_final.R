@@ -504,6 +504,14 @@ model_function <- function() {
   
   big_nut_chicken_truffle_profit_5 <- Reduce("+", big_nut_chicken_truffle_profit_vec_5)
   
+  # Version 6 Chicken only
+  
+  chicken_profit_vec <- chicken_income - general_investments_vec
+  
+  chicken_profit_vec <- discount(chicken_profit_vec, discount_rate)
+  
+  chicken_profit_6 <- Reduce("+", chicken_profit_vec)
+  
   
   # Decisions
   
@@ -541,6 +549,7 @@ model_function <- function() {
               d_3_inst_4 = d_3_inst_4,
               d_3_inst_2 = d_3_inst_2,
               d_3_inst_5 = d_3_inst_5,
+              outcome_6 = chicken_profit_6,
               vec_outcome_1 = small_nut_chicken_profit_vec_1,
               vec_outcome_2 = big_nut_chicken_profit_vec_2,
               vec_outcome_3 = truffle_chicken_profit_vec_3,
@@ -564,13 +573,13 @@ simulation <- mcSimulation(
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
+  vars = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5", "outcome_6"),
   method = "smooth_simple_overlay"
 ) +
   labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)"),
+    labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)", "Chicken only"),
     values = c("red", "blue", "green", "orange", "purple"),
     name = "Decision Options:
     (# of Trees)"
@@ -731,10 +740,10 @@ evpi_1 <- multi_EVPI(mc = mcSimulation_table_1, write_table = T, first_out_var =
 evpi_2 <- multi_EVPI(mc = mcSimulation_table_2, write_table = T, first_out_var = "d_5_inst_4")
 evpi_3 <- multi_EVPI(mc = mcSimulation_table_3, write_table = T, first_out_var = "d_4_inst_1")
 evpi_4 <- multi_EVPI(mc = mcSimulation_table_4, write_table = T, first_out_var = "d_5_inst_2")
-evpi_5 <- multi_EVPI(mc = mcSimulation_table_5, write_table = T, first_out_var = "d_1_inst_3")
-evpi_6 <- multi_EVPI(mc = mcSimulation_table_6, write_table = T, first_out_var = "d_4_inst_3")
-evpi_7 <- multi_EVPI(mc = mcSimulation_table_7, write_table = T, first_out_var = "d_2_inst_3")
-evpi_8 <- multi_EVPI(mc = mcSimulation_table_8, write_table = T, first_out_var = "d_5_inst_3")
+evpi_5 <- multi_EVPI(mc = mcSimulation_table_5, write_table = T, first_out_var = "d_3_inst_1")
+evpi_6 <- multi_EVPI(mc = mcSimulation_table_6, write_table = T, first_out_var = "d_3_inst_4")
+evpi_7 <- multi_EVPI(mc = mcSimulation_table_7, write_table = T, first_out_var = "d_3_inst_2")
+evpi_8 <- multi_EVPI(mc = mcSimulation_table_8, write_table = T, first_out_var = "d_3_inst_5")
 
 plot_evpi(evpi_1, decision_vars = "d_2_inst_1")
 plot_evpi(evpi_2, decision_vars = "d_5_inst_4")
