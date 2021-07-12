@@ -517,13 +517,13 @@ model_function <- function() {
   
   d_5_inst_2 <- big_nut_chicken_truffle_profit_5 -big_nut_chicken_profit_2
   
-  d_1_inst_3 <- small_nut_chicken_profit_1 - truffle_chicken_profit_3
+  d_3_inst_1 <- truffle_chicken_profit_3 - small_nut_chicken_profit_1
   
-  d_4_inst_3 <-  small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
+  d_3_inst_4 <- truffle_chicken_profit_3 - small_nut_chicken_truffle_profit_4
   
-  d_2_inst_3 <- big_nut_chicken_profit_2 - truffle_chicken_profit_3
+  d_3_inst_2 <- truffle_chicken_profit_3 - big_nut_chicken_profit_2
   
-  d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
+  d_3_inst_5 <- truffle_chicken_profit_3 - big_nut_chicken_truffle_profit_5
   
   ###
   
@@ -537,10 +537,10 @@ model_function <- function() {
               d_5_inst_4 = d_5_inst_4,
               d_4_inst_1 = d_4_inst_1,
               d_5_inst_2 = d_5_inst_2,
-              d_1_inst_3 = d_1_inst_3,
-              d_4_inst_3 = d_4_inst_3,
-              d_2_inst_3 = d_2_inst_3,
-              d_5_inst_3 = d_5_inst_3,
+              d_3_inst_1 = d_3_inst_1,
+              d_3_inst_4 = d_3_inst_4,
+              d_3_inst_2 = d_3_inst_2,
+              d_3_inst_5 = d_3_inst_5,
               vec_outcome_1 = small_nut_chicken_profit_vec_1,
               vec_outcome_2 = big_nut_chicken_profit_vec_2,
               vec_outcome_3 = truffle_chicken_profit_vec_3,
@@ -577,41 +577,47 @@ plot_distributions(
   )# +
   #theme(legend.position = "bottom")
 
-# v2
+# Decisions 1
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("d_2_inst_1", "d_2_inst_3", "d_4_inst_1", "d_5_inst_3", "d_5_inst_4"),
+  vars = c("d_2_inst_1", "d_5_inst_2", "d_5_inst_4"),
   method = "smooth_simple_overlay"
 ) +
   labs(title = "Differences between the sceanrios",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
  scale_fill_manual(
-  labels = c("d_2_inst_1", "d_2_inst_3", "d_4_inst_1", "d_5_inst_3", "d_5_inst_4"),
+  labels = c("Intervention 2 instead of 1", "Intervention 5 instead of 2", "Intervention 5 instead of 4"),
   values = c("red", "blue", "green", "orange", "purple", "grey"),
   name = "Decision Options:"
   ) +
   theme(legend.position = "bottom")
 
+# Decisions 2
+plot_distributions(
+  mcSimulation_object = simulation,
+  vars = c("d_3_inst_1","d_3_inst_2", "d_3_inst_4", "d_3_inst_5"),
+  method = "smooth_simple_overlay"
+) +
+  labs(title = "Differences between the sceanrios",
+       subtitle = "Accumulated values for 30 years - 10000 model runs") +
+  scale_fill_manual(
+    labels = c("Intervention 3 instead of 1", "Intervention 3 instead of 2","Intervention 3 instead of 4", "Intervention 3 instead of 5"),
+    values = c("red", "blue", "green", "orange", "purple", "grey"),
+    name = "Decision Options:"
+  ) +
+  theme(legend.position = "bottom")
 
 # Plot the cashflow distribution over time
 # This seems weird...
 plot_cashflow(
   mcSimulation_object = simulation,
-<<<<<<< HEAD
-  cashflow_var_name = "d_2_inst_1",
-=======
   cashflow_var_name = c("vec_outcome_1", "vec_outcome_2", "vec_outcome_3", "vec_outcome_4", "vec_outcome_5"),
->>>>>>> 1c02a9542d74b18f8bf0dc065f096dc614a49c18
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
-<<<<<<< HEAD
-  facet_labels = c("Big Nut Plantation")
-=======
   facet_labels = c("vec_outcome_1", "vec_outcome_2", "vec_outcome_3", "vec_outcome_4", "vec_outcome_5")
->>>>>>> 1c02a9542d74b18f8bf0dc065f096dc614a49c18
 ) +
   labs(title = "Cashflow in three different interventions",
        subtitle = "Values for the first 10 years - 10000 model runs")
@@ -633,11 +639,7 @@ pls_result <- plsr.mcSimulation(
 )
 
 Pls_1 <- plot_pls(pls_result, input_table = input_estimates, threshold = 0.8) + 
-<<<<<<< HEAD
   ggtitle(label= "nuts+hay+chicken (70 trees)")
-=======
-  ggtitle(label= "outcome_1")
->>>>>>> 1c02a9542d74b18f8bf0dc065f096dc614a49c18
 
 # outcome_2
 pls_result2 <- plsr.mcSimulation(
@@ -647,11 +649,8 @@ pls_result2 <- plsr.mcSimulation(
 )
 
 Pls_2 <- plot_pls(pls_result2, input_table = input_estimates, threshold = 0.8) + 
-<<<<<<< HEAD
   ggtitle(label= "nuts+chicken (200 trees)")
-=======
-  ggtitle(label= "outcome_2")
->>>>>>> 1c02a9542d74b18f8bf0dc065f096dc614a49c18
+
 
 # outcome_3
 pls_result3 <- plsr.mcSimulation(
@@ -661,7 +660,6 @@ pls_result3 <- plsr.mcSimulation(
 )
 
 Pls_3 <- plot_pls(pls_result3, input_table = input_estimates, threshold = 0.8) + 
-<<<<<<< HEAD
   ggtitle(label= "Truffle Trees + chicken (200 trees)")
 
 pls_result4<- plsr.mcSimulation(
@@ -687,9 +685,8 @@ Pls_5<- plot_pls(pls_result3, input_table = input_estimates, threshold = 0.8) +
 # final plot
 Pls_combined <- ggarrange(Pls_2, Pls_1, Pls_3, Pls_4, Pls_5 + rremove("x.text"), 
           labels = c(" ", " ", " "," ", " "),
-          ncol = 3, nrow = 1)
-=======
-  ggtitle(label= "outcome_2")
+          ncol = 3, nrow = 1) +
+          ggtitle(label= "outcome_2")
 
 # outcome_4
 pls_result4 <- plsr.mcSimulation(
@@ -699,7 +696,7 @@ pls_result4 <- plsr.mcSimulation(
 )
 
 Pls_4 <- plot_pls(pls_result4, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_4")
+  ggtitle(label= "4: Few Nuttrees + Truffle + Chicken")
 
 # outcome_5
 pls_result5 <- plsr.mcSimulation(
@@ -709,13 +706,12 @@ pls_result5 <- plsr.mcSimulation(
 )
 
 Pls_5 <- plot_pls(pls_result5, input_table = input_estimates, threshold = 0.8) + 
-  ggtitle(label= "outcome_5")
+  ggtitle(label= "5: Many Nuttrees + Truffle + Chicken")
 
 # final plot
 Pls_combined <- ggarrange(Pls_2, Pls_1, Pls_3, Pls_4, Pls_5 + rremove("x.text"), 
           labels = c(" ", " ", " ", " ", " "),
           ncol = 5, nrow = 1)
->>>>>>> 1c02a9542d74b18f8bf0dc065f096dc614a49c18
 annotate_figure(Pls_combined,
                 top = text_grob("Projection to Latent Structures analysis", face = "bold", size = 14),
 )
@@ -731,14 +727,14 @@ mcSimulation_table_6 <- data.frame(simulation$x, simulation$y[11])
 mcSimulation_table_7 <- data.frame(simulation$x, simulation$y[12])
 mcSimulation_table_8 <- data.frame(simulation$x, simulation$y[13])
 
-evpi_1 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_2_inst_1")
-evpi_2 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_5_inst_4")
-evpi_3 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_4_inst_1")
-evpi_4 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_5_inst_2")
-evpi_5 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_1_inst_3")
-evpi_6 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_4_inst_3")
-evpi_7 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_2_inst_3")
-evpi_8 <- multi_EVPI(mc = mcSimulation_table, write_table = T, first_out_var = "d_5_inst_3")
+evpi_1 <- multi_EVPI(mc = mcSimulation_table_1, write_table = T, first_out_var = "d_2_inst_1")
+evpi_2 <- multi_EVPI(mc = mcSimulation_table_2, write_table = T, first_out_var = "d_5_inst_4")
+evpi_3 <- multi_EVPI(mc = mcSimulation_table_3, write_table = T, first_out_var = "d_4_inst_1")
+evpi_4 <- multi_EVPI(mc = mcSimulation_table_4, write_table = T, first_out_var = "d_5_inst_2")
+evpi_5 <- multi_EVPI(mc = mcSimulation_table_5, write_table = T, first_out_var = "d_1_inst_3")
+evpi_6 <- multi_EVPI(mc = mcSimulation_table_6, write_table = T, first_out_var = "d_4_inst_3")
+evpi_7 <- multi_EVPI(mc = mcSimulation_table_7, write_table = T, first_out_var = "d_2_inst_3")
+evpi_8 <- multi_EVPI(mc = mcSimulation_table_8, write_table = T, first_out_var = "d_5_inst_3")
 
 plot_evpi(evpi_1, decision_vars = "d_2_inst_1")
 plot_evpi(evpi_2, decision_vars = "d_5_inst_4")
