@@ -370,11 +370,11 @@ model_function <- function() {
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
     time_to_first_yield_estimate = 5,
-    first_yield_estimate_percent = 50,
+    first_yield_estimate_percent = 20,
     time_to_second_yield_estimate = 10,
     second_yield_estimate_percent = 100,
     n_years = years,
-    var_CV = 40,
+    var_CV = 60,
   )
   
   truffle_price <- vv(var_mean = truffle_price,
@@ -387,9 +387,50 @@ model_function <- function() {
                               var_CV = 5,
                               n = years)
   
-  truffle_harvest_costs[1:9] <- 0
+  truffle_harvest_costs[1:5] <- 0
   
-  truffle_final_vec_3_4_5 <- truffle_income - truffle_harvest_costs
+  ###
+  truffle_final_vec_4_5 <- truffle_income - truffle_harvest_costs
+  ###
+  
+  # Truffle irrigation for 3
+  
+  days_irrigation_truffle <- vv(var_mean = truffle_days_to_irrigate,
+                        var_CV = 60,
+                        n = years)
+  
+  days_irrigation_truffle[days_irrigation_truffle < 20] <- 20
+  
+  days_irrigation_truffle[days_irrigation_truffle > 70] <- 70
+  
+  
+  truffle_irrigation_h_vec <- days_irrigation_truffle * work_per_irrigation
+  
+  water_usage_vec_truffle <- days_irrigation_truffle * truffle_water_per_day
+  
+  trailer_refills_vec_truffle <- water_usage_vec_truffle / trailer_capacity
+  
+  trailer_refills_vec_truffle <- trailer_refills_vec_truffle + 3
+  
+  refill_h_vec_truffle <- trailer_refills_vec_truffle * work_per_trailer
+  
+  irrigation_h_vec_truffle <- refill_h_vec_truffle + truffle_irrigation_h_vec
+  
+  irrigation_costs_truffle <- irrigation_h_vec_truffle * working_hours_costs
+  
+  maintaining_irrigation_truffle <- vv(var_mean = maintaining_irrigation_2,
+                                 var_CV = 10,
+                                 n = years)
+  
+  water_costs_truffle <- water_usage_vec_truffle * water_price
+  
+  irrigation_costs_truffle <- irrigation_costs_truffle + maintaining_irrigation_truffle + water_costs_truffle
+  
+  irrigation_costs_truffle[1] <- irrigation_costs_truffle[1] + irrigation_installation_2
+  
+  ###
+  truffle_final_vec_3 <- truffle_income - truffle_harvest_costs - irrigation_costs_truffle
+  ###
   
   # Chicken ----
   # For Version 1, 2, 3, 4 and 5
@@ -455,12 +496,51 @@ model_function <- function() {
         working_costs_chicken_final + chicken_replacement_cost_final
     )
   
+  
+  # CO² Certificates ----
+  
+  # Version 1 and 4
+  
+  co2_per_year_1_4 <- 70 * kg_per_bush
+  
+  certifikates_1_4 <- co2_per_year_1_4 / kg_per_certificate
+  
+  certifikates_1_4_vec <- rep(c(certifikates_1_4), times = years)
+  
+  income_certifikates_1_4_vec <- certifikates_1_4_vec * co2_price_per_ton
+  
+  certifikates_1_4_final <- Reduce("+", certifikates_1_4_vec)
+  
+  # Version 2 and 5
+  
+  co2_per_year_2_5 <- 200 * kg_per_bush
+  
+  certifikates_2_5 <- co2_per_year_2_5 / kg_per_certificate
+  
+  certifikates_2_5_vec <- rep(c(certifikates_2_5), times = years)
+  
+  income_certifikates_2_5_vec <- certifikates_1_4_vec * co2_price_per_ton
+  
+  certifikates_2_5_final <- Reduce("+", certifikates_2_5_vec)
+  
+  # Version 3
+  
+  co2_per_year_3 <- 200 * kg_per_tree
+  
+  certifikates_3 <- co2_per_year_3 / kg_per_certificate
+  
+  certifikates_3_vec <- rep(c(certifikates_3), times = years)
+  
+  income_certifikates_3_vec <- certifikates_1_4_vec * co2_price_per_ton
+  
+  certifikates_3_final <- Reduce("+", certifikates_3_vec)
+  
   # Decision / Final ----
   # discounting for inflation
   
   # Version 1
   small_nut_chicken_profit_vec_1 <-
-    nut_profit_vec_1 + chicken_income
+    nut_profit_vec_1 + chicken_income - general_investments_vec + income_certifikates_1_4_vec
   
   small_nut_chicken_profit_vec_1 <- 
     discount(small_nut_chicken_profit_vec_1, discount_rate)
@@ -470,7 +550,7 @@ model_function <- function() {
   
   #Version 2
   big_nut_chicken_profit_vec_2 <-
-    nut_profit_vec_2 + chicken_income
+    nut_profit_vec_2 + chicken_income - general_investments_vec + income_certifikates_2_5_vec
   
   big_nut_chicken_profit_vec_2 <- 
     discount(big_nut_chicken_profit_vec_2, discount_rate)
@@ -479,7 +559,8 @@ model_function <- function() {
   
   # Version 3
   truffle_chicken_profit_vec_3 <-
-    truffle_final_vec_3_4_5 - truffle_tree_costs + chicken_income
+    truffle_final_vec_3 - truffle_tree_costs + chicken_income - 
+    general_investments_vec + income_certifikates_3_vec
   
   truffle_chicken_profit_vec_3 <-
     discount(truffle_chicken_profit_vec_3, discount_rate)
@@ -488,7 +569,8 @@ model_function <- function() {
   
   # Version 4
   small_nut_chicken_truffle_profit_vec_4 <-
-    nut_profit_vec_1 + chicken_income + (truffle_final_vec_3_4_5/2.8)
+    nut_profit_vec_1 + chicken_income + (truffle_final_vec_4_5/2.8) - 
+    general_investments_vec + income_certifikates_1_4_vec
   
   small_nut_chicken_truffle_profit_vec_4 <- 
     discount(small_nut_chicken_truffle_profit_vec_4, discount_rate)
@@ -497,7 +579,8 @@ model_function <- function() {
   
   # Version 5
   big_nut_chicken_truffle_profit_vec_5 <-
-    nut_profit_vec_2 + chicken_income + truffle_final_vec_3_4_5
+    nut_profit_vec_2 + chicken_income + truffle_final_vec_4_5 - 
+    general_investments_vec + income_certifikates_2_5_vec
   
   big_nut_chicken_truffle_profit_vec_5 <- 
     discount(big_nut_chicken_truffle_profit_vec_5, discount_rate)
@@ -533,6 +616,19 @@ model_function <- function() {
   
   d_3_inst_5 <- truffle_chicken_profit_3 - big_nut_chicken_truffle_profit_5
   
+  d_1_inst_6 <- small_nut_chicken_profit_1 - chicken_profit_6
+    
+  d_2_inst_6 <- big_nut_chicken_profit_2 - chicken_profit_6
+    
+  d_3_inst_6 <- truffle_chicken_profit_3 - chicken_profit_6
+    
+  d_4_inst_6 <- small_nut_chicken_truffle_profit_4 - chicken_profit_6
+    
+  d_5_inst_6 <- big_nut_chicken_truffle_profit_5 - chicken_profit_6
+  
+  d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
+  
+  d_4_inst_3 <- small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
   ###
   
   
@@ -549,7 +645,17 @@ model_function <- function() {
               d_3_inst_4 = d_3_inst_4,
               d_3_inst_2 = d_3_inst_2,
               d_3_inst_5 = d_3_inst_5,
+              d_1_inst_6 = d_1_inst_6,
+              d_2_inst_6 = d_2_inst_6,
+              d_3_inst_6 = d_3_inst_6,
+              d_4_inst_6 = d_4_inst_6,
+              d_5_inst_6 = d_5_inst_6,
+              d_5_inst_3 = d_5_inst_3,
+              d_4_inst_3 = d_4_inst_3,
               outcome_6 = chicken_profit_6,
+              certifikates_1_4 = certifikates_1_4_final,
+              certifikates_2_5 = certifikates_2_5_final,
+              certifikates_3 = certifikates_3_final,
               vec_outcome_1 = small_nut_chicken_profit_vec_1,
               vec_outcome_2 = big_nut_chicken_profit_vec_2,
               vec_outcome_3 = truffle_chicken_profit_vec_3,
@@ -579,8 +685,15 @@ plot_distributions(
   labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
+<<<<<<< HEAD
     labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)", "Chicken only"),
     values = c("red", "blue", "green", "orange", "purple", "yellow"),
+=======
+    labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)",
+               "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)",
+               "nuts+chicken+truffle (200)", "Chicken only"),
+    values = c("red", "blue", "green", "orange", "purple", "grey"),
+>>>>>>> 46fd0d658e9d55b7e9b588614ff375cc4509d5fe
     name = "Decision Options:
     (# of Trees)"
   )# +
@@ -595,7 +708,8 @@ plot_distributions(
   labs(title = "Differences between the sceanrios",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
  scale_fill_manual(
-  labels = c("Intervention 2 instead of 1", "Intervention 5 instead of 2", "Intervention 5 instead of 4"),
+  labels = c("Intervention 2 instead of 1", "Intervention 5 instead of 2",
+             "Intervention 5 instead of 4"),
   values = c("red", "blue", "green", "orange", "purple", "grey"),
   name = "Decision Options:"
   ) +
@@ -610,7 +724,36 @@ plot_distributions(
   labs(title = "Differences between the sceanrios",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Intervention 3 instead of 1", "Intervention 3 instead of 2","Intervention 3 instead of 4", "Intervention 3 instead of 5"),
+    labels = c("Intervention 3 instead of 1", "Intervention 3 instead of 2",
+               "Intervention 3 instead of 4", "Intervention 3 instead of 5"),
+    values = c("red", "blue", "green", "orange", "purple", "grey"),
+    name = "Decision Options:"
+  ) +
+  theme(legend.position = "bottom")
+
+# Decisions 3
+plot_distributions(
+  mcSimulation_object = simulation,
+  vars = c("d_4_inst_3", "d_5_inst_3", "d_5_inst_4"),
+  method = "smooth_simple_overlay") +
+  labs(title = "Decisions",
+       subtitle = "Accumulated values for 30 years - 10000 model runs") +
+  scale_fill_manual(
+    labels = c("Scenario 4 - 3", "Scenario 5 - 3", "Scenario 5 - 4"),
+    values = c("red", "blue", "green", "orange", "purple", "grey"),
+    name = "Decision Options:"
+  ) +
+  theme(legend.position = "bottom")
+
+# Plot CO² Certificates
+plot_distributions(
+  mcSimulation_object = simulation,
+  vars = c("certifikates_1_4", "certifikates_2_5", "certifikates_3"),
+  method = "smooth_simple_overlay") +
+  labs(title = "CO² Certificates",
+       subtitle = "Accumulated values for 30 years - 10000 model runs") +
+  scale_fill_manual(
+    labels = c("Scenario 1 and 4", "Scenario 2 and 5", "Scenario 3"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:"
   ) +
@@ -620,16 +763,23 @@ plot_distributions(
 # This seems weird...
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = c("vec_outcome_1", "vec_outcome_2", "vec_outcome_3", "vec_outcome_4", "vec_outcome_5"),
+  cashflow_var_name = "vec_outcome_1",
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
+<<<<<<< HEAD
   facet_labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)")
 ) +
   labs(title = "Cashflow in five different interventions",
        subtitle = "Values for the first 30 years - 10000 model runs")
+=======
+  facet_labels = "vec_outcome_1"
+) +
+  labs(title = "Cashflow",
+       subtitle = "Values for the first 10 years - 10000 model runs")
+>>>>>>> 46fd0d658e9d55b7e9b588614ff375cc4509d5fe
 
 # 1: nuts+hay+chicken (70 trees)
 # 2: nuts+chicken (200 trees)
@@ -718,36 +868,37 @@ Pls_5 <- plot_pls(pls_result5, input_table = input_estimates, threshold = 0.8) +
   ggtitle(label= "5: Many Nuttrees + Truffle + Chicken")
 
 # final plot
-Pls_combined <- ggarrange(Pls_2, Pls_1, Pls_3, Pls_4, Pls_5 + rremove("x.text"), 
+Pls_combined <- ggarrange(Pls_1, Pls_2, Pls_3, Pls_4, Pls_5 + rremove("x.text"), 
           labels = c(" ", " ", " ", " ", " "),
           ncol = 5, nrow = 1)
 annotate_figure(Pls_combined,
-                top = text_grob("Projection to Latent Structures analysis", face = "bold", size = 14),
+                top = text_grob("Projection to Latent Structures analysis",
+                                face = "bold", size = 14),
 )
 # EVPI ----
 # Use with caution!!! takes really long time to calculate!!!
 
-mcSimulation_table_1 <- data.frame(simulation$x, simulation$y[6])
-mcSimulation_table_2 <- data.frame(simulation$x, simulation$y[7])
-mcSimulation_table_3 <- data.frame(simulation$x, simulation$y[8])
+mcSimulation_table_1 <- data.frame(simulation$x, simulation$y[19])
+mcSimulation_table_2 <- data.frame(simulation$x, simulation$y[20])
+mcSimulation_table_3 <- data.frame(simulation$x, simulation$y[7])
 mcSimulation_table_4 <- data.frame(simulation$x, simulation$y[9])
 mcSimulation_table_5 <- data.frame(simulation$x, simulation$y[10])
 mcSimulation_table_6 <- data.frame(simulation$x, simulation$y[11])
 mcSimulation_table_7 <- data.frame(simulation$x, simulation$y[12])
 mcSimulation_table_8 <- data.frame(simulation$x, simulation$y[13])
 
-evpi_1 <- multi_EVPI(mc = mcSimulation_table_1, write_table = T, first_out_var = "d_2_inst_1")
-evpi_2 <- multi_EVPI(mc = mcSimulation_table_2, write_table = T, first_out_var = "d_5_inst_4")
-evpi_3 <- multi_EVPI(mc = mcSimulation_table_3, write_table = T, first_out_var = "d_4_inst_1")
+evpi_1 <- multi_EVPI(mc = mcSimulation_table_1, write_table = T, first_out_var = "d_5_inst_3")
+evpi_2 <- multi_EVPI(mc = mcSimulation_table_2, write_table = T, first_out_var = "d_4_inst_3")
+evpi_3 <- multi_EVPI(mc = mcSimulation_table_3, write_table = T, first_out_var = "d_5_inst_4")
 evpi_4 <- multi_EVPI(mc = mcSimulation_table_4, write_table = T, first_out_var = "d_5_inst_2")
 evpi_5 <- multi_EVPI(mc = mcSimulation_table_5, write_table = T, first_out_var = "d_3_inst_1")
 evpi_6 <- multi_EVPI(mc = mcSimulation_table_6, write_table = T, first_out_var = "d_3_inst_4")
 evpi_7 <- multi_EVPI(mc = mcSimulation_table_7, write_table = T, first_out_var = "d_3_inst_2")
 evpi_8 <- multi_EVPI(mc = mcSimulation_table_8, write_table = T, first_out_var = "d_3_inst_5")
 
-plot_evpi(evpi_1, decision_vars = "d_2_inst_1")
-plot_evpi(evpi_2, decision_vars = "d_5_inst_4")
-plot_evpi(evpi_3, decision_vars = "d_4_inst_1")
+plot_evpi(evpi_1, decision_vars = "d_5_inst_3")
+plot_evpi(evpi_2, decision_vars = "d_4_inst_3")
+plot_evpi(evpi_3, decision_vars = "d_5_inst_4")
 plot_evpi(evpi_4, decision_vars = "d_5_inst_2")
 plot_evpi(evpi_5, decision_vars = "d_1_inst_3")
 plot_evpi(evpi_6, decision_vars = "d_4_inst_3")
