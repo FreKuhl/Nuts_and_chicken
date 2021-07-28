@@ -57,4 +57,5 @@ function (mcSimulation_object, cashflow_var_name, x_axis_name = "Timeline of int
                                                                                                                                            labels = facet_labels)) + ggplot2::theme_bw(base_size = base_size) + 
     ggplot2::theme(legend.margin = ggplot2::margin(-0.75, 
                                                    0, 0, 0, unit = "cm"), strip.background = ggplot2::element_blank(), 
+                   ...)
 }

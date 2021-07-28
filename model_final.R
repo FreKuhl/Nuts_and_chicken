@@ -580,7 +580,7 @@ plot_distributions(
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
     labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)", "Chicken only"),
-    values = c("red", "blue", "green", "orange", "purple"),
+    values = c("red", "blue", "green", "orange", "purple", "yellow"),
     name = "Decision Options:
     (# of Trees)"
   )# +
@@ -626,10 +626,10 @@ plot_cashflow(
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
-  facet_labels = c("vec_outcome_1", "vec_outcome_2", "vec_outcome_3", "vec_outcome_4", "vec_outcome_5")
+  facet_labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)")
 ) +
-  labs(title = "Cashflow in three different interventions",
-       subtitle = "Values for the first 10 years - 10000 model runs")
+  labs(title = "Cashflow in five different interventions",
+       subtitle = "Values for the first 30 years - 10000 model runs")
 
 # 1: nuts+hay+chicken (70 trees)
 # 2: nuts+chicken (200 trees)
