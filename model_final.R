@@ -370,8 +370,8 @@ model_function <- function() {
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
     time_to_first_yield_estimate = 5,
-    first_yield_estimate_percent = 20,
-    time_to_second_yield_estimate = 10,
+    first_yield_estimate_percent = 10,
+    time_to_second_yield_estimate = 15,
     second_yield_estimate_percent = 100,
     n_years = years,
     var_CV = 60,
@@ -679,7 +679,7 @@ simulation <- mcSimulation(
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5", "outcome_6"),
+  vars = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
   method = "smooth_simple_overlay"
 ) +
   labs(title = "Distribution of income for five different interventions",
@@ -691,7 +691,7 @@ plot_distributions(
 =======
     labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)",
                "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)",
-               "nuts+chicken+truffle (200)", "Chicken only"),
+               "nuts+chicken+truffle (200)"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
 >>>>>>> 46fd0d658e9d55b7e9b588614ff375cc4509d5fe
     name = "Decision Options:
@@ -718,14 +718,14 @@ plot_distributions(
 # Decisions 2
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("d_3_inst_1","d_3_inst_2", "d_3_inst_4", "d_3_inst_5"),
+  vars = c("d_1_inst_6","d_2_inst_6", "d_3_inst_6", "d_4_inst_6", "d_5_inst_6"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Differences between the sceanrios",
+  labs(title = "Scenarios compared to `only chickens`",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Intervention 3 instead of 1", "Intervention 3 instead of 2",
-               "Intervention 3 instead of 4", "Intervention 3 instead of 5"),
+    labels = c("Intervention 1...", "Intervention 2...",
+               "Intervention 3...", "Intervention 4...", "Intervention 5 instead of `only chickens`"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:"
   ) +
@@ -739,7 +739,7 @@ plot_distributions(
   labs(title = "Decisions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Scenario 4 - 3", "Scenario 5 - 3", "Scenario 5 - 4"),
+    labels = c("Scenario 5 - 3", "Scenario 5 - 3", "Scenario 5 - 4"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:"
   ) +
