@@ -10,13 +10,13 @@ library("readxl")
 
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
+  vars = c("baseline","outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
   method = "smooth_simple_overlay"
 ) +
   labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)",
+    labels = c("Baseline", "nuts+hay+chicken (70)", "nuts+chicken (200)",
                "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)",
                "nuts+chicken+truffle (200)"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
@@ -31,7 +31,7 @@ plot_distributions(
   vars = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Differences between the sceanrios and the baseline",
+  labs(title = "Differences between the scenarios and the baseline",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
     labels = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
@@ -88,13 +88,13 @@ plot_distributions(
 # This seems weird...
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = "vec_outcome_1",
+  cashflow_var_name = "vec_outcome_baseline",
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
-  facet_labels = "vec_outcome_1"
+  facet_labels = "baseline_vec"
 ) +
   labs(title = "Cashflow",
        subtitle = "Values for the first 10 years - 10000 model runs")

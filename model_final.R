@@ -772,6 +772,7 @@ model_function <- function() {
               outcome_4 = small_nut_chicken_truffle_profit_4,
               outcome_5 = big_nut_chicken_truffle_profit_5,
               outcome_6 = chicken_profit_6,
+              baseline = baseline,
               decision_1 = decision_1,
               decision_2 = decision_2,
               decision_3 = decision_3,
