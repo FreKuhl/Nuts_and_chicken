@@ -685,15 +685,12 @@ plot_distributions(
   labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-<<<<<<< HEAD
     labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)", "Chicken only"),
     values = c("red", "blue", "green", "orange", "purple", "yellow"),
-=======
     labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)",
                "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)",
                "nuts+chicken+truffle (200)"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
->>>>>>> 46fd0d658e9d55b7e9b588614ff375cc4509d5fe
     name = "Decision Options:
     (# of Trees)"
   )# +
@@ -763,23 +760,20 @@ plot_distributions(
 # This seems weird...
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = "vec_outcome_1",
+  cashflow_var_name = c("vec_outcome_1", "vec_outcome_2", "vec_outcome_3", "vec_outcome_4", "vec_outcome_5"),
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
-<<<<<<< HEAD
-  facet_labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)")
+  facet_labels = c("nuts+hay+chicken (70)", "nuts+chicken (200)", "Truffle Trees + chicken (200)",
+                   "nuts+hay+chicken+truffle (70)", "nuts+chicken+truffle (200)")
 ) +
   labs(title = "Cashflow in five different interventions",
        subtitle = "Values for the first 30 years - 10000 model runs")
-=======
-  facet_labels = "vec_outcome_1"
-) +
-  labs(title = "Cashflow",
-       subtitle = "Values for the first 10 years - 10000 model runs")
->>>>>>> 46fd0d658e9d55b7e9b588614ff375cc4509d5fe
+
+
+
 
 # 1: nuts+hay+chicken (70 trees)
 # 2: nuts+chicken (200 trees)
