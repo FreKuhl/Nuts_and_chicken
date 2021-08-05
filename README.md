@@ -1,5 +1,5 @@
 # Nuts and chicken
-by [Lukas Gürtler](https://github.com/LukasGuertler) & [Frederik Kuhl](https://github.com/FreKuhl)
+[Lukas Gürtler](https://github.com/LukasGuertler) & [Frederik Kuhl](https://github.com/FreKuhl)
 
 This Decision analysis model for combining a nuttree meadow with chicken, was started in the ['Decision Analysis and Forecasting for Agricultural Development'](https://cory-whitney.shinyapps.io/Decision_Analysis_Course/) course by [Cory Whitney](https://cory-whitney.com/) & [Eike Lüdeling](https://eikeluedeling.com/index.html) at the University of Bonn in the Corona Summer of 2021. 
 
