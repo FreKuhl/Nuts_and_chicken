@@ -22,8 +22,8 @@ plot_distributions(
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:
     (# of Trees)"
-  )# +
-#theme(legend.position = "bottom")
+  ) +
+  coord_cartesian(ylim = c(0, 0.000015))
 
 # Plot Decision 1-5 against baseline
 plot_distributions(
