@@ -196,7 +196,7 @@ summary {
 
 
 <p>This supplementary is available under <a href="https://github.com/FreKuhl/Nuts_and_chicken.git" class="uri">https://github.com/FreKuhl/Nuts_and_chicken.git</a> and outlines the Decision Analysis approaches used in Model-based evaluation of management options in ornamental plant nurseries <span class="citation">(Ruett, Whitney, and Luedeling 2020)</span>. Here we provide our input table, code and results to allow for transparent reproduction of the model.</p>
-<p>All other applied <code>R</code> packages are cited and listed in the <a href="#references">References</a>.</p>
+<p>All other applied <code>R</code> packages are cited and listed in the [References].</p>
 <div id="input-table" class="section level2">
 <h2>Input table</h2>
 <p>The input table <code>Input_estimates.xlsx</code> (attached) contains: Variable names, unit, distributions (posnorm = positive normal distribution, const = constant, tnorm_0_1= truncated normal distribution, norm = normal distribution), lower bound, mean, upper bound and definition of variables.</p>
@@ -214,9 +214,7 @@ for(i in colnames(x)) assign(i, as.numeric(x[1,i]),envir = .GlobalEnv)}
 make_variables(as.estimate(input_estimates))</code></pre>
 <p>We generated a function called <code>model_function</code> to evaluate the decision options in <code>decisionSupport</code> <span class="citation">(<strong>luedelingDecisionSupportQuantitativeSupport2019?</strong>)</span>. The following calculations are part of this function (see the entire function below).</p>
 <pre class="r"><code>model_function &lt;- function() {}</code></pre>
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="unnumbered">References</h1>
+<p>We used the <code>vv()</code> (value varier function) function from <code>decisionSupport</code> <span class="citation">(<strong>luedelingDecisionSupportQuantitativeSupport2019?</strong>)</span> to account for the monthly variation in infection risks. Here it is used to generate values out of variables pre-defined upper and lower bounds over time. # References</p>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-ruett_model-based_2020" class="csl-entry">
 Ruett, Marius, Cory Whitney, and Eike Luedeling. 2020. <span>“Model-Based Evaluation of Management Options in Ornamental Plant Nurseries.”</span> <em>Journal of Cleaner Production</em> 271 (June): 122653. <a href="https://doi.org/10.1016/j.jclepro.2020.122653">https://doi.org/10.1016/j.jclepro.2020.122653</a>.
