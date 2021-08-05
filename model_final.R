@@ -49,12 +49,121 @@ model_function <- function() {
                   var_CV = 20,
                   n = years)
   
+  subsidies_vec <- vv(var_mean = subsidies,
+                  var_CV = 1,
+                  n = years)
+  
   general_investments_vec <- vv(var_mean = maintaining_fences_cost,
                                 var_CV = 30,
                                 n = years)
+  
   ###
   general_investments_vec[1] <- general_investments_vec[1] + 
     grass_planting_cost + initial_fences_cost
+  ###
+  
+  # Baseline ----
+  
+  #Winterbarley
+  winterbarley_yield_vec <- vv(var_mean = winterbarley_yield,
+                               var_CV = 10,
+                               n = years)
+  winterbarley_costs_vec <- vv(var_mean = winterbarley_costs,
+                               var_CV = 5,
+                               n = years)
+  winterbarley_work_vec <- vv(var_mean = winterbarley_work,
+                              var_CV = 5,
+                              n = years)
+  winterbarley_price_vec <- vv(var_mean = winterbarley_price,
+                               var_CV = 10,
+                               n = years)
+  
+  winterbarley_income_vec <- (winterbarley_yield_vec * winterbarley_price_vec) -
+    (winterbarley_costs_vec + (winterbarley_work_vec * working_hours_costs))
+  
+  # Rye
+  rye_yield_vec <- vv(var_mean = rye_yield,
+                               var_CV = 10,
+                               n = years)
+  rye_costs_vec <- vv(var_mean = rye_costs,
+                               var_CV = 5,
+                               n = years)
+  rye_work_vec <- vv(var_mean = rye_work,
+                              var_CV = 5,
+                              n = years)
+  rye_price_vec <- vv(var_mean = rye_price,
+                               var_CV = 10,
+                               n = years)
+  
+  rye_income_vec <- (rye_yield_vec * rye_price_vec) -
+    (rye_costs_vec + (rye_work_vec * working_hours_costs))
+  
+  # Wheat
+  wheat_yield_vec <- vv(var_mean = wheat_yield,
+                               var_CV = 10,
+                               n = years)
+  wheat_costs_vec <- vv(var_mean = wheat_costs,
+                               var_CV = 5,
+                               n = years)
+  wheat_work_vec <- vv(var_mean = wheat_work,
+                              var_CV = 5,
+                              n = years)
+  wheat_price_vec <- vv(var_mean = wheat_price,
+                               var_CV = 10,
+                               n = years)
+  
+  wheat_income_vec <- (wheat_yield_vec * wheat_price_vec) -
+    (wheat_costs_vec + (winterbarley_work_vec * wheat_work_vec))
+  
+  # Summerbarley
+  summerbarley_yield_vec <- vv(var_mean = summerbarley_yield,
+                               var_CV = 10,
+                               n = years)
+  summerbarley_costs_vec <- vv(var_mean = summerbarley_costs,
+                               var_CV = 5,
+                               n = years)
+  summerbarley_work_vec <- vv(var_mean = summerbarley_work,
+                              var_CV = 5,
+                              n = years)
+  summerbarley_price_vec <- vv(var_mean = summerbarley_price,
+                               var_CV = 10,
+                               n = years)
+  
+  summerbarley_income_vec <- (summerbarley_yield_vec * summerbarley_price_vec) -
+    (summerbarley_costs_vec + (summerbarley_work_vec * working_hours_costs))
+  
+  
+  baseline_vec <- winterbarley_income_vec
+  
+  baseline_vec[2] <- rye_income_vec[2]
+  baseline_vec[6] <- rye_income_vec[6]
+  baseline_vec[10] <- rye_income_vec[10]
+  baseline_vec[14] <- rye_income_vec[14]
+  baseline_vec[18] <- rye_income_vec[18]
+  baseline_vec[22] <- rye_income_vec[22]
+  baseline_vec[26] <- rye_income_vec[26]
+  baseline_vec[30] <- rye_income_vec[30]
+  
+  baseline_vec[3] <- wheat_income_vec[3]
+  baseline_vec[7] <- wheat_income_vec[7]
+  baseline_vec[11] <- wheat_income_vec[11]
+  baseline_vec[15] <- wheat_income_vec[15]
+  baseline_vec[19] <- wheat_income_vec[19]
+  baseline_vec[23] <- wheat_income_vec[23]
+  baseline_vec[27] <- wheat_income_vec[27]
+  
+  baseline_vec[4] <- summerbarley_income_vec[4]
+  baseline_vec[8] <- summerbarley_income_vec[8]
+  baseline_vec[12] <- summerbarley_income_vec[12]
+  baseline_vec[16] <- summerbarley_income_vec[16]
+  baseline_vec[20] <- summerbarley_income_vec[20]
+  baseline_vec[24] <- summerbarley_income_vec[24]
+  baseline_vec[28] <- summerbarley_income_vec[28]
+  
+  ###
+  baseline_vec <- baseline_vec + subsidies_vec
+  baseline_vec <- discount(baseline_vec, discount_rate)
+  baseline <- Reduce("+", baseline_vec)
   ###
   
   # Yield Nuts ----
@@ -84,7 +193,7 @@ model_function <- function() {
   income_hay <- amount_bales * income_per_bale
   
   ###
-  nut_income_vec_1_4 <- (nuts_yield_vec_1 * nut_price) + income_hay + subsidies
+  nut_income_vec_1_4 <- (nuts_yield_vec_1 * nut_price) + income_hay
   ###
   
   # For Versions 2 and 5
@@ -103,7 +212,7 @@ model_function <- function() {
   harvest_count_2 <- ifelse(nuts_yield_vec_2 < 20, 0, 1)
   
   ###
-  nut_income_vec_2_5 <- (nuts_yield_vec_2 * nut_price) + subsidies
+  nut_income_vec_2_5 <- (nuts_yield_vec_2 * nut_price)
   ###
   
   # Nuts Costs ----
@@ -156,7 +265,8 @@ model_function <- function() {
   
   nut_other_costs_vec_4 <- nut_other_costs_vec_1
   
-  nut_other_costs_vec_4[1] <- nut_other_costs_vec_4[1] + truffle_tree_planting_costs_1
+  nut_other_costs_vec_4[1] <- 
+    nut_other_costs_vec_4[1] + truffle_tree_planting_costs_1
   
   hay_costs <- vv(var_mean = hay_costs_1,
                   var_CV = 5,
@@ -227,7 +337,8 @@ model_function <- function() {
   
   nut_other_costs_vec_5 <- nut_other_costs_vec_2
   
-  nut_other_costs_vec_5[1] <- nut_other_costs_vec_5[1] + truffle_tree_planting_costs_2
+  nut_other_costs_vec_5[1] <- 
+    nut_other_costs_vec_5[1] + truffle_tree_planting_costs_2
   
   replace_trees_2 <- chance_event(chance = 0.1,
                                   value_if = 9,
@@ -281,7 +392,8 @@ model_function <- function() {
   
   water_costs_1 <- water_usage_vec_1 * water_price
   
-  irrigation_costs_1_4 <- irrigation_costs_1 + maintaining_irrigation_1 + water_costs_1
+  irrigation_costs_1_4 <- 
+    irrigation_costs_1 + maintaining_irrigation_1 + water_costs_1
   
   ###
   irrigation_costs_1_4[1] <- irrigation_costs_1_4[1] + irrigation_installation_1
@@ -309,7 +421,8 @@ model_function <- function() {
   
   water_costs_2 <- water_usage_vec_2 * water_price
   
-  irrigation_costs_2_5 <- irrigation_costs_2 + maintaining_irrigation_2 + water_costs_2
+  irrigation_costs_2_5 <- 
+    irrigation_costs_2 + maintaining_irrigation_2 + water_costs_2
   
   ###
   irrigation_costs_2_5[1] <- irrigation_costs_2_5[1] + irrigation_installation_2
@@ -426,12 +539,15 @@ model_function <- function() {
   
   water_costs_truffle <- water_usage_vec_truffle * water_price
   
-  irrigation_costs_truffle <- irrigation_costs_truffle + maintaining_irrigation_truffle + water_costs_truffle
+  irrigation_costs_truffle <- 
+    irrigation_costs_truffle + maintaining_irrigation_truffle + water_costs_truffle
   
-  irrigation_costs_truffle[1] <- irrigation_costs_truffle[1] + irrigation_installation_2
+  irrigation_costs_truffle[1] <- 
+    irrigation_costs_truffle[1] + irrigation_installation_2
   
   ###
-  truffle_final_vec_3 <- truffle_income - truffle_harvest_costs - irrigation_costs_truffle
+  truffle_final_vec_3 <- 
+    truffle_income - truffle_harvest_costs - irrigation_costs_truffle
   ###
   
   # Chicken ----
@@ -542,7 +658,8 @@ model_function <- function() {
   
   # Version 1
   small_nut_chicken_profit_vec_1 <-
-    nut_profit_vec_1 + chicken_income - general_investments_vec + income_certifikates_1_4_vec
+    nut_profit_vec_1 + chicken_income - general_investments_vec + 
+    income_certifikates_1_4_vec + subsidies_vec
   
   small_nut_chicken_profit_vec_1 <- 
     discount(small_nut_chicken_profit_vec_1, discount_rate)
@@ -552,7 +669,8 @@ model_function <- function() {
   
   #Version 2
   big_nut_chicken_profit_vec_2 <-
-    nut_profit_vec_2 + chicken_income - general_investments_vec + income_certifikates_2_5_vec
+    nut_profit_vec_2 + chicken_income - general_investments_vec + 
+    income_certifikates_2_5_vec + subsidies_vec
   
   big_nut_chicken_profit_vec_2 <- 
     discount(big_nut_chicken_profit_vec_2, discount_rate)
@@ -562,7 +680,7 @@ model_function <- function() {
   # Version 3
   truffle_chicken_profit_vec_3 <-
     truffle_final_vec_3 - truffle_tree_costs + chicken_income - 
-    general_investments_vec + income_certifikates_3_vec
+    general_investments_vec + income_certifikates_3_vec + subsidies_vec
   
   truffle_chicken_profit_vec_3 <-
     discount(truffle_chicken_profit_vec_3, discount_rate)
@@ -572,26 +690,29 @@ model_function <- function() {
   # Version 4
   small_nut_chicken_truffle_profit_vec_4 <-
     nut_profit_vec_1 + chicken_income + (truffle_final_vec_4_5/2.8) - 
-    general_investments_vec + income_certifikates_1_4_vec
+    general_investments_vec + income_certifikates_1_4_vec + subsidies_vec
   
   small_nut_chicken_truffle_profit_vec_4 <- 
     discount(small_nut_chicken_truffle_profit_vec_4, discount_rate)
   
-  small_nut_chicken_truffle_profit_4 <- Reduce("+", small_nut_chicken_truffle_profit_vec_4)
+  small_nut_chicken_truffle_profit_4 <- 
+    Reduce("+", small_nut_chicken_truffle_profit_vec_4)
   
   # Version 5
   big_nut_chicken_truffle_profit_vec_5 <-
     nut_profit_vec_2 + chicken_income + truffle_final_vec_4_5 - 
-    general_investments_vec + income_certifikates_2_5_vec
+    general_investments_vec + income_certifikates_2_5_vec + subsidies_vec
   
   big_nut_chicken_truffle_profit_vec_5 <- 
     discount(big_nut_chicken_truffle_profit_vec_5, discount_rate)
   
-  big_nut_chicken_truffle_profit_5 <- Reduce("+", big_nut_chicken_truffle_profit_vec_5)
+  big_nut_chicken_truffle_profit_5 <- 
+    Reduce("+", big_nut_chicken_truffle_profit_vec_5)
   
   # Version 6 Chicken only for better visualization
   
-  chicken_profit_vec <- chicken_income - general_investments_vec
+  chicken_profit_vec <- 
+    chicken_income - general_investments_vec + subsidies_vec
   
   chicken_profit_vec <- discount(chicken_profit_vec, discount_rate)
   
@@ -602,9 +723,20 @@ model_function <- function() {
   
   ###
   
+  decision_1 <- small_nut_chicken_profit_1 - baseline
+  
+  decision_2 <- big_nut_chicken_profit_2 - baseline
+  
+  decision_3 <- truffle_chicken_profit_3 - baseline
+  
+  decision_4 <- small_nut_chicken_truffle_profit_4 - baseline
+  
+  decision_5 <- big_nut_chicken_truffle_profit_5 - baseline
+  
   d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
   
-  d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
+  d_5_inst_4 <- 
+    big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
   
   d_4_inst_1 <- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
   
@@ -639,22 +771,13 @@ model_function <- function() {
               outcome_3 = truffle_chicken_profit_3,
               outcome_4 = small_nut_chicken_truffle_profit_4,
               outcome_5 = big_nut_chicken_truffle_profit_5,
-              d_2_inst_1 = d_2_inst_1,
-              d_5_inst_4 = d_5_inst_4,
-              d_4_inst_1 = d_4_inst_1,
-              d_5_inst_2 = d_5_inst_2,
-              d_3_inst_1 = d_3_inst_1,
-              d_3_inst_4 = d_3_inst_4,
-              d_3_inst_2 = d_3_inst_2,
-              d_3_inst_5 = d_3_inst_5,
-              d_1_inst_6 = d_1_inst_6,
-              d_2_inst_6 = d_2_inst_6,
-              d_3_inst_6 = d_3_inst_6,
-              d_4_inst_6 = d_4_inst_6,
-              d_5_inst_6 = d_5_inst_6,
-              d_5_inst_3 = d_5_inst_3,
-              d_4_inst_3 = d_4_inst_3,
               outcome_6 = chicken_profit_6,
+              decision_1 = decision_1,
+              decision_2 = decision_2,
+              decision_3 = decision_3,
+              decision_4 = decision_4,
+              decision_5 = decision_5,
+              d_5_inst_3 = d_5_inst_3,
               certifikates_1_4 = certifikates_1_4_final,
               certifikates_2_5 = certifikates_2_5_final,
               certifikates_3 = certifikates_3_final,
@@ -662,7 +785,8 @@ model_function <- function() {
               vec_outcome_2 = big_nut_chicken_profit_vec_2,
               vec_outcome_3 = truffle_chicken_profit_vec_3,
               vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
-              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5))
+              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5,
+              vec_outcome_baseline = baseline_vec))
   
 }
 
