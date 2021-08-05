@@ -25,17 +25,16 @@ plot_distributions(
   )# +
 #theme(legend.position = "bottom")
 
-# Decisions 1
+# Plot Decision 1-5 against baseline
 plot_distributions(
   mcSimulation_object = simulation,
-  vars = c("d_2_inst_1", "d_5_inst_2", "d_5_inst_4"),
+  vars = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Differences between the sceanrios",
+  labs(title = "Differences between the sceanrios and the baseline",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Intervention 2 instead of 1", "Intervention 5 instead of 2",
-               "Intervention 5 instead of 4"),
+    labels = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:"
   ) +
