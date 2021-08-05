@@ -10,6 +10,8 @@ discount_rate = 3
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 
 # make variables ----
+# Use only for test runs
+
 make_variables <- function(est,n=1)
 { x<-random(rho=est, n=n)
 for(i in colnames(x)) assign(i,
@@ -587,7 +589,7 @@ model_function <- function() {
   
   big_nut_chicken_truffle_profit_5 <- Reduce("+", big_nut_chicken_truffle_profit_vec_5)
   
-  # Version 6 Chicken only
+  # Version 6 Chicken only for better visualization
   
   chicken_profit_vec <- chicken_income - general_investments_vec
   
@@ -673,6 +675,7 @@ simulation <- mcSimulation(
   numberOfModelRuns = 10000,
   functionSyntax = "plainNames"
 )
+<<<<<<< HEAD
 
 
 # Plot distributions ----
@@ -898,3 +901,5 @@ plot_evpi(evpi_5, decision_vars = "d_1_inst_3")
 plot_evpi(evpi_6, decision_vars = "d_4_inst_3")
 plot_evpi(evpi_7, decision_vars = "d_2_inst_3")
 plot_evpi(evpi_8, decision_vars = "d_5_inst_3")
+=======
+>>>>>>> 47871feb3a26402850bcedfb513051a7848106ad
