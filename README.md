@@ -1,4 +1,5 @@
 # Nuts and chicken
+<<<<<<< HEAD
 by [Lukas Gürtler](https://github.com/LukasGuertler) & [Frederik Kuhl](https://github.com/FreKuhl)
 
 This Decision analysis model for combining a nuttree meadow with chicken, was started in the ['Decision Analysis and Forecasting for Agricultural Development'](https://cory-whitney.shinyapps.io/Decision_Analysis_Course/) course by [Cory Whitney](https://cory-whitney.com/) & [Eike Lüdeling](https://eikeluedeling.com/index.html) at the University of Bonn in the Corona Summer of 2021. 
@@ -25,3 +26,15 @@ The scenarios contain different numbers of trees combined with chicken. For thre
 # Using the code
 To get a better overview of our code check the __The_R_Markdown.html__ file in the project. It gives detailed overview about what we did and how our different scenarios were calculated. Values are taken from the __input_estimates.xlsx__. The values are no exact numbers but distributions with lower and upper bounds which the Monte Carlo Simulation uses to pick random values for each run. These values are then used for calculation and the results are displayed in distribution plots which can be easily compared to each other. 
 To run the model open the __model_final.R__ file and load the libraries on the top. To visualize the results run the different functions in the __visualization_analysis.R__ file.
+=======
+Decision analysis model for combining a nuttree meadow with chicken.
+
+This is a model that was started in the 'Decision Analysis and Forecasting for Agricultural Development' course at the University of Bonn in the Corona Summer of 2021.
+
+# The Idea
+
+The idea behind our model, was to create an Agroforestry intervention for a small farmland plot in the Eifel region. The plot that is used for regular crops right now, is going to be used to sequestrate CO2. As the land use plan doesn't allow planting a regular forest we looked for different solutions to combine trees with different animals. The best solution for the owners [Woodify](woodify.de) was planting trees and keep chicken in a chicken mobile house. So we came up with five different scenarios that have different levels of intensity.
+
+# Conceptual Model
+![](Conceptual_model.png)
+>>>>>>> 38f8808568345dc0190ba9465e58bb0497af5216
