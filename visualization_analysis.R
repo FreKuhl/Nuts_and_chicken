@@ -5,7 +5,6 @@ library(tidyverse)
 library(ggpubr)
 library("readxl")
 
-
 # Plot distributions ----
 
 plot_distributions(
@@ -98,6 +97,8 @@ plot_cashflow(
 ) +
   labs(title = "Cashflow",
        subtitle = "Values for the first 10 years - 10000 model runs")
+
+
 
 # 1: nuts+hay+chicken (70 trees)
 # 2: nuts+chicken (200 trees)

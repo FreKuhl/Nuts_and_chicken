@@ -49,5 +49,10 @@ model_function <- function() {}
 ```
 
 We used the `vv()` (value varier function) function from `decisionSupport` [@luedelingDecisionSupportQuantitativeSupport2019] to account for the monthly variation in infection risks.
-Here it is used to generate values out of variables pre-defined upper and lower bounds over time. 
+Here it is used to generate values out of variables pre-defined upper and lower bounds over time.
+
+# Results
+
+
+
 # References

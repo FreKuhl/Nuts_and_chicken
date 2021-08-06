@@ -24,7 +24,7 @@ make_variables(as.estimate(input_estimates))
 
 # Model Function ----
 
-# 5 Szenarios: 
+# 5 Scenarios: 
 # 1: nuts+hay+chicken (70 trees)
 # 2: nuts+chicken (200 trees)
 # 3: Truffle Trees + chicken (200 trees)
