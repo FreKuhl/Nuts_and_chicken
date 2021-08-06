@@ -12,17 +12,20 @@ plot_distributions(
   vars = c("baseline","outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Distribution of income for five different interventions",
+  labs(title = "Distribution of income for five different interventions and Baseline",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Baseline", "nuts+hay+chicken (70)", "nuts+chicken (200)",
+    labels = c("Baseline: Crop Land", "nuts+hay+chicken (70)", "nuts+chicken (200)",
                "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)",
                "nuts+chicken+truffle (200)"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:
     (# of Trees)"
   ) +
-  coord_cartesian(ylim = c(0, 0.000015))
+  coord_cartesian(ylim = c(0, 0.000015)) +
+  xlab("Outcome distribution in €") +
+  ylab("Probability density")
+
 
 # Plot Decision 1-5 against baseline
 plot_distributions(
