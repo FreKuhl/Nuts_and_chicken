@@ -7,6 +7,7 @@ library("readxl")
 
 # Plot distributions ----
 
+# Plot income of 5 scenarios + baseline
 plot_distributions(
   mcSimulation_object = simulation,
   vars = c("baseline","outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
@@ -33,14 +34,17 @@ plot_distributions(
   vars = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Differences between the scenarios and the baseline",
+  labs(title = "Worth of decision of switching from baseline to scenarios",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
     labels = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:"
   ) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  coord_cartesian(ylim = c(0, 0.000015)) +
+  xlab("Outcome distribution in €") +
+  ylab("Probability density")
 
 # Decisions 2
 plot_distributions(

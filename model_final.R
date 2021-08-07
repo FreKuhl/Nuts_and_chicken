@@ -617,11 +617,19 @@ model_function <- function() {
   
   # CO² Certificates ----
   
+  # Eggs
+  
+  co2_emmiter_eggs <- eggs * co2_per_egg
+  
+  co2_emmiter_eggs <- co2_emmiter_eggs / kg_per_certificate
+  
   # Version 1 and 4
   
   co2_per_year_1_4 <- 70 * kg_per_bush
   
   certifikates_1_4 <- co2_per_year_1_4 / kg_per_certificate
+  
+  certifikates_1_4 <- certifikates_1_4 - co2_emmiter_eggs
   
   certifikates_1_4_vec <- rep(c(certifikates_1_4), times = years)
   
@@ -635,6 +643,8 @@ model_function <- function() {
   
   certifikates_2_5 <- co2_per_year_2_5 / kg_per_certificate
   
+  certifikates_2_5 <- certifikates_2_5 - co2_emmiter_eggs
+  
   certifikates_2_5_vec <- rep(c(certifikates_2_5), times = years)
   
   income_certifikates_2_5_vec <- certifikates_1_4_vec * co2_price_per_ton
@@ -646,6 +656,8 @@ model_function <- function() {
   co2_per_year_3 <- 200 * kg_per_tree
   
   certifikates_3 <- co2_per_year_3 / kg_per_certificate
+  
+  certifikates_3 <- certifikates_3 - co2_emmiter_eggs
   
   certifikates_3_vec <- rep(c(certifikates_3), times = years)
   
@@ -787,7 +799,8 @@ model_function <- function() {
               vec_outcome_3 = truffle_chicken_profit_vec_3,
               vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
               vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5,
-              vec_outcome_baseline = baseline_vec))
+              vec_outcome_baseline = baseline_vec,
+              co2_egg = co2_emmiter_eggs))
   
 }
 

@@ -53,6 +53,20 @@ Here it is used to generate values out of variables pre-defined upper and lower 
 
 # Results
 
+## Explaining Results/Values
 
+Running the model produces a different outputs who are defined in the return list of the `model_function`. In this case it includes the accumulated income values for each scenario for the whole time-period, a vector with annual distribution of income for each scenario as well as different calculated decisions. Additionally the amount of sequestered CO2 is considered as an output.
+The raw model-results of each scenario, including the baseline, is shown in the Graph 1. 
+On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density how likely one certain amount of revenue is likely. If the Curve for a scenario is wide, it means that the the degree of uncertainty is high, the possible revenue range is large. The smaller the curve is, the scenario is more defined and it is of a higher certainty that the displayed revenue is reached.
+The baseline has the smallest curve, which means that this base-scenario is, compared to the other scenarios, well defined. This is because normal crop land is a well known and researched system with comparable few components who affect the income. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. This is also visible in Graph 1, the systems including nuts, chicken and truffle have the widest distribution curve. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue.
+Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedelingDecisionSupportQuantitativeSupport2019] Package also allows provides additional in depth analysis tools. They were also used for the evaluation of the results in this chapter.
+
+## In depth analysis
+
+Graph 1 shows that most likely every scenario will produse a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss. The current status of the area of interest is conventional crop land, this is the baseline. In order to determine wether or not one of the five agroforestry scenarios will be more profitable compared to the baseline, the baseline is in Graph 2 substracted from each of the five scenarios. Graph 2 is therefor no longer just presenting the distribution of income but its presenting how much the decision of switching from the baseline to one of the scenarios is worth. 
+
+## Conclusions
+
+### Improvements
 
 # References
