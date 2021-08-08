@@ -8,6 +8,7 @@ library("readxl")
 input_estimates <- read_excel("input_estimates.xlsx")
 discount_rate = 3
 years <- 30 # IMPORTANT! Select ONLY steps of 10
+number_of_chicken = 200 # Select 50 or 200
 
 # make variables ----
 # Use only for test runs
@@ -553,37 +554,59 @@ model_function <- function() {
   # Chicken ----
   # For Version 1, 2, 3, 4 and 5
   
-  initial_chicken_costs_final <-
-    (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost
+  if (number_of_chicken == 50){
+    
+    initial_chicken_costs_final_2 <-
+      (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost_2
+    
+    maintaining_chicken_mobile_vec <- vv(var_mean = maintaining_chicken_mobile_2,
+                                           var_CV = 15,
+                                           n = years)
+    
+    maintaining_chicken_mobile_vec[1] <-
+      maintaining_chicken_mobile_vec[1] + initial_chicken_costs_final_2
+    
+    working_hours_chicken <- vv(var_mean = working_hours_chicken_2,
+                                var_CV = 10,
+                                n = years)
+    
+  } else if (number_of_chicken == 200) {
+    
+    initial_chicken_costs_final_1 <-
+      (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost_1
+    
+    maintaining_chicken_mobile_vec <- vv(var_mean = maintaining_chicken_mobile_1,
+                                           var_CV = 15,
+                                           n = years)
+    
+    maintaining_chicken_mobile_vec[1] <-
+      maintaining_chicken_mobile_vec[1] + initial_chicken_costs_final_1
+    
+    working_hours_chicken <- vv(var_mean = working_hours_chicken_1,
+                                var_CV = 10,
+                                n = years)
+    
+  } else {
+    print("Number of chicken wrong")
+  }
   
-  maintaining_chicken_mobile_vec <- vv(var_mean = maintaining_chicken_mobile,
-                                       var_CV = 15,
-                                       n = years)
   
-  maintaining_chicken_mobile_vec[1] <-
-    maintaining_chicken_mobile_vec[1] + initial_chicken_costs_final
-  
-  chicken_feed <- vv(var_mean = chicken_feed,
+  chicken_feed_vec <- vv(var_mean = feed_per_hen,
                      var_CV = 5,
                      n = years)
   
-  feed_cost <- vv(var_mean = feed_cost,
+  feed_cost_vec <- vv(var_mean = feed_cost,
                   var_CV = 10,
                   n = years)
   
-  feed_cost_final <- chicken_feed * feed_cost
-  
-  working_hours_chicken <- vv(var_mean = working_hours_chicken,
-                              var_CV = 10,
-                              n = years)
+  feed_cost_final_vec <- number_of_chicken * (chicken_feed_vec * feed_cost_vec)
   
   working_costs_chicken_final <-
     working_hours_chicken * working_hours_costs
   
   chicken_replacement <- vv(var_mean = number_of_chicken,
-                            var_CV = 10,
-                            n = years,
-                            lower_limit = 225)
+                            var_CV = 2,
+                            n = years)
   
   # setting every second year to zero starting with the first 
   chicken_replacement[] <- chicken_replacement * c(FALSE, TRUE)
@@ -594,9 +617,11 @@ model_function <- function() {
   # Income
   
   # Number of eggs per Year
-  eggs_per_year <- vv(var_mean = eggs,
-                      var_CV = 7,
+  eggs_per_year <- vv(var_mean = egg_per_hen,
+                      var_CV = 2,
                       n = years)
+  
+  eggs_per_year <- eggs_per_year * number_of_chicken
   
   #
   eggs_price <- vv(
@@ -610,7 +635,7 @@ model_function <- function() {
   
   chicken_income <-
     eggs_income - (
-      maintaining_chicken_mobile_vec + feed_cost_final +
+      maintaining_chicken_mobile_vec + feed_cost_final_vec +
         working_costs_chicken_final + chicken_replacement_cost_final
     )
   
@@ -619,7 +644,7 @@ model_function <- function() {
   
   # Eggs
   
-  co2_emmiter_eggs <- eggs * co2_per_egg
+  co2_emmiter_eggs <- (number_of_chicken * egg_per_hen) * co2_per_egg
   
   co2_emmiter_eggs <- co2_emmiter_eggs / kg_per_certificate
   
@@ -670,8 +695,7 @@ model_function <- function() {
   
   # Version 1
   small_nut_chicken_profit_vec_1 <-
-    nut_profit_vec_1 + chicken_income - general_investments_vec + 
-    income_certifikates_1_4_vec + subsidies_vec
+    nut_profit_vec_1 + chicken_income - general_investments_vec + subsidies_vec
   
   small_nut_chicken_profit_vec_1 <- 
     discount(small_nut_chicken_profit_vec_1, discount_rate)
@@ -681,8 +705,7 @@ model_function <- function() {
   
   #Version 2
   big_nut_chicken_profit_vec_2 <-
-    nut_profit_vec_2 + chicken_income - general_investments_vec + 
-    income_certifikates_2_5_vec + subsidies_vec
+    nut_profit_vec_2 + chicken_income - general_investments_vec + subsidies_vec
   
   big_nut_chicken_profit_vec_2 <- 
     discount(big_nut_chicken_profit_vec_2, discount_rate)
@@ -692,7 +715,7 @@ model_function <- function() {
   # Version 3
   truffle_chicken_profit_vec_3 <-
     truffle_final_vec_3 - truffle_tree_costs + chicken_income - 
-    general_investments_vec + income_certifikates_3_vec + subsidies_vec
+    general_investments_vec + subsidies_vec
   
   truffle_chicken_profit_vec_3 <-
     discount(truffle_chicken_profit_vec_3, discount_rate)
@@ -702,7 +725,7 @@ model_function <- function() {
   # Version 4
   small_nut_chicken_truffle_profit_vec_4 <-
     nut_profit_vec_1 + chicken_income + (truffle_final_vec_4_5/2.8) - 
-    general_investments_vec + income_certifikates_1_4_vec + subsidies_vec
+    general_investments_vec + subsidies_vec
   
   small_nut_chicken_truffle_profit_vec_4 <- 
     discount(small_nut_chicken_truffle_profit_vec_4, discount_rate)
@@ -713,7 +736,7 @@ model_function <- function() {
   # Version 5
   big_nut_chicken_truffle_profit_vec_5 <-
     nut_profit_vec_2 + chicken_income + truffle_final_vec_4_5 - 
-    general_investments_vec + income_certifikates_2_5_vec + subsidies_vec
+    general_investments_vec + subsidies_vec
   
   big_nut_chicken_truffle_profit_vec_5 <- 
     discount(big_nut_chicken_truffle_profit_vec_5, discount_rate)
