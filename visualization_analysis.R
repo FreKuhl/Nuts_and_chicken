@@ -5,25 +5,32 @@ library(tidyverse)
 library(ggpubr)
 library("readxl")
 
-
 # Plot distributions ----
 
+# Plot income of 5 scenarios + baseline
 plot_distributions(
   mcSimulation_object = simulation,
   vars = c("baseline","outcome_1", "outcome_2", "outcome_3", "outcome_4", "outcome_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Distribution of income for five different interventions",
+  labs(title = "Distribution of income for five different interventions and Baseline",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
-    labels = c("Baseline", "nuts+hay+chicken (70)", "nuts+chicken (200)",
+    labels = c("Baseline: Crop Land", "nuts+hay+chicken (70)", "nuts+chicken (200)",
                "Truffle Trees + chicken (200)", "nuts+hay+chicken+truffle (70)",
                "nuts+chicken+truffle (200)"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:
     (# of Trees)"
   ) +
+<<<<<<< HEAD
   coord_cartesian(ylim=c(0, 0.000015))
+=======
+  coord_cartesian(ylim = c(0, 0.000015)) +
+  xlab("Outcome distribution in €") +
+  ylab("Probability density")
+
+>>>>>>> 96d5fd74fe201ec4fa4326cde11cc4a379b9f515
 
 # Plot Decision 1-5 against baseline
 plot_distributions(
@@ -31,14 +38,17 @@ plot_distributions(
   vars = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
   method = "smooth_simple_overlay"
 ) +
-  labs(title = "Differences between the scenarios and the baseline",
+  labs(title = "Worth of decision of switching from baseline to scenarios",
        subtitle = "Accumulated values for 30 years - 10000 model runs") +
   scale_fill_manual(
     labels = c("decision_1", "decision_2", "decision_3", "decision_4", "decision_5"),
     values = c("red", "blue", "green", "orange", "purple", "grey"),
     name = "Decision Options:"
   ) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  coord_cartesian(ylim = c(0, 0.000015)) +
+  xlab("Outcome distribution in €") +
+  ylab("Probability density")
 
 # Decisions 2
 plot_distributions(
@@ -98,6 +108,8 @@ plot_cashflow(
 ) +
   labs(title = "Cashflow",
        subtitle = "Values for the first 10 years - 10000 model runs")
+
+
 
 # 1: nuts+hay+chicken (70 trees)
 # 2: nuts+chicken (200 trees)
