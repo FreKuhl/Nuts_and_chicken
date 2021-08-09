@@ -8,7 +8,7 @@ library("readxl")
 input_estimates <- read_excel("input_estimates.xlsx")
 discount_rate = 3
 years <- 30 # IMPORTANT! Select ONLY steps of 10
-number_of_chicken = 200 # Select 50 or 200
+number_of_chicken = 50 # Select 50 or 200
 
 # make variables ----
 # Use only for test runs
