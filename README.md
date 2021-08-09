@@ -1,5 +1,5 @@
 # Nuts and chicken
-[Lukas Gürtler](https://github.com/LukasGuertler) & [Frederik Kuhl](https://github.com/FreKuhl)
+by [Lukas Gürtler](https://github.com/LukasGuertler) & [Frederik Kuhl](https://github.com/FreKuhl)
 
 This Decision analysis model for combining a nuttree meadow with chicken, was started in the ['Decision Analysis and Forecasting for Agricultural Development'](https://cory-whitney.shinyapps.io/Decision_Analysis_Course/) course by [Cory Whitney](https://cory-whitney.com/) & [Eike Lüdeling](https://eikeluedeling.com/index.html) at the University of Bonn in the Corona Summer of 2021. 
 
@@ -23,5 +23,5 @@ We used the package [decisionSupport](https://cran.r-project.org/web/packages/de
 The scenarios contain different numbers of trees combined with chicken. For three scenarios we also added truffle as another way of generating revenue. As setting up a hazelnut plantation is cost and time intensive we also wanted to see if it would also be possible to set up this system without the plantation (Scenario 3), which would allow for better biodiversity through use of different tree varieties.
 
 # Using the code
-To get a better overview of our code check the __The_R_Markdown.html__ file in the project. It gives detailed overview about what we did and how our different scenarios were calculated. Values are taken from the __input_estimates.xlsx__. The values are no exact numbers but distributions with lower and upper bounds which the Monte Carlo Simulation uses to pick random values for each run. These values are then used for calculation and the results are displayed in distribution plots which can be easily compared to each other. 
+To get a better overview of our code check the __The_R_Markdown.html__ file in the project. It gives detailed overview about what we did and how our different scenarios were calculated. Values are taken from the __input_estimates.xlsx__ file. The values are no exact numbers but distributions with lower and upper bounds which the Monte Carlo Simulation uses to pick random values for each run. These values are then used for calculation and the results are displayed in distribution plots which can be easily compared to each other. 
 To run the model open the __model_final.R__ file and load the libraries on the top. To visualize the results run the different functions in the __visualization_analysis.R__ file.
