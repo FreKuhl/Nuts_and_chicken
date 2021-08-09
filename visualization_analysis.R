@@ -23,14 +23,9 @@ plot_distributions(
     name = "Decision Options:
     (# of Trees)"
   ) +
-<<<<<<< HEAD
-  coord_cartesian(ylim=c(0, 0.000015))
-=======
   coord_cartesian(ylim = c(0, 0.000015)) +
   xlab("Outcome distribution in €") +
   ylab("Probability density")
-
->>>>>>> 96d5fd74fe201ec4fa4326cde11cc4a379b9f515
 
 # Plot Decision 1-5 against baseline
 plot_distributions(
@@ -80,7 +75,7 @@ plot_distributions(
   ) +
   theme(legend.position = "bottom")
 
-# Plot CO² Certificates
+# Plot CO² Certificates ----
 plot_distributions(
   mcSimulation_object = simulation,
   vars = c("certifikates_1_4", "certifikates_2_5", "certifikates_3"),
@@ -94,20 +89,31 @@ plot_distributions(
   ) +
   theme(legend.position = "bottom")
 
-# Plot the cashflow distribution over time
-# This seems weird...
+# Plot the cashflow distribution over time ----
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = "vec_outcome_baseline",
+  cashflow_var_name = c("vec_outcome_baseline",
+                        "vec_outcome_1",
+                        "vec_outcome_2",
+                        "vec_outcome_3",
+                        "vec_outcome_4",
+                        "vec_outcome_5"),
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
-  facet_labels = "baseline_vec"
+  facet_labels = c(
+    "vec_outcome_baseline",
+    "vec_outcome_1",
+    "vec_outcome_2",
+    "vec_outcome_3",
+    "vec_outcome_4",
+    "vec_outcome_5"
+  ),
 ) +
   labs(title = "Cashflow",
-       subtitle = "Values for the first 10 years - 10000 model runs")
+       subtitle = "Values for the first 30 years - 10000 model runs")
 
 
 
