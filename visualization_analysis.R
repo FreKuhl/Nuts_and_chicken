@@ -4,6 +4,7 @@ library(decisionSupport)
 library(tidyverse)
 library(ggpubr)
 library("readxl")
+library(bayesplot)
 
 # Plot distributions ----
 
@@ -131,6 +132,20 @@ plot_cashflow(
 ) +
   labs(title = "Cashflow",
        subtitle = "Values for the first 30 years - 10000 model runs")
+
+# Other plotting options ----
+
+test <- data.frame("Scenario 1" = simulation$y$outcome_1,
+                   "Scenario 2" = simulation$y$outcome_2,
+                   "Scenario 3" = simulation$y$outcome_3,
+                   "Scenario 4" = simulation$y$outcome_4,
+                   "Scenario 5" = simulation$y$outcome_5)
+
+
+mcmc_areas(test,prob = 0.9,point_est = "median") +
+  xlab("Outcome Distribution in €")
+
+mcmc_intervals(test,prob = 0.5,prob_outer = 0.9,point_est = "median")
 
 
 
