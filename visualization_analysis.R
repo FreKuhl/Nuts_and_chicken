@@ -92,24 +92,26 @@ plot_distributions(
 # Plot the cashflow distribution over time ----
 plot_cashflow(
   mcSimulation_object = simulation,
-  cashflow_var_name = c("vec_outcome_baseline",
-                        "vec_outcome_1",
-                        "vec_outcome_2",
-                        "vec_outcome_3",
-                        "vec_outcome_4",
-                        "vec_outcome_5"),
+  cashflow_var_name = c(
+    "vec_outcome_1",
+    "vec_outcome_2",
+    "vec_outcome_3",
+    "vec_outcome_4",
+    "vec_outcome_5",
+    "vec_outcome_baseline"
+  ),
   x_axis_name = "Years with intervention",
   y_axis_name = "Annual cashflow in €",
   color_25_75 = "green4",
   color_5_95 = "green1",
   color_median = "red",
   facet_labels = c(
-    "vec_outcome_baseline",
     "vec_outcome_1",
     "vec_outcome_2",
     "vec_outcome_3",
     "vec_outcome_4",
-    "vec_outcome_5"
+    "vec_outcome_5",
+    "vec_outcome_baseline"
   ),
 ) +
   labs(title = "Cashflow",
