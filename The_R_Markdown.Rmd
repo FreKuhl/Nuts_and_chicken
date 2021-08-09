@@ -461,7 +461,7 @@ Based on the Curves for every scenario, different decisions can be modeled and c
 Graph 1 shows that most likely every scenario will produce a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss. The current status of the area of interest is conventional crop land, this is the baseline. 
 
 ### Decisions
-In order to determine wether or not one of the five agroforestry scenarios will be more profitable compared to the baseline, the baseline is in Graph 2 substracted from each of the five scenarios. Graph 2 is therefor no longer just presenting the distribution of income but its presenting how much the decision of switching from the baseline to one of the scenarios is worth. Because the accumulated income of the 
+In order to determine whether or not one of the five agroforestry scenarios will be more profitable compared to the baseline, the baseline is in Graph 2 subtracted from each of the five scenarios. Graph 2 is therefor no longer just presenting the distribution of income but its presenting how much the decision of switching from the baseline to one of the scenarios is worth. Because the accumulated income of the 
 
 ## Conclusions
 
