@@ -7,7 +7,7 @@ This Decision analysis model for combining a nuttree meadow with chicken, was st
 The idea behind our model, was to create an Agroforestry intervention for a small farmland plot in the Eifel region. The plot that is used for regular crops right now, is going to be used to sequestrate CO2. As the land use plan doesn't allow planting a regular forest we looked for different solutions to combine trees with different animals. The best solution for the owners [Woodify](woodify.de) was planting trees and keeping chicken in a chicken mobile house. So we came up with five different scenarios that have different levels of intensity. The way we calculated the different outcomes can be seen in our conceptual model below.
 
 # Conceptual Model
-![](Conceptual_model.png)
+![](Bilder_präsi/Conceptual_model.png)
 
 # Methods
 We used the package [decisionSupport](https://cran.r-project.org/web/packages/decisionSupport/index.html) by Eike Luedeling to implement our model in R. It helps to model decisions that are mainly agriculture related but can also be used for other complex systems, that would be hard to study in real life.
