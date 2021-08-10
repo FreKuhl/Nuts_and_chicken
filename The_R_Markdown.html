@@ -192,8 +192,8 @@ pre code {
 </div>
 
 
-<p>This supplementary is available under <a href="https://github.com/FreKuhl/Nuts_and_chicken.git" class="uri">https://github.com/FreKuhl/Nuts_and_chicken.git</a> and outlines the Decision Analysis approaches used in Model-based evaluation of management options in ornamental plant nurseries <span class="citation">(Ruett, Whitney, and Luedeling 2020)</span>. Here we provide our input table, code and results to allow for transparent reproduction of the model.</p>
-<p>All other applied <code>R</code> packages are cited and listed in the <a href="#references">References</a>.</p>
+<p><font size="4"> This supplementary is available under <a href="https://github.com/FreKuhl/Nuts_and_chicken.git" class="uri">https://github.com/FreKuhl/Nuts_and_chicken.git</a> and outlines the Decision Analysis approaches used in Model-based evaluation of management options in ornamental plant nurseries <span class="citation">(Ruett, Whitney, and Luedeling 2020)</span>. Here we provide our input table, code and results to allow for transparent reproduction of the model.</p>
+<p>All other applied <code>R</code> packages are cited and listed in the [References].</p>
 <div id="input-table" class="section level2">
 <h2>Input table</h2>
 <p>The input table <code>Input_estimates.xlsx</code> (attached) contains: Variable names, unit, distributions (posnorm = positive normal distribution, const = constant, tnorm_0_1= truncated normal distribution, norm = normal distribution), lower bound, mean, upper bound and definition of variables.</p>
@@ -209,9 +209,8 @@ make_variables &lt;- function(est,n=1)
 for(i in colnames(x)) assign(i, as.numeric(x[1,i]),envir = .GlobalEnv)}
 
 make_variables(as.estimate(input_estimates))</code></pre>
-<p>We generated a function called <code>model_function</code> to evaluate the decision options in <code>decisionSupport</code> <span class="citation">(<strong>luedelingDecisionSupportQuantitativeSupport2019?</strong>)</span>. The following calculations are part of this function (see the entire function below).</p>
+<p>We generated a function called <code>model_function</code> to evaluate the decision options in <code>decisionSupport</code> <span class="citation">(Luedeling et al. 2021)</span>. The following calculations are part of this function (see the entire function below).</p>
 <pre class="r"><code>model_function &lt;- function() {}</code></pre>
-<p>We used the <code>vv()</code> (value varier function) function from <code>decisionSupport</code> <span class="citation">(<strong>luedelingDecisionSupportQuantitativeSupport2019?</strong>)</span> to account for the monthly variation in infection risks. Here it is used to generate values out of variables pre-defined upper and lower bounds over time.</p>
 </div>
 <div id="the-scenarios" class="section level2">
 <h2>The scenarios</h2>
@@ -243,7 +242,7 @@ make_variables(as.estimate(input_estimates))</code></pre>
     grass_planting_cost + initial_fences_cost</code></pre>
 <div id="the-baseline-scenario" class="section level3">
 <h3>The baseline scenario</h3>
-<p>The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are Winterberley, rye, wheat and sommerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run.</p>
+<p>The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and sommerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run.</p>
 <pre class="r"><code> winterbarley_yield_vec &lt;- vv(var_mean = winterbarley_yield,
                                var_CV = 10,
                                n = years)
@@ -263,7 +262,7 @@ make_variables(as.estimate(input_estimates))</code></pre>
 <div id="scenario-1" class="section level3">
 <h3>Scenario 1</h3>
 <p>Scenario 1 consists of a hazelnut plantation with 70 trees spaced in rows of 10 meters. The plantation is irrigated with a drip system and additionally hay is produced between the rows of trees. In addition to the plantation, 200 chickens are kept with a chicken mobile.</p>
-<p>For each branch of the income we calculated the yields and the cost. The Code below shows this for the Nuts yield of scenario 1 and 4.</p>
+<p>For each branch of the income we calculated the yields and the cost. The Code below shows this for the Nuts yield of scenario 1 and 4. Using the <code>gompertz_yield</code> function the nuts yield starts after 6 years and the first full yield can be expected after 10 years. Also the possibility of frost damage is applied by multypling the vectors.</p>
 <pre class="r"><code> # Yield Nuts ----
   # For Versions 1 and 4
 
@@ -278,9 +277,9 @@ nuts_1 &lt;- gompertz_yield(
   
   nuts_yield_vec_1 &lt;- nuts_1 * nuts_frost
   
-  harvest_count_1 &lt;- ifelse(nuts_yield_vec_1 &lt; 20, 0, 1)
-  
-  amount_bales &lt;- vv(var_mean = amount_bales_1,
+  harvest_count_1 &lt;- ifelse(nuts_yield_vec_1 &lt; 20, 0, 1)</code></pre>
+<p>The hay production is implemented with varying amounts.</p>
+<pre class="r"><code>  amount_bales &lt;- vv(var_mean = amount_bales_1,
                      var_CV = 10,
                      n = years)
   
@@ -288,13 +287,12 @@ nuts_1 &lt;- gompertz_yield(
                         var_CV = 10,
                         n = years)
   
-  income_hay &lt;- amount_bales * income_per_bale
-  
-  ###
-  nut_income_vec_1_4 &lt;- (nuts_yield_vec_1 * nut_price) + income_hay
-  
-  
-  # Nuts Costs ----
+  income_hay &lt;- amount_bales * income_per_bale</code></pre>
+<p>The final income vector for nut production with the added income by hay for scenario 1 &amp; 4.</p>
+<pre class="r"><code>  ###
+  nut_income_vec_1_4 &lt;- (nuts_yield_vec_1 * nut_price) + income_hay</code></pre>
+<p>Then we calculated the costs for the nut plantation.</p>
+<pre class="r"><code>  # Nuts Costs ----
   # For Versions 1 and 4
   
   maintaining_tree_h_vec_1 &lt;- vv(var_mean = maintaining_trees_h_1,
@@ -333,11 +331,11 @@ nuts_1 &lt;- gompertz_yield(
   
   harvest_nets_1 &lt;- vv(var_mean = harvest_nets_1,
                        var_CV = 1,
-                       n = years)
-  
-  harvest_nets_1[] &lt;- harvest_nets_1 *
+                       n = years)</code></pre>
+<p>The costs are then stored in vectors.</p>
+<pre class="r"><code>  harvest_nets_1[] &lt;- harvest_nets_1 *
     c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-  
+ 
   nut_other_costs_vec_1 &lt;- nut_other_costs_vec_1 + harvest_nets_1
   
   nut_other_costs_vec_1[1] &lt;- nut_other_costs_vec_1[1] + tree_planting_costs_1
@@ -349,9 +347,9 @@ nuts_1 &lt;- gompertz_yield(
   
   hay_costs &lt;- vv(var_mean = hay_costs_1,
                   var_CV = 5,
-                  n = years)
-  
-  replace_trees_1 &lt;- chance_event(chance = 0.1,
+                  n = years)</code></pre>
+<p>The <code>chance_event</code> of having to replace trees because of damage is added.</p>
+<pre class="r"><code>  replace_trees_1 &lt;- chance_event(chance = 0.1,
                                   value_if = 3,
                                   value_if_not = 0,
                                   n = years,
@@ -364,7 +362,7 @@ nuts_1 &lt;- gompertz_yield(
 <div id="scenario-2" class="section level3">
 <h3>Scenario 2</h3>
 <p>Scenario 2 consists of a hazelnut plantation with 200 trees, which stand at a distance of 5 meters, this is irrigated by a drip system and also here 200 chickens are kept with a chicken mobile.</p>
-<p>As all the plantations in our model are irrigated the code below shows the calculation for irrigation in scenario 2 and 5.</p>
+<p>As all the plantations in our model are irrigated the code below shows the calculation for irrigation in scenario 2 and 5. We assumed that the number of days in which irrigation is required does not exceed two months. In each run, numbers between 10 and 55 are randomly selected.</p>
 <pre class="r"><code> # Irrigation ----
   
   days_irrigation &lt;- vv(var_mean = days_to_irrigate,
@@ -375,9 +373,8 @@ nuts_1 &lt;- gompertz_yield(
   
   days_irrigation[days_irrigation &gt; 55] &lt;- 55
   
-  irrigation_h_vec &lt;- days_irrigation * work_per_irrigation
-  
-  # For Versions 2 and 5
+  irrigation_h_vec &lt;- days_irrigation * work_per_irrigation</code></pre>
+<pre class="r"><code>  # For Versions 2 and 5
   
   irrigation_installation_2 &lt;- water_trailer + installation_irrigation_2
   
@@ -407,7 +404,7 @@ nuts_1 &lt;- gompertz_yield(
 </div>
 <div id="scenario-3" class="section level3">
 <h3>Scenario 3</h3>
-<p>Scenario 3 consists of 200 trees of different species, which are additionally infected with truffles and are not to be harvested. Also here 200 chickens are kept with a chicken mobile. As there is no nut harvest in this scenario we used a different way of calculating the cost for maintenance .</p>
+<p>Scenario 3 consists of 200 trees of different species, which are additionally infected with truffles and are not to be harvested. Also here 200 chickens are kept with a chicken mobile. As there is no nut harvest in this scenario we used a different way of calculating the cost for maintenance.</p>
 <pre class="r"><code># Version 3
   
   maintaining_tree_h_vec_3 &lt;- vv(var_mean = maintaining_trees_h_3,
@@ -427,7 +424,7 @@ nuts_1 &lt;- gompertz_yield(
                              n = years)
   
   tree_other_costs_vec[1] &lt;- tree_other_costs_vec[1] + tree_planting_costs_3</code></pre>
-<p>In this scenario the irrigation is done by a trailer that needs to be refilled and manually driven over the meadow.</p>
+<p>In this scenario the irrigation is done by a trailer that needs to be refilled and is manually driven over the meadow.</p>
 <pre class="r"><code># Truffle irrigation for 3
   
   days_irrigation_truffle &lt;- vv(var_mean = truffle_days_to_irrigate,
@@ -463,20 +460,17 @@ nuts_1 &lt;- gompertz_yield(
     irrigation_costs_truffle + maintaining_irrigation_truffle + water_costs_truffle
   
   irrigation_costs_truffle[1] &lt;- 
-    irrigation_costs_truffle[1] + irrigation_installation_2
-  
-  ###
+    irrigation_costs_truffle[1] + irrigation_installation_2</code></pre>
+<p>The final truffle vector is added.</p>
+<pre class="r"><code>  ###
   truffle_final_vec_3 &lt;- 
     truffle_income - truffle_harvest_costs - irrigation_costs_truffle
   ###</code></pre>
 </div>
 <div id="scenario-4" class="section level3">
 <h3>Scenario 4</h3>
-<p>Scenario 4 is exactly the same as scenario 1, but the trees are additionally infected with truffles. The code below shows the way truffle yield and income are calculated in scenario 3,4 and 5.</p>
-<pre class="r"><code># Truffle ----
-  # For Version 3, 4 and 5
-  
-  truffle &lt;- gompertz_yield(
+<p>Scenario 4 is exactly the same as scenario 1, but the trees are additionally infected with truffles. The code below shows the way truffle yield and income are calculated in scenario 3, 4 and 5.</p>
+<pre class="r"><code>  truffle &lt;- gompertz_yield(
     max_harvest = truffle_yield,
     time_to_first_yield_estimate = 5,
     first_yield_estimate_percent = 10,
@@ -496,16 +490,16 @@ nuts_1 &lt;- gompertz_yield(
                               var_CV = 5,
                               n = years)
   
-  truffle_harvest_costs[1:5] &lt;- 0
-  
-  ###
+  truffle_harvest_costs[1:5] &lt;- 0</code></pre>
+<p>The final vector for scenario 4 &amp; 5 is created it will later be reduced for scenario 4 account for the smaller number of trees.</p>
+<pre class="r"><code>  ###
   truffle_final_vec_4_5 &lt;- truffle_income - truffle_harvest_costs
   ###</code></pre>
 </div>
 <div id="scenario-5" class="section level3">
 <h3>Scenario 5</h3>
 <p>Scenario 5 is exactly the same as scenario 2, but the trees are additionally infected with truffles.</p>
-<p>The income generated by chicken eggs is the same in all the scenarios.</p>
+<p>The income generated by chicken eggs is the same in all the scenarios. We added two different versions, one with 50 and one with 200 chicken because the egg production also adds a lot of CO2 and we wanted to see the impact depending on the amount of chicken.</p>
 <pre class="r"><code># Chicken ----
   # For Version 1, 2, 3, 4 and 5
   
@@ -523,9 +517,9 @@ nuts_1 &lt;- gompertz_yield(
     
     working_hours_chicken &lt;- vv(var_mean = working_hours_chicken_2,
                                 var_CV = 10,
-                                n = years)
-    
-  } else if (number_of_chicken == 200) {
+                                n = years)</code></pre>
+<p>The structure for both versions is the same just the numbers vary.</p>
+<pre class="r"><code>  } else if (number_of_chicken == 200) {
     
     initial_chicken_costs_final_1 &lt;-
       (number_of_chicken * chicken_replacement_cost) + initial_chicken_mobile_cost_1
@@ -539,14 +533,13 @@ nuts_1 &lt;- gompertz_yield(
     
     working_hours_chicken &lt;- vv(var_mean = working_hours_chicken_1,
                                 var_CV = 10,
-                                n = years)
-    
-  } else {
+                                n = years)</code></pre>
+<p>If the <code>numer_of_chicken</code> is not 50 or 200 a error message is given.</p>
+<pre class="r"><code>  } else {
     print(&quot;Number of chicken wrong&quot;)
-  }
-  
-  
-  chicken_feed_vec &lt;- vv(var_mean = feed_per_hen,
+  }</code></pre>
+<p>The cost for feed and the working cost vector are added.</p>
+<pre class="r"><code>  chicken_feed_vec &lt;- vv(var_mean = feed_per_hen,
                      var_CV = 5,
                      n = years)
   
@@ -555,11 +548,11 @@ nuts_1 &lt;- gompertz_yield(
                   n = years)
   
   feed_cost_final_vec &lt;- number_of_chicken * (chicken_feed_vec * feed_cost_vec)
-  
+ 
   working_costs_chicken_final &lt;-
-    working_hours_chicken * working_hours_costs
-  
-  chicken_replacement &lt;- vv(var_mean = number_of_chicken,
+    working_hours_chicken * working_hours_costs</code></pre>
+<p>The chicken have ro be replaced after two years and a varying number of irregular replacements are added.</p>
+<pre class="r"><code>  chicken_replacement &lt;- vv(var_mean = number_of_chicken,
                             var_CV = 2,
                             n = years)
   
@@ -567,9 +560,9 @@ nuts_1 &lt;- gompertz_yield(
   chicken_replacement[] &lt;- chicken_replacement * c(FALSE, TRUE)
   
   chicken_replacement_cost_final &lt;-
-    chicken_replacement * chicken_replacement_cost
-  
-  # Income
+    chicken_replacement * chicken_replacement_cost</code></pre>
+<p>The final income vector for the egg production is created by adding up the varying number of eggs and prices.</p>
+<pre class="r"><code>  # Income
   
   # Number of eggs per Year
   eggs_per_year &lt;- vv(var_mean = egg_per_hen,
@@ -595,6 +588,157 @@ nuts_1 &lt;- gompertz_yield(
     )</code></pre>
 </div>
 </div>
+<div id="calculating-co2" class="section level1">
+<h1>Calculating CO2</h1>
+<p>We did not include the income of the certificates to the final model because in every scenario it is also possible that emissions are positive. As CO2 calculation in real life is quite complicated this is just an approximation to get an overview for Woodify as their goal is to sequestrate CO2 on the plot. We added a variable that calculated the amount of Co2 emmited depending on the produced eggs.</p>
+<pre class="r"><code>  # Eggs
+  
+  co2_emmiter_eggs &lt;- (number_of_chicken * egg_per_hen) * co2_per_egg
+  
+  co2_emmiter_eggs &lt;- co2_emmiter_eggs / kg_per_certificate</code></pre>
+<p>Then we created a variable that accounts for the soil organic carbon that will increase in time because the land is no longer used to produce crops.</p>
+<pre class="r"><code> # SOC Soil organic carbon
+  
+  total_soc &lt;- soc * (1 - soil_stones)
+  
+  soc_increase &lt;- total_soc * landuse_increase_soc
+  
+  annual_soc_increase &lt;- soc_increase / years
+  
+  annual_soc_increase &lt;- annual_soc_increase / kg_per_certificate</code></pre>
+<p>The final income that can be generated by selling CO2 certficates for scenario 1 &amp; 4 considering the amount of trees and the soil organic carbon of the years minus the added CO2 by egg production.</p>
+<pre class="r"><code># Version 1 and 4
+  
+  co2_per_year_1_4 &lt;- 70 * kg_per_bush
+  
+  certifikates_1_4 &lt;- co2_per_year_1_4 / kg_per_certificate
+  
+  certifikates_1_4 &lt;- certifikates_1_4 + annual_soc_increase - co2_emmiter_eggs
+  
+  certifikates_1_4_vec &lt;- rep(c(certifikates_1_4), times = years)
+  
+  certifikates_1_4_final &lt;- Reduce(&quot;+&quot;, certifikates_1_4_vec)
+  
+  income_certifikates_1_4_vec &lt;- certifikates_1_4_vec * co2_price_per_ton
+  
+  income_certifikates_1_4_final &lt;- Reduce(&quot;+&quot;, income_certifikates_1_4_vec)</code></pre>
+<p>The final income that can be generated by selling CO2 certficates for scenario 2 &amp; 5 considering the amount of trees and the soil organic carbon of the years minus the added CO2 by egg production.</p>
+<pre class="r"><code> # Version 2 and 5
+  
+  co2_per_year_2_5 &lt;- 200 * kg_per_bush
+  
+  certifikates_2_5 &lt;- co2_per_year_2_5 / kg_per_certificate
+  
+  certifikates_2_5 &lt;- certifikates_2_5 + annual_soc_increase - co2_emmiter_eggs
+  
+  certifikates_2_5_vec &lt;- rep(c(certifikates_2_5), times = years)
+  
+  certifikates_2_5_final &lt;- Reduce(&quot;+&quot;, certifikates_2_5_vec)
+  
+  income_certifikates_2_5_vec &lt;- certifikates_1_4_vec * co2_price_per_ton
+  
+  income_certifikates_2_5_final &lt;- Reduce(&quot;+&quot;, income_certifikates_2_5_vec)</code></pre>
+<p>The final income that can be generated by selling CO2 certficates for scenario 3 considering the amount of trees and the soil organic carbon of the years minus the added CO2 by egg production.</p>
+<pre class="r"><code> # Version 3
+  
+  co2_per_year_3 &lt;- 200 * kg_per_tree
+  
+  certifikates_3 &lt;- co2_per_year_3 / kg_per_certificate
+  
+  certifikates_3 &lt;- certifikates_3 + annual_soc_increase - co2_emmiter_eggs
+  
+  certifikates_3_vec &lt;- rep(c(certifikates_3), times = years)
+  
+  certifikates_3_final &lt;- Reduce(&quot;+&quot;, certifikates_3_vec)
+  
+  income_certifikates_3_vec &lt;- certifikates_1_4_vec * co2_price_per_ton
+  
+  income_certifikates_3_final &lt;- Reduce(&quot;+&quot;, income_certifikates_3_vec)</code></pre>
+</div>
+<div id="discounting" class="section level1">
+<h1>Discounting</h1>
+<p>As we set the runtime of our model to 30 years it is quite likely that we have to deal with inflation as the money we have right now will probably we worth less later. In our runs we set the <code>discount_rate</code> to 3 which can be seen as 3% of inflation over the years. This number can be easily adjusted in the beginning of our code. For every scenario we used the <code>discount</code> function with the same <code>discount_rate</code> and added the values for each year into a single number by using the <code>reduce</code> function. Here is the example for version 1.</p>
+<pre class="r"><code># Version 1
+  small_nut_chicken_profit_vec_1 &lt;-
+    nut_profit_vec_1 + chicken_income - general_investments_vec + subsidies_vec
+  
+  small_nut_chicken_profit_vec_1 &lt;- 
+    discount(small_nut_chicken_profit_vec_1, discount_rate)
+  
+  small_nut_chicken_profit_1 &lt;- Reduce(&quot;+&quot;, small_nut_chicken_profit_vec_1)</code></pre>
+<p>For scenario 4 we additionally had to account for the smaller number of trees in the truffle production by dividing by the factor 2.8.</p>
+<pre class="r"><code> # Version 4
+  small_nut_chicken_truffle_profit_vec_4 &lt;-
+    nut_profit_vec_1 + chicken_income + (truffle_final_vec_4_5/2.8) - 
+    general_investments_vec + subsidies_vec</code></pre>
+</div>
+<div id="the-decisions" class="section level1">
+<h1>The Decisions</h1>
+<p>To compare decisions, it is important to calculate the income of the scenarios minus the baseline to see the actual benefits.</p>
+<pre class="r"><code>decision_1 &lt;- small_nut_chicken_profit_1 - baseline
+  
+decision_2 &lt;- big_nut_chicken_profit_2 - baseline
+  
+decision_3 &lt;- truffle_chicken_profit_3 - baseline
+
+decision_4 &lt;- small_nut_chicken_truffle_profit_4 - baseline
+  
+decision_5 &lt;- big_nut_chicken_truffle_profit_5 - baseline</code></pre>
+<p>We also compared different options to each other by substratcting the different incomes from each other.</p>
+<pre class="r"><code> d_2_inst_1 &lt;- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
+  
+  d_5_inst_4 &lt;- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
+  
+  d_4_inst_1 &lt;- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
+  
+  d_5_inst_2 &lt;- big_nut_chicken_truffle_profit_5 -big_nut_chicken_profit_2
+  
+  d_3_inst_1 &lt;- truffle_chicken_profit_3 - small_nut_chicken_profit_1
+  
+  d_3_inst_4 &lt;- truffle_chicken_profit_3 - small_nut_chicken_truffle_profit_4
+  
+  d_3_inst_2 &lt;- truffle_chicken_profit_3 - big_nut_chicken_profit_2
+  
+  d_3_inst_5 &lt;- truffle_chicken_profit_3 - big_nut_chicken_truffle_profit_5
+  
+  d_1_inst_6 &lt;- small_nut_chicken_profit_1 - chicken_profit_6
+    
+  d_2_inst_6 &lt;- big_nut_chicken_profit_2 - chicken_profit_6
+    
+  d_3_inst_6 &lt;- truffle_chicken_profit_3 - chicken_profit_6
+    
+  d_4_inst_6 &lt;- small_nut_chicken_truffle_profit_4 - chicken_profit_6
+    
+  d_5_inst_6 &lt;- big_nut_chicken_truffle_profit_5 - chicken_profit_6
+  
+  d_5_inst_3 &lt;- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
+  
+  d_4_inst_3 &lt;- small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3</code></pre>
+<p>The last part of our <code>model_function</code> is the <code>return</code> with stores our results in a list of different vectors that can be used for visualization later.</p>
+<pre class="r"><code> return(list(outcome_1 = small_nut_chicken_profit_1,
+              outcome_2 = big_nut_chicken_profit_2,
+              outcome_3 = truffle_chicken_profit_3,
+              outcome_4 = small_nut_chicken_truffle_profit_4,
+              outcome_5 = big_nut_chicken_truffle_profit_5,
+              outcome_6 = chicken_profit_6,
+              baseline = baseline,
+              decision_1 = decision_1,
+              decision_2 = decision_2,
+              decision_3 = decision_3,
+              decision_4 = decision_4,
+              decision_5 = decision_5,
+              d_5_inst_3 = d_5_inst_3,
+              certifikates_1_4 = certifikates_1_4_final,
+              certifikates_2_5 = certifikates_2_5_final,
+              certifikates_3 = certifikates_3_final,
+              vec_outcome_1 = small_nut_chicken_profit_vec_1,
+              vec_outcome_2 = big_nut_chicken_profit_vec_2,
+              vec_outcome_3 = truffle_chicken_profit_vec_3,
+              vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
+              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5,
+              vec_outcome_baseline = baseline_vec,
+              co2_egg = co2_emmiter_eggs))</code></pre>
+</div>
 <div id="results" class="section level1">
 <h1>Results</h1>
 <div id="explaining-resultsvalues" class="section level2">
@@ -603,20 +747,25 @@ nuts_1 &lt;- gompertz_yield(
 </div>
 <div id="in-depth-analysis" class="section level2">
 <h2>In depth analysis</h2>
-<p>Graph 1 shows that most likely every scenario will produse a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss. The current status of the area of interest is conventional crop land, this is the baseline. In order to determine wether or not one of the five agroforestry scenarios will be more profitable compared to the baseline, the baseline is in Graph 2 substracted from each of the five scenarios. Graph 2 is therefor no longer just presenting the distribution of income but its presenting how much the decision of switching from the baseline to one of the scenarios is worth. Because the accumulated income of the</p>
+<p>Graph 1 shows that most likely every scenario will produce a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss. The current status of the area of interest is conventional crop land, this is the baseline.</p>
+<div id="decisions" class="section level3">
+<h3>Decisions</h3>
+<p>In order to determine whether or not one of the five agroforestry scenarios will be more profitable compared to the baseline, the baseline is in Graph 2 subtracted from each of the five scenarios. Graph 2 is therefor no longer just presenting the distribution of income but its presenting how much the decision of switching from the baseline to one of the scenarios is worth. Because the accumulated income of the</p>
+</div>
 </div>
 <div id="conclusions" class="section level2">
 <h2>Conclusions</h2>
 <div id="improvements" class="section level3">
 <h3>Improvements</h3>
-</div>
-</div>
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="unnumbered">References</h1>
+<p></font> # References</p>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-luedeling_decisionsupport_2021" class="csl-entry">
+Luedeling, Eike, Lutz Goehring, Katja Schiffers, Cory Whitney, and Eduardo Fernandez. 2021. <span>“<span class="nocase">decisionSupport</span> – <span>Quantitative</span> <span>Support</span> of <span>Decision</span> <span>Making</span> Under <span>Uncertainty</span>. <span>Contributed</span> Package to the <span>R</span> Programming Language. <span>Version</span> 1.106.”</span> <a href="https://cran.r-project.org/web/packages/decisionSupport/index.html">https://cran.r-project.org/web/packages/decisionSupport/index.html</a>.
+</div>
 <div id="ref-ruett_model-based_2020" class="csl-entry">
 Ruett, Marius, Cory Whitney, and Eike Luedeling. 2020. <span>“Model-Based Evaluation of Management Options in Ornamental Plant Nurseries.”</span> <em>Journal of Cleaner Production</em> 271 (June): 122653. <a href="https://doi.org/10.1016/j.jclepro.2020.122653">https://doi.org/10.1016/j.jclepro.2020.122653</a>.
+</div>
+</div>
 </div>
 </div>
 </div>
