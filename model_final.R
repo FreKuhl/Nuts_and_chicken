@@ -788,8 +788,7 @@ model_function <- function() {
   
   d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
   
-  d_5_inst_4 <- 
-    big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
+  d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
   
   d_4_inst_1 <- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
   

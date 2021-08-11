@@ -19,7 +19,7 @@ library(rmarkdown)
 knitr::write_bib(c(.packages(),
                    'knitr', 'decisionSupport'), 'bib/packages.bib')
 ```
-
+<font size="4">
 This supplementary is available under <https://github.com/FreKuhl/Nuts_and_chicken.git> and outlines the Decision Analysis approaches used in Model-based evaluation of management options in ornamental plant nurseries [@ruett_model-based_2020]. Here we provide our input table, code and results to allow for transparent reproduction of the model.
 
 All other applied `R` packages are cited and listed in the [References].
@@ -43,16 +43,13 @@ for(i in colnames(x)) assign(i, as.numeric(x[1,i]),envir = .GlobalEnv)}
 make_variables(as.estimate(input_estimates))
 ```
 
-We generated a function called `model_function` to evaluate the decision options in `decisionSupport` [@luedelingDecisionSupportQuantitativeSupport2019]. The following calculations are part of this function (see the entire function below). 
+We generated a function called `model_function` to evaluate the decision options in `decisionSupport` [@luedeling_decisionsupport_2021]. The following calculations are part of this function (see the entire function below). 
 ```{r eval= FALSE}
 model_function <- function() {}
 ```
 
-We used the `vv()` (value varier function) function from `decisionSupport` [@luedelingDecisionSupportQuantitativeSupport2019] to account for the monthly variation in infection risks.
-Here it is used to generate values out of variables pre-defined upper and lower bounds over time.
-
 ## The scenarios
-The investments and risks that are made independently of the scenarios have been grouped together under #General. This variables are the variance of nut prices, the cance of losses due to frost, the amount of subsidies, the initial planting of grass and setting up and maintaining fences.
+The investments and risks that are made independently of the scenarios have been grouped together under #General. This variables are the variance of nut prices, the cance of losses due to frost, the amount of subsidies, the initial planting of grass and setting up and maintaining fences. 
 ```{r eval= FALSE}
 # General ----
   
@@ -104,7 +101,8 @@ The baseline scenario describes the current situation on the plot and is used to
 ### Scenario 1
 Scenario 1 consists of a hazelnut plantation with 70 trees spaced in rows of 10 meters. The plantation is irrigated with a drip system and additionally hay is produced between the rows of trees. In addition to the plantation, 200 chickens are kept with a chicken mobile. 
 
-For each branch of the income we calculated the yields and the cost. The Code below shows this for the Nuts yield of scenario 1 and 4.
+For each branch of the income we calculated the yields and the cost. The Code below shows this for the Nuts yield of scenario 1 and 4. 
+Using the `gompertz_yield` function the nuts yield starts after 6 years and the first full yield can be expected after 10 years. Also the possibility of frost damage is applied by multypling the vectors.
 ```{r eval= FALSE}
  # Yield Nuts ----
   # For Versions 1 and 4
@@ -121,7 +119,9 @@ nuts_1 <- gompertz_yield(
   nuts_yield_vec_1 <- nuts_1 * nuts_frost
   
   harvest_count_1 <- ifelse(nuts_yield_vec_1 < 20, 0, 1)
-  
+```
+The hay production is implemented with varying amounts.
+```{r eval= FALSE}
   amount_bales <- vv(var_mean = amount_bales_1,
                      var_CV = 10,
                      n = years)
@@ -131,11 +131,14 @@ nuts_1 <- gompertz_yield(
                         n = years)
   
   income_hay <- amount_bales * income_per_bale
-  
+```
+The final income vector for nut production with the added income by hay for scenario 1 & 4.
+```{r eval= FALSE}
   ###
   nut_income_vec_1_4 <- (nuts_yield_vec_1 * nut_price) + income_hay
-  
-  
+```
+Then we calculated the costs for the nut plantation.
+```{r eval= FALSE}
   # Nuts Costs ----
   # For Versions 1 and 4
   
@@ -176,10 +179,12 @@ nuts_1 <- gompertz_yield(
   harvest_nets_1 <- vv(var_mean = harvest_nets_1,
                        var_CV = 1,
                        n = years)
-  
+```
+The costs are then stored in vectors.
+```{r eval= FALSE}
   harvest_nets_1[] <- harvest_nets_1 *
     c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-  
+ 
   nut_other_costs_vec_1 <- nut_other_costs_vec_1 + harvest_nets_1
   
   nut_other_costs_vec_1[1] <- nut_other_costs_vec_1[1] + tree_planting_costs_1
@@ -192,7 +197,9 @@ nuts_1 <- gompertz_yield(
   hay_costs <- vv(var_mean = hay_costs_1,
                   var_CV = 5,
                   n = years)
-  
+```
+The `chance_event` of having to replace trees because of damage is added.
+```{r eval= FALSE}
   replace_trees_1 <- chance_event(chance = 0.1,
                                   value_if = 3,
                                   value_if_not = 0,
@@ -208,6 +215,7 @@ nuts_1 <- gompertz_yield(
 Scenario 2 consists of a hazelnut plantation with 200 trees, which stand at a distance of 5 meters, this is irrigated by a drip system and also here 200 chickens are kept with a chicken mobile. 
 
 As all the plantations in our model are irrigated the code below shows the calculation for irrigation in scenario 2 and 5.
+We assumed that the number of days in which irrigation is required does not exceed two months. In each run, numbers between 10 and 55 are randomly selected.
 ```{r eval= FALSE}
  # Irrigation ----
   
@@ -220,7 +228,9 @@ As all the plantations in our model are irrigated the code below shows the calcu
   days_irrigation[days_irrigation > 55] <- 55
   
   irrigation_h_vec <- days_irrigation * work_per_irrigation
-  
+```
+
+```{r eval= FALSE}
   # For Versions 2 and 5
   
   irrigation_installation_2 <- water_trailer + installation_irrigation_2
@@ -312,7 +322,9 @@ In this scenario the irrigation is done by a trailer that needs to be refilled a
   
   irrigation_costs_truffle[1] <- 
     irrigation_costs_truffle[1] + irrigation_installation_2
-  
+```
+The final truffle vector is added.
+```{r eval= FALSE}
   ###
   truffle_final_vec_3 <- 
     truffle_income - truffle_harvest_costs - irrigation_costs_truffle
@@ -320,11 +332,8 @@ In this scenario the irrigation is done by a trailer that needs to be refilled a
 ```
 
 ### Scenario 4
-Scenario 4 is exactly the same as scenario 1, but the trees are additionally infected with truffles. The code below shows the way truffle yield and income are calculated in scenario 3,4 and 5.
+Scenario 4 is exactly the same as scenario 1, but the trees are additionally infected with truffles. The code below shows the way truffle yield and income are calculated in scenario 3, 4 and 5.
 ```{r eval= FALSE}
-# Truffle ----
-  # For Version 3, 4 and 5
-  
   truffle <- gompertz_yield(
     max_harvest = truffle_yield,
     time_to_first_yield_estimate = 5,
@@ -346,7 +355,9 @@ Scenario 4 is exactly the same as scenario 1, but the trees are additionally inf
                               n = years)
   
   truffle_harvest_costs[1:5] <- 0
-  
+```
+The final vector for scenario 4 & 5 is created it will later be reduced for scenario 4 account for the smaller number of trees.
+```{r eval= FALSE}
   ###
   truffle_final_vec_4_5 <- truffle_income - truffle_harvest_costs
   ###
@@ -355,7 +366,7 @@ Scenario 4 is exactly the same as scenario 1, but the trees are additionally inf
 ### Scenario 5
 Scenario 5 is exactly the same as scenario 2, but the trees are additionally infected with truffles.
 
-The income generated by chicken eggs is the same in all the scenarios.
+The income generated by chicken eggs is the same in all the scenarios. We added two different versions, one with 50 and one with 200 chicken because the egg production also adds a lot of CO2 and we wanted to see the impact depending on the amount of chicken.
 ```{r eval= FALSE}
 # Chicken ----
   # For Version 1, 2, 3, 4 and 5
@@ -375,7 +386,9 @@ The income generated by chicken eggs is the same in all the scenarios.
     working_hours_chicken <- vv(var_mean = working_hours_chicken_2,
                                 var_CV = 10,
                                 n = years)
-    
+```
+The structure for both versions is the same just the numbers vary.
+```{r eval= FALSE}
   } else if (number_of_chicken == 200) {
     
     initial_chicken_costs_final_1 <-
@@ -391,12 +404,15 @@ The income generated by chicken eggs is the same in all the scenarios.
     working_hours_chicken <- vv(var_mean = working_hours_chicken_1,
                                 var_CV = 10,
                                 n = years)
-    
+```
+If the `numer_of_chicken` is not 50 or 200 a error message is given.
+```{r eval= FALSE}
   } else {
     print("Number of chicken wrong")
   }
-  
-  
+```
+The cost for feed and the working cost vector are added.
+```{r eval= FALSE}
   chicken_feed_vec <- vv(var_mean = feed_per_hen,
                      var_CV = 5,
                      n = years)
@@ -406,10 +422,12 @@ The income generated by chicken eggs is the same in all the scenarios.
                   n = years)
   
   feed_cost_final_vec <- number_of_chicken * (chicken_feed_vec * feed_cost_vec)
-  
+ 
   working_costs_chicken_final <-
     working_hours_chicken * working_hours_costs
-  
+```
+The chicken have ro be replaced after two years and a varying number of irregular replacements are added.
+```{r eval= FALSE}
   chicken_replacement <- vv(var_mean = number_of_chicken,
                             var_CV = 2,
                             n = years)
@@ -419,7 +437,9 @@ The income generated by chicken eggs is the same in all the scenarios.
   
   chicken_replacement_cost_final <-
     chicken_replacement * chicken_replacement_cost
-  
+```
+The final income vector for the egg production is created by adding up the varying number of eggs and prices.
+```{r eval= FALSE}
   # Income
   
   # Number of eggs per Year
@@ -446,6 +466,175 @@ The income generated by chicken eggs is the same in all the scenarios.
     )
 ```
 
+# Calculating CO2
+We did not include the income of the certificates to the final model because in every scenario it is also possible that emissions are positive. As CO2 calculation in real life is quite complicated this is just an approximation to get an overview for Woodify as their goal is to sequestrate CO2 on the plot.
+We added a variable that calculated the amount of Co2 emmited depending on the produced eggs.
+```{r eval= FALSE}
+  # Eggs
+  
+  co2_emmiter_eggs <- (number_of_chicken * egg_per_hen) * co2_per_egg
+  
+  co2_emmiter_eggs <- co2_emmiter_eggs / kg_per_certificate
+```
+Then we created a variable that accounts for the soil organic carbon that will increase in time because the land is no longer used to produce crops.
+```{r eval= FALSE}
+ # SOC Soil organic carbon
+  
+  total_soc <- soc * (1 - soil_stones)
+  
+  soc_increase <- total_soc * landuse_increase_soc
+  
+  annual_soc_increase <- soc_increase / years
+  
+  annual_soc_increase <- annual_soc_increase / kg_per_certificate
+```
+The final income that can be generated by selling CO2 certficates for scenario 1 & 4 considering the amount of trees and the soil organic carbon of the years minus the added CO2 by egg production.
+```{r eval= FALSE}
+# Version 1 and 4
+  
+  co2_per_year_1_4 <- 70 * kg_per_bush
+  
+  certifikates_1_4 <- co2_per_year_1_4 / kg_per_certificate
+  
+  certifikates_1_4 <- certifikates_1_4 + annual_soc_increase - co2_emmiter_eggs
+  
+  certifikates_1_4_vec <- rep(c(certifikates_1_4), times = years)
+  
+  certifikates_1_4_final <- Reduce("+", certifikates_1_4_vec)
+  
+  income_certifikates_1_4_vec <- certifikates_1_4_vec * co2_price_per_ton
+  
+  income_certifikates_1_4_final <- Reduce("+", income_certifikates_1_4_vec)
+```
+The final income that can be generated by selling CO2 certficates for scenario 2 & 5 considering the amount of trees and the soil organic carbon of the years minus the added CO2 by egg production.
+```{r eval= FALSE}
+ # Version 2 and 5
+  
+  co2_per_year_2_5 <- 200 * kg_per_bush
+  
+  certifikates_2_5 <- co2_per_year_2_5 / kg_per_certificate
+  
+  certifikates_2_5 <- certifikates_2_5 + annual_soc_increase - co2_emmiter_eggs
+  
+  certifikates_2_5_vec <- rep(c(certifikates_2_5), times = years)
+  
+  certifikates_2_5_final <- Reduce("+", certifikates_2_5_vec)
+  
+  income_certifikates_2_5_vec <- certifikates_1_4_vec * co2_price_per_ton
+  
+  income_certifikates_2_5_final <- Reduce("+", income_certifikates_2_5_vec)
+```
+The final income that can be generated by selling CO2 certficates for scenario 3 considering the amount of trees and the soil organic carbon of the years minus the added CO2 by egg production.
+```{r eval= FALSE}
+ # Version 3
+  
+  co2_per_year_3 <- 200 * kg_per_tree
+  
+  certifikates_3 <- co2_per_year_3 / kg_per_certificate
+  
+  certifikates_3 <- certifikates_3 + annual_soc_increase - co2_emmiter_eggs
+  
+  certifikates_3_vec <- rep(c(certifikates_3), times = years)
+  
+  certifikates_3_final <- Reduce("+", certifikates_3_vec)
+  
+  income_certifikates_3_vec <- certifikates_1_4_vec * co2_price_per_ton
+  
+  income_certifikates_3_final <- Reduce("+", income_certifikates_3_vec)
+```
+
+# Discounting
+As we set the runtime of our model to 30 years it is quite likely that we have to deal with inflation as the money we have right now will probably we worth less later. In our runs we set the `discount_rate` to 3 which can be seen as 3% of inflation over the years. This number can be easily adjusted in the beginning of our code.
+For every scenario we used the `discount` function with the same `discount_rate` and added the values for each year into a single number by using the `reduce` function. Here is the example for version 1.
+```{r eval= FALSE}
+# Version 1
+  small_nut_chicken_profit_vec_1 <-
+    nut_profit_vec_1 + chicken_income - general_investments_vec + subsidies_vec
+  
+  small_nut_chicken_profit_vec_1 <- 
+    discount(small_nut_chicken_profit_vec_1, discount_rate)
+  
+  small_nut_chicken_profit_1 <- Reduce("+", small_nut_chicken_profit_vec_1)
+```
+For scenario 4 we additionally had to account for the smaller number of trees in the truffle production by dividing by the factor 2.8.
+```{r eval= FALSE}
+ # Version 4
+  small_nut_chicken_truffle_profit_vec_4 <-
+    nut_profit_vec_1 + chicken_income + (truffle_final_vec_4_5/2.8) - 
+    general_investments_vec + subsidies_vec
+```
+# The Decisions
+To compare decisions, it is important to calculate the income of the scenarios minus the baseline to see the actual benefits.
+```{r eval= FALSE}
+decision_1 <- small_nut_chicken_profit_1 - baseline
+  
+decision_2 <- big_nut_chicken_profit_2 - baseline
+  
+decision_3 <- truffle_chicken_profit_3 - baseline
+
+decision_4 <- small_nut_chicken_truffle_profit_4 - baseline
+  
+decision_5 <- big_nut_chicken_truffle_profit_5 - baseline
+```
+We also compared different options to each other by substratcting the different incomes from each other.
+```{r eval= FALSE}
+ d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
+  
+  d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
+  
+  d_4_inst_1 <- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
+  
+  d_5_inst_2 <- big_nut_chicken_truffle_profit_5 -big_nut_chicken_profit_2
+  
+  d_3_inst_1 <- truffle_chicken_profit_3 - small_nut_chicken_profit_1
+  
+  d_3_inst_4 <- truffle_chicken_profit_3 - small_nut_chicken_truffle_profit_4
+  
+  d_3_inst_2 <- truffle_chicken_profit_3 - big_nut_chicken_profit_2
+  
+  d_3_inst_5 <- truffle_chicken_profit_3 - big_nut_chicken_truffle_profit_5
+  
+  d_1_inst_6 <- small_nut_chicken_profit_1 - chicken_profit_6
+    
+  d_2_inst_6 <- big_nut_chicken_profit_2 - chicken_profit_6
+    
+  d_3_inst_6 <- truffle_chicken_profit_3 - chicken_profit_6
+    
+  d_4_inst_6 <- small_nut_chicken_truffle_profit_4 - chicken_profit_6
+    
+  d_5_inst_6 <- big_nut_chicken_truffle_profit_5 - chicken_profit_6
+  
+  d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
+  
+  d_4_inst_3 <- small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
+```
+The last part of our `model_function` is the `return` which stores our results in a list of different vectors that can be later used for visualization.
+```{r eval= FALSE}
+ return(list(outcome_1 = small_nut_chicken_profit_1,
+              outcome_2 = big_nut_chicken_profit_2,
+              outcome_3 = truffle_chicken_profit_3,
+              outcome_4 = small_nut_chicken_truffle_profit_4,
+              outcome_5 = big_nut_chicken_truffle_profit_5,
+              outcome_6 = chicken_profit_6,
+              baseline = baseline,
+              decision_1 = decision_1,
+              decision_2 = decision_2,
+              decision_3 = decision_3,
+              decision_4 = decision_4,
+              decision_5 = decision_5,
+              d_5_inst_3 = d_5_inst_3,
+              certifikates_1_4 = certifikates_1_4_final,
+              certifikates_2_5 = certifikates_2_5_final,
+              certifikates_3 = certifikates_3_final,
+              vec_outcome_1 = small_nut_chicken_profit_vec_1,
+              vec_outcome_2 = big_nut_chicken_profit_vec_2,
+              vec_outcome_3 = truffle_chicken_profit_vec_3,
+              vec_outcome_4 = small_nut_chicken_truffle_profit_vec_4,
+              vec_outcome_5 = big_nut_chicken_truffle_profit_vec_5,
+              vec_outcome_baseline = baseline_vec,
+              co2_egg = co2_emmiter_eggs))
+```
+
 # Results
 
 ## Explaining Results/Values
@@ -454,7 +643,7 @@ Running the model produces a different outputs who are defined in the return lis
 The raw model-results of each scenario, including the baseline, is shown in the Graph 1. 
 On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density how likely one certain amount of revenue is likely. If the Curve for a scenario is wide, it means that the the degree of uncertainty is high, the possible revenue range is large. The smaller the curve is, the scenario is more defined and it is of a higher certainty that the displayed revenue is reached.
 The baseline has the smallest curve, which means that this base-scenario is, compared to the other scenarios, well defined. This is because normal crop land is a well known and researched system with comparable few components who affect the income. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. This is also visible in Graph 1, the systems including nuts, chicken and truffle have the widest distribution curve. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue.
-Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedelingDecisionSupportQuantitativeSupport2019] Package also allows provides additional in depth analysis tools. They were also used for the evaluation of the results in this chapter.
+Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedeling_decisionsupport_2021] Package also allows provides additional in depth analysis tools. They were also used for the evaluation of the results in this chapter.
 
 ## In depth analysis
 
@@ -464,7 +653,9 @@ Graph 1 shows that most likely every scenario will produce a positive overall in
 In order to determine whether or not one of the five agroforestry scenarios will be more profitable compared to the baseline, the baseline is in Graph 2 subtracted from each of the five scenarios. Graph 2 is therefor no longer just presenting the distribution of income but its presenting how much the decision of switching from the baseline to one of the scenarios is worth. Because the accumulated income of the 
 
 ## Conclusions
+```{r eval= FALSE}
 
+```
 ### Improvements
-
+</font>
 # References
