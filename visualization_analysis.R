@@ -128,6 +128,12 @@ results <- data.frame("Scenario 1" = simulation$y$outcome_1,
                    "Scenario 4" = simulation$y$outcome_4,
                    "Scenario 5" = simulation$y$outcome_5)
 
+decisions <- data.frame("Scenario 1" = simulation$y$decision_1,
+                      "Scenario 2" = simulation$y$decision_2,
+                      "Scenario 3" = simulation$y$decision_3,
+                      "Scenario 4" = simulation$y$decision_4,
+                      "Scenario 5" = simulation$y$decision_5)
+
 results_1 <- data.frame("Scenario 1" = simulation$y$outcome_1,
                         "Scenario 2" = simulation$y$outcome_2,
                         "Scenario 3" = simulation$y$outcome_3)
@@ -135,17 +141,24 @@ results_1 <- data.frame("Scenario 1" = simulation$y$outcome_1,
 results_2 <- data.frame("Scenario 4" = simulation$y$outcome_4,
                         "Scenario 5" = simulation$y$outcome_5)
 
+baseline_1 <- data.frame("Baseline" = simulation$y$baseline)
 
+# results
 mcmc_areas(results,prob = 0.5, point_est = "median") +
   xlab("Outcome Distribution in €") +
   labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs")
 
-mcmc_areas(results_1,prob = 0.5, prob_outer = 0.95, point_est = "median") +
+#Decisions
+mcmc_areas(decisions,prob = 0.5, point_est = "median") +
+  xlab("Outcome Distribution in €") +
+  labs(title = "Worth of decision of switching from baseline to scenarios",
+       subtitle = "Accumulated values for 30 years - 10000 model runs")
+
+mcmc_areas(baseline_1,prob = 0.5, point_est = "median") +
   xlab("Outcome Distribution in €")
 
-mcmc_areas(results_2,prob = 0.9,point_est = "median") +
-  xlab("Outcome Distribution in €")
+
 
 mcmc_intervals(results,prob = 0.5,prob_outer = 0.95,point_est = "median")
 
