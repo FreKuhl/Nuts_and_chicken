@@ -122,17 +122,32 @@ plot_cashflow(
 
 # Other plotting options ----
 
-test <- data.frame("Scenario 1" = simulation$y$outcome_1,
+results <- data.frame("Scenario 1" = simulation$y$outcome_1,
                    "Scenario 2" = simulation$y$outcome_2,
                    "Scenario 3" = simulation$y$outcome_3,
                    "Scenario 4" = simulation$y$outcome_4,
                    "Scenario 5" = simulation$y$outcome_5)
 
+results_1 <- data.frame("Scenario 1" = simulation$y$outcome_1,
+                        "Scenario 2" = simulation$y$outcome_2,
+                        "Scenario 3" = simulation$y$outcome_3)
 
-mcmc_areas(test,prob = 0.9,point_est = "median") +
+results_2 <- data.frame("Scenario 4" = simulation$y$outcome_4,
+                        "Scenario 5" = simulation$y$outcome_5)
+
+
+mcmc_areas(results,prob = 0.5, prob_outer = 0.9, point_est = "median") +
+  xlab("Outcome Distribution in €") +
+  labs(title = "Distribution of income for five different interventions",
+       subtitle = "Accumulated values for 30 years - 10000 model runs")
+
+mcmc_areas(results_1,prob = 0.5, prob_outer = 0.95, point_est = "median") +
   xlab("Outcome Distribution in €")
 
-mcmc_intervals(test,prob = 0.5,prob_outer = 0.9,point_est = "median")
+mcmc_areas(results_2,prob = 0.9,point_est = "median") +
+  xlab("Outcome Distribution in €")
+
+mcmc_intervals(results,prob = 0.5,prob_outer = 0.95,point_est = "median")
 
 
 
