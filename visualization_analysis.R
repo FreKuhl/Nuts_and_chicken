@@ -136,7 +136,7 @@ results_2 <- data.frame("Scenario 4" = simulation$y$outcome_4,
                         "Scenario 5" = simulation$y$outcome_5)
 
 
-mcmc_areas(results,prob = 0.5, prob_outer = 0.9, point_est = "median") +
+mcmc_areas(results,prob = 0.5, point_est = "median") +
   xlab("Outcome Distribution in €") +
   labs(title = "Distribution of income for five different interventions",
        subtitle = "Accumulated values for 30 years - 10000 model runs")
