@@ -787,35 +787,8 @@ model_function <- function() {
   
   decision_5 <- big_nut_chicken_truffle_profit_5 - baseline
   
-  d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
-  
-  d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
-  
-  d_4_inst_1 <- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
-  
-  d_5_inst_2 <- big_nut_chicken_truffle_profit_5 -big_nut_chicken_profit_2
-  
-  d_3_inst_1 <- truffle_chicken_profit_3 - small_nut_chicken_profit_1
-  
-  d_3_inst_4 <- truffle_chicken_profit_3 - small_nut_chicken_truffle_profit_4
-  
-  d_3_inst_2 <- truffle_chicken_profit_3 - big_nut_chicken_profit_2
-  
-  d_3_inst_5 <- truffle_chicken_profit_3 - big_nut_chicken_truffle_profit_5
-  
-  d_1_inst_6 <- small_nut_chicken_profit_1 - chicken_profit_6
-    
-  d_2_inst_6 <- big_nut_chicken_profit_2 - chicken_profit_6
-    
-  d_3_inst_6 <- truffle_chicken_profit_3 - chicken_profit_6
-    
-  d_4_inst_6 <- small_nut_chicken_truffle_profit_4 - chicken_profit_6
-    
-  d_5_inst_6 <- big_nut_chicken_truffle_profit_5 - chicken_profit_6
-  
   d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
   
-  d_4_inst_3 <- small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
   ###
   
   

@@ -244,6 +244,17 @@ annotate_figure(Pls_combined,
                 top = text_grob("Projection to Latent Structures analysis",
                                 face = "bold", size = 14),
 )
+
+# Plot results together ----
+
+compound_figure(model = model_function, 
+                input_table = input_estimates, 
+                decision_var_name = "decision_3",
+                cashflow_var_name = "vec_outcome_3",
+                model_runs = 10000, 
+                distribution_method = 'smooth_simple_overlay')
+
+
 # EVPI ----
 # Use with caution!!! takes really long time to calculate!!!
 
