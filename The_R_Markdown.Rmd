@@ -639,26 +639,44 @@ The last part of our `model_function` is the `return` which stores our results i
 
 ## Explaining Results/Values
 
-Running the model produces a different outputs who are defined in the return list of the `model_function`. In this case it includes the accumulated income values for each scenario for the whole time-period, a vector with annual distribution of income for each scenario as well as different calculated decisions. Additionally the amount of sequestered CO2 is considered as an output.
+Running the model produces different outputs who are defined in the return list of the `model_function`. In this case it includes the accumulated income values for each scenario for the whole time-period, a vector with annual distribution of income for each scenario as well as different calculated decisions. Additionally the amount of sequestered CO2 is considered as an output.
 The raw model-results of each scenario, including the baseline, is shown in the Graph 1. 
-On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density how likely one certain amount of revenue is likely. If the Curve for a scenario is wide, it means that the degree of uncertainty is high, the possible revenue range is large. The smaller the curve is, the more is the scenario defined and it is of a higher certainty that a certain revenue is reached.
-The baseline has the smallest curve, which means that this base-scenario is, compared to the other scenarios, well defined. This is because normal crop land is a well known and researched system with comparable few components who affect the income. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. This is also visible in Graph 1, the systems including nuts, chicken and truffle have the widest distribution curve. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue.
-Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedeling_decisionsupport_2021] Package also allows provides additional in depth analysis tools. They were also used for the evaluation of the results in this chapter.
+On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density how likely a certain amount of revenue is likely. If the Curve for a scenario is wide, it means that the degree of uncertainty is high, the possible revenue range is large. The smaller the curve is, the more is the scenario defined and it is of a higher certainty that a certain revenue is reached.
+The baseline has the smallest curve, which means that this base-scenario is, compared to the other scenarios, well defined. This is because normal crop land is a well known and researched system with comparable few components who affect the income. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue. The truth will most likely lay somewhere in between.
+Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedeling_decisionsupport_2021] Package also allows provides additional in depth analysis tools. One of them ist the `plot_chashflow()` option [@luedeling_decisionsupport_2021]. It plots the annual cashflow over the 30 years. It displays the median as well as the 50% and 90% confidence interval. Also the 
 
 ## In depth analysis
 
-Graph 1 shows the simulated distribution of income for the 5 scenarios and the baseline. It shows that most likely every scenario will produce a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss, most of the curves are in the postive range. But it also shows that most of the scenarios have a very wide range of possible incomes. Also, the scenarios 1 to 4 all produce very similar income curves, so that it is difficult to distinguish between them. Even so it is a valuable insight that the systems are most likely to produce positive incomes, it is even more important to compare these incomes to the current system, the baseline. Therefor the income generated by baseline is subtracted from the income from the five scenarios.
-
-### Decisions
+Graph 1 shows the simulated distribution of income for the 5 scenarios and the baseline. It shows that most likely every scenario will produce a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss, most of the curves are in the positive range. But it also shows that most of the scenarios have a very wide range of possible incomes. Also, the scenarios 1 to 4 all produce very similar income curves, so that it is difficult to distinguish between them. Even so it is a valuable insight that the systems are most likely to produce positive incomes, it is even more important to compare these incomes to the current system, the baseline. Therefor the income generated by baseline is subtracted from the income from the five scenarios.
 By subtracting the baseline scenario from the five scenarios, in Graph 2 is the additional income from switching from the baseline to one of the five scenarios plotted. Because the baseline generated only a very small income over 30 years, distribution of the plots only changed slightly. To get a better overview over the 5 scenarios, we decided to use another option for plotting. Graph 2 was generated by the `bayesplot`library with the `mcmc_areas()`function. Here, the distribution curve of every scenario is plotted separately. The dark blue line is marking the median of the distribution and the light blue area the 50 percent interval. Now the differences between the scenarios are well visible.
 
-### Cashflow
+### Results Scenario 1
+Scenario 1 has the narrowest distribution curve and in the median also the lowest simulated income. Because it uses only 70 hazelnut trees the yield uncertainty is lower than in the bigger plantations with 200 hazelnut trees. And while there is an additional factor, the hay making, this produces such small incomes that it does not widen the distribution curve. Even so the median is the lowest, because of its narrow distribution it is still most likely to produce more income compared to the baseline and is therefor a valid option to choose from. Especially since it is the system with the lowest initial investment costs. 
 
-Another option to further analyse the results is to use the `plot_chashflow()` option [@luedeling_decisionsupport_2021]. It plots the annual cashflow over the 30 years. It displays the median as well as the 50% and 90% confidence interval. 
+### Results Scenario 2
+Scenario 2 has a much wider distribution which extends to the left side, so the median is also higher. This is because here 200 hazelnut trees are planted and the scaling factor makes it more profitable. While the possibility off losses are similar to the first scenario, the possible income is higher. This makes it from a business standpoint a more promising choice. But with more hazelnut bushes the amount of working hours needed to sustain this system is also larger, which needs to be considered by the stakeholders. 
+
+### Results Scenario 3
+Scenario 3 is the first one using
+
+### Results Scenario 4
+
+### Results Scenario 5
 
 ### CO2 Certificates
 
 ## Conclusions
+How the scenarios finally compare to each other.
+
+### Personal advise
+What scenario we would recommend and why
+
+### Outlook
+What could be added to the model: The amount of working hours per system could be acknowledged. This would enable the stakeholder, especially the farmer, to compare each system better with their personal preferences. 
+After harvest costs and risks need to be considered in an updated version od the model.
+The CO2 simulation can be improved by involving experts and the decision maker woodify.
+
+
 ```{r eval= FALSE}
 
 ```
