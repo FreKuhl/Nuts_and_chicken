@@ -247,11 +247,11 @@ annotate_figure(Pls_combined,
 
 # Plot results together ----
 
-compound_figure(model = model_function, 
-                input_table = input_estimates, 
-                decision_var_name = "decision_3",
-                cashflow_var_name = "vec_outcome_3",
-                model_runs = 10000, 
+compound_figure(model = model_function,
+                input_table = input_estimates,
+                decision_var_name = "baseline",
+                cashflow_var_name = "vec_outcome_baseline",
+                model_runs = 10000,
                 distribution_method = 'smooth_simple_overlay')
 
 
