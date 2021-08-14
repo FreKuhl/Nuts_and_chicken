@@ -9,6 +9,7 @@ input_estimates <- read_excel("input_estimates.xlsx")
 discount_rate = 3
 years <- 30 # IMPORTANT! Select ONLY steps of 10
 number_of_chicken = 50 # Select 50 or 200
+options("scipen"=10)
 
 # make variables ----
 # Use only for test runs
@@ -786,6 +787,7 @@ model_function <- function() {
   
   decision_5 <- big_nut_chicken_truffle_profit_5 - baseline
   
+<<<<<<< HEAD
   d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
   
   d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
@@ -812,9 +814,10 @@ model_function <- function() {
     
   d_5_inst_6 <- big_nut_chicken_truffle_profit_5 - chicken_profit_6
   
+=======
+>>>>>>> d5b05a22e6c4d2c6496abb8bbdaecf871dc34fbb
   d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
   
-  d_4_inst_3 <- small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
   ###
   
   

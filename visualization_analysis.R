@@ -122,17 +122,45 @@ plot_cashflow(
 
 # Other plotting options ----
 
-test <- data.frame("Scenario 1" = simulation$y$outcome_1,
+results <- data.frame("Scenario 1" = simulation$y$outcome_1,
                    "Scenario 2" = simulation$y$outcome_2,
                    "Scenario 3" = simulation$y$outcome_3,
                    "Scenario 4" = simulation$y$outcome_4,
                    "Scenario 5" = simulation$y$outcome_5)
 
+decisions <- data.frame("Scenario 1" = simulation$y$decision_1,
+                      "Scenario 2" = simulation$y$decision_2,
+                      "Scenario 3" = simulation$y$decision_3,
+                      "Scenario 4" = simulation$y$decision_4,
+                      "Scenario 5" = simulation$y$decision_5)
 
-mcmc_areas(test,prob = 0.9,point_est = "median") +
+results_1 <- data.frame("Scenario 1" = simulation$y$outcome_1,
+                        "Scenario 2" = simulation$y$outcome_2,
+                        "Scenario 3" = simulation$y$outcome_3)
+
+results_2 <- data.frame("Scenario 4" = simulation$y$outcome_4,
+                        "Scenario 5" = simulation$y$outcome_5)
+
+baseline_1 <- data.frame("Baseline" = simulation$y$baseline)
+
+# results
+mcmc_areas(results,prob = 0.5, point_est = "median") +
+  xlab("Outcome Distribution in €") +
+  labs(title = "Distribution of income for five different interventions",
+       subtitle = "Accumulated values for 30 years - 10000 model runs")
+
+#Decisions
+mcmc_areas(decisions,prob = 0.5, point_est = "median") +
+  xlab("Outcome Distribution in €") +
+  labs(title = "Worth of decision of switching from baseline to scenarios",
+       subtitle = "Accumulated values for 30 years - 10000 model runs")
+
+mcmc_areas(baseline_1,prob = 0.5, point_est = "median") +
   xlab("Outcome Distribution in €")
 
-mcmc_intervals(test,prob = 0.5,prob_outer = 0.9,point_est = "median")
+
+
+mcmc_intervals(results,prob = 0.5,prob_outer = 0.95,point_est = "median")
 
 
 
@@ -216,6 +244,17 @@ annotate_figure(Pls_combined,
                 top = text_grob("Projection to Latent Structures analysis",
                                 face = "bold", size = 14),
 )
+
+# Plot results together ----
+
+compound_figure(model = model_function,
+                input_table = input_estimates,
+                decision_var_name = "baseline",
+                cashflow_var_name = "vec_outcome_baseline",
+                model_runs = 10000,
+                distribution_method = 'smooth_simple_overlay')
+
+
 # EVPI ----
 # Use with caution!!! takes really long time to calculate!!!
 
@@ -226,12 +265,12 @@ mcSimulation_table_4 <- data.frame(simulation$x, simulation$y[11])
 mcSimulation_table_5 <- data.frame(simulation$x, simulation$y[12])
 mcSimulation_table_6 <- data.frame(simulation$x, simulation$y[13])
 
-evpi_1 <- multi_EVPI(mc = mcSimulation_table_1, write_table = T, first_out_var = "decision_1")
-evpi_2 <- multi_EVPI(mc = mcSimulation_table_2, write_table = T, first_out_var = "decision_2")
-evpi_3 <- multi_EVPI(mc = mcSimulation_table_3, write_table = T, first_out_var = "decision_3")
-evpi_4 <- multi_EVPI(mc = mcSimulation_table_4, write_table = T, first_out_var = "decision_4")
-evpi_5 <- multi_EVPI(mc = mcSimulation_table_5, write_table = T, first_out_var = "decision_5")
-evpi_6 <- multi_EVPI(mc = mcSimulation_table_6, write_table = T, first_out_var = "d_5_inst_3")
+evpi_1 <- multi_EVPI(mc = mcSimulation_table_1, write_table = F, first_out_var = "decision_1")
+evpi_2 <- multi_EVPI(mc = mcSimulation_table_2, write_table = F, first_out_var = "decision_2")
+evpi_3 <- multi_EVPI(mc = mcSimulation_table_3, write_table = F, first_out_var = "decision_3")
+evpi_4 <- multi_EVPI(mc = mcSimulation_table_4, write_table = F, first_out_var = "decision_4")
+evpi_5 <- multi_EVPI(mc = mcSimulation_table_5, write_table = F, first_out_var = "decision_5")
+evpi_6 <- multi_EVPI(mc = mcSimulation_table_6, write_table = F, first_out_var = "d_5_inst_3")
 
 plot_evpi(evpi_1, decision_vars = "decision_1")
 plot_evpi(evpi_2, decision_vars = "decision_2")
