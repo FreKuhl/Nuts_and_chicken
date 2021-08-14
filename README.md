@@ -13,12 +13,12 @@ The idea behind our model, was to create an Agroforestry intervention for a smal
 We used the package [decisionSupport](https://cran.r-project.org/web/packages/decisionSupport/index.html) by Eike Luedeling to implement our model in R. It helps to model decisions that are mainly agriculture related but can also be used for other complex systems, that would be hard to study in real life.
 [tidyverse](https://www.tidyverse.org/) & [ggpubr](https://rpkgs.datanovia.com/ggpubr/) were used for formatting data and visualization.
 
-# The scenarios
-1. 70 Hazelnut Trees + Chicken
-2. 200 Hazelnut Trees + Chicken
-3. 200 Truffle Trees + Chicken
-4. 70 Hazelnut Trees + Chicken + Truffle
-5. 200 Hazelnut Trees + Chicken + Truffle
+# The Scenarios
+1. 70 Hazelnut Trees + 200 Chicken
+2. 200 Hazelnut Trees + 200 Chicken
+3. 200 Truffle Trees + 200 Chicken
+4. 70 Hazelnut Trees with Truffle + 200 Chicken
+5. 200 Hazelnut Trees with Truffle + 200 Chicken
 
 The scenarios contain different numbers of trees combined with chicken. For three scenarios we also added truffle as another way of generating revenue. As setting up a hazelnut plantation is cost and time intensive we also wanted to see if it would also be possible to set up this system without the plantation (Scenario 3), which would allow for better biodiversity through use of different tree varieties.
 
