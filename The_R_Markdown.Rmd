@@ -19,25 +19,20 @@ library(rmarkdown)
 knitr::write_bib(c(.packages(),
                    'knitr', 'decisionSupport'), 'bib/packages.bib')
 ```
-<<<<<<< HEAD
 
 
-=======
-<font size="4">
->>>>>>> d5b05a22e6c4d2c6496abb8bbdaecf871dc34fbb
-This supplementary is available under <https://github.com/FreKuhl/Nuts_and_chicken.git> and outlines the Decision Analysis approaches used in Model-based evaluation of management options in ornamental plant nurseries [@ruett_model-based_2020]. Here we provide our input table, code and results to allow for transparent reproduction of the model.
+This supplementary is available under <https://github.com/FreKuhl/Nuts_and_chicken.git> and outlines the Decision Analysis model we created in the ['Decision Analysis and Forecasting for Agricultural Development'](https://cory-whitney.shinyapps.io/Decision_Analysis_Course/) course by [Cory Whitney](https://cory-whitney.com/) & [Eike Lüdeling](https://eikeluedeling.com/index.html) at the University of Bonn in the Corona Summer of 2021. 
 
-All other applied `R` packages are cited and listed in the [References].
+The idea behind our model, was to create an Agroforestry intervention for a small farmland plot in the Eifel region. The plot that is used for regular crops right now, is going to be used to sequestrate CO2. As the land use plan doesn't allow planting a regular forest we looked for different solutions to combine trees with different animals. The best solution for the owners [Woodify](woodify.de) was planting trees and keeping chicken in a chicken mobile house. So we came up with five different scenarios that have different levels of intensity. The way we calculated the different outcomes can be seen in our conceptual model below.
 
 ## Input table
-The input table `Input_estimates.xlsx` (attached) contains: Variable names, unit, distributions (posnorm = positive normal distribution, const = constant, tnorm_0_1= truncated normal distribution, norm = normal distribution), lower bound, mean, upper bound and definition of variables.
+The input table `Input_estimates.xlsx` (attached) contains: Variable names, unit, distributions (posnorm = positive normal distribution, const = constant, tnorm_0_1= truncated normal distribution, norm = normal distribution), lower bound, mean, upper bound and definition of variables. The sources of information can also be found within the excel sheet.
 
 ## Implementing the model in R
-
 Here we provide our mathematical model that enables simulation of decision outcomes.
-The calculations in this document are based on random draws from the distributions in the input table `Input_estimates.csv`. Explanations for code chunks are not part of the actual simulation. 
+The calculations in this document are based on random draws from the distributions in the input table `Input_estimates.xlsx`. Explanations for code chunks are not part of the actual simulation. 
 
-Load the input table `Input_file.csv` and make variables.
+Load the input table `Input_estimates.xlsx` and make variables.
 ```{r eval= FALSE}
 input_estimates <- read_excel("input_estimates.xlsx")
 
@@ -48,20 +43,13 @@ for(i in colnames(x)) assign(i, as.numeric(x[1,i]),envir = .GlobalEnv)}
 make_variables(as.estimate(input_estimates))
 ```
 
-<<<<<<< HEAD
 We generated a function called `model_function` to evaluate the decision options in `decisionSupport` [@luedeling_decisionsupport_2021]. The following calculations are part of this function (see the entire function in `model-final.R`). 
 ```{r eval= FALSE}
 model_function <- function() {}
 ```
 In the following sections we left out some repetitive parts of the code for easier reading.
-=======
-We generated a function called `model_function` to evaluate the decision options in `decisionSupport` [@luedeling_decisionsupport_2021]. The following calculations are part of this function (see the entire function below). 
-```{r eval= FALSE}
-model_function <- function() {}
-```
 
->>>>>>> d5b05a22e6c4d2c6496abb8bbdaecf871dc34fbb
-## The scenarios
+## The Scenarios
 The investments and risks that are made independently of the scenarios have been grouped together under #General. This variables are the variance of nut prices, the cance of losses due to frost, the amount of subsidies, the initial planting of grass and setting up and maintaining fences. 
 ```{r eval= FALSE}
 # General ----
@@ -92,7 +80,7 @@ The investments and risks that are made independently of the scenarios have been
 ```    
     
 ### The baseline scenario
-The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and sommerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run.
+The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and summerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run.
 ```{r eval= FALSE}
  winterbarley_yield_vec <- vv(var_mean = winterbarley_yield,
                                var_CV = 10,
@@ -589,38 +577,6 @@ decision_4 <- small_nut_chicken_truffle_profit_4 - baseline
   
 decision_5 <- big_nut_chicken_truffle_profit_5 - baseline
 ```
-We also compared different options to each other by substratcting the different incomes from each other.
-```{r eval= FALSE}
- d_2_inst_1 <- big_nut_chicken_profit_2 - small_nut_chicken_profit_1
-  
-  d_5_inst_4 <- big_nut_chicken_truffle_profit_5 - small_nut_chicken_truffle_profit_4
-  
-  d_4_inst_1 <- small_nut_chicken_truffle_profit_4 - small_nut_chicken_profit_1
-  
-  d_5_inst_2 <- big_nut_chicken_truffle_profit_5 -big_nut_chicken_profit_2
-  
-  d_3_inst_1 <- truffle_chicken_profit_3 - small_nut_chicken_profit_1
-  
-  d_3_inst_4 <- truffle_chicken_profit_3 - small_nut_chicken_truffle_profit_4
-  
-  d_3_inst_2 <- truffle_chicken_profit_3 - big_nut_chicken_profit_2
-  
-  d_3_inst_5 <- truffle_chicken_profit_3 - big_nut_chicken_truffle_profit_5
-  
-  d_1_inst_6 <- small_nut_chicken_profit_1 - chicken_profit_6
-    
-  d_2_inst_6 <- big_nut_chicken_profit_2 - chicken_profit_6
-    
-  d_3_inst_6 <- truffle_chicken_profit_3 - chicken_profit_6
-    
-  d_4_inst_6 <- small_nut_chicken_truffle_profit_4 - chicken_profit_6
-    
-  d_5_inst_6 <- big_nut_chicken_truffle_profit_5 - chicken_profit_6
-  
-  d_5_inst_3 <- big_nut_chicken_truffle_profit_5 - truffle_chicken_profit_3
-  
-  d_4_inst_3 <- small_nut_chicken_truffle_profit_4 - truffle_chicken_profit_3
-```
 The last part of our `model_function` is the `return` which stores our results in a list of different vectors that can be later used for visualization.
 ```{r eval= FALSE}
  return(list(outcome_1 = small_nut_chicken_profit_1,
@@ -648,7 +604,6 @@ The last part of our `model_function` is the `return` which stores our results i
               co2_egg = co2_emmiter_eggs))
 ```
 
-<<<<<<< HEAD
 # Results
 
 ## Explaining Results/Values
@@ -659,7 +614,7 @@ On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis 
 The baseline has the smallest curve, which means that this base-scenario is, compared to the other scenarios, well defined. This is because normal crop land is a well known and researched system with comparable few components who affect the income. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. This is also visible in Graph 1, the systems including nuts, chicken and truffle have the widest distribution curve. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue.
 Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedeling_decisionsupport_2021] Package also allows provides additional in depth analysis tools. They were also used for the evaluation of the results in this chapter.
 =======
-## Results
+# Results
 
 ## Explaining Results/Values
 
@@ -681,7 +636,6 @@ The fourth graph is the EVPI.
 ![Result Scenario 1 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_1.jpeg)
 
 Scenario 1 has the narrowest distribution curve and in the median also the lowest simulated income. Because it uses only 70 hazelnut trees the yield uncertainty is lower than in the bigger plantations with 200 hazelnut trees. And while there is an additional factor, the hay making, this produces such small incomes that it does not widen the distribution curve. Even so the median is the lowest, because of its narrow distribution it is still most likely to produce more income compared to the baseline and is therefor a valid option to choose from. Especially since it is the system with the lowest initial investment costs. 
->>>>>>> d5b05a22e6c4d2c6496abb8bbdaecf871dc34fbb
 
 ### Results Scenario 2
 
@@ -707,12 +661,8 @@ Scenario 3 is the first one using
 ### CO2 Certificates
 
 ## Conclusions
-<<<<<<< HEAD
-```{r eval= FALSE}
 
-```
 ### Improvements
-=======
 How the scenarios finally compare to each other.
 
 Graph 1 shows the simulated distribution of income for the 5 scenarios and the baseline. It shows that most likely every scenario will produce a positive overall income over a period of 30 years. Even so with every scenario there is also a chance of producing an overall loss, most of the curves are in the positive range. But it also shows that most of the scenarios have a very wide range of possible incomes.
@@ -726,11 +676,7 @@ What could be added to the model: The amount of working hours per system could b
 After harvest costs and risks need to be considered in an updated version od the model.
 The CO2 simulation can be improved by involving experts and the decision maker woodify.
 
->>>>>>> d5b05a22e6c4d2c6496abb8bbdaecf871dc34fbb
 
-```{r eval= FALSE}
-
-```
 ### Improvements
-</font>
+
 # References
