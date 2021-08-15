@@ -80,7 +80,7 @@ The investments and risks that are made independently of the scenarios have been
 ```    
     
 ### The baseline scenario
-The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and summerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run. The informations about the yield, costs, working hours and price where pre calculated with the "Leistungs-Kostenrechner Pflanzenbau" by the KTBL [@KTBL_2021]
+The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and summerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run. The informations about the yield, costs, working hours and price where pre calculated with the "Leistungs-Kostenrechner Pflanzenbau" by the KTBL [@KTBL.2021]
 ```{r eval= FALSE}
  winterbarley_yield_vec <- vv(var_mean = winterbarley_yield,
                                var_CV = 10,
