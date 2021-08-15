@@ -4,9 +4,10 @@ by [Lukas Gürtler](https://github.com/LukasGuertler) & [Frederik Kuhl](https://
 This Decision analysis model for combining a nuttree meadow with chicken, was started in the ['Decision Analysis and Forecasting for Agricultural Development'](https://cory-whitney.shinyapps.io/Decision_Analysis_Course/) course by [Cory Whitney](https://cory-whitney.com/) & [Eike Lüdeling](https://eikeluedeling.com/index.html) at the University of Bonn in the Corona Summer of 2021. 
 
 # The Idea
-The idea behind our model, was to create an Agroforestry intervention for a small farmland plot in the Eifel region. The plot that is used for regular crops right now, is going to be used to sequestrate CO2. As the land use plan doesn't allow planting a regular forest we looked for different solutions to combine trees with different animals. The best solution for the owners [Woodify](woodify.de) was planting trees and keeping chicken in a chicken mobile house. So we came up with five different scenarios that have different levels of intensity. The way we calculated the different outcomes can be seen in our conceptual model below.
+The idea behind our model, was to create an Agroforestry intervention for a small farmland plot in the Eifel region. The plot that is used for regular crops right now, is going to be used to sequestrate CO2. As the land use plan doesn't allow planting a regular forest we looked for different solutions to combine trees with different animals. The best solution for the owners [Woodify](woodify.de) was planting trees and keeping chicken in a chicken mobile house. So we came up with five different scenarios that have different levels of intensity. 
 
 # Conceptual Model
+We used this conceptual model to describe the system and to visualize the way we calculated the different outcomes.
 ![](Bilder_präsi/Conceptual_model.png)
 
 # Methods
