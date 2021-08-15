@@ -80,7 +80,7 @@ The investments and risks that are made independently of the scenarios have been
 ```    
     
 ### The baseline scenario
-The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and summerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run.
+The baseline scenario describes the current situation on the plot and is used to compare the different decisions with the current state. The plot is used as arable land and its income consists of a crop rotation with different cultures. The income in the different years varies annually, as in the other scenarios. The different cultures are winterbarley, rye, wheat and summerbarley. They are all calculated like the example below and added up over the period of 30 years into vectors for each model run. The informations about the yield, costs, working hours and price where pre calculated with the "Leistungs-Kostenrechner Pflanzenbau" by the KTBL [@KTBL_2021]
 ```{r eval= FALSE}
  winterbarley_yield_vec <- vv(var_mean = winterbarley_yield,
                                var_CV = 10,
@@ -100,7 +100,7 @@ The baseline scenario describes the current situation on the plot and is used to
 ```
 
 ### Scenario 1
-Scenario 1 consists of a hazelnut plantation with 70 trees spaced in rows of 10 meters. The plantation is irrigated with a drip system and additionally hay is produced between the rows of trees. In addition to the plantation, 200 chickens are kept with a chicken mobile. 
+Scenario 1 consists of a hazelnut plantation with 70 trees spaced in rows of 10 meters. The plantation is irrigated with a drip system and additionally hay is produced between the rows of trees. In addition to the plantation, 50 chickens are kept with a chicken mobile. 
 
 For each branch of the income we calculated the yields and the cost. The Code below shows this for the Nuts yield of scenario 1 and 4. 
 Using the `gompertz_yield` function the nuts yield starts after 6 years and the first full yield can be expected after 10 years. Also the possibility of frost damage is applied by multypling the vectors.
@@ -213,7 +213,7 @@ The `chance_event` of having to replace trees because of damage is added.
 ```
 
 ### Scenario 2
-Scenario 2 consists of a hazelnut plantation with 200 trees, which stand at a distance of 5 meters, this is irrigated by a drip system and also here 200 chickens are kept with a chicken mobile. 
+Scenario 2 consists of a hazelnut plantation with 200 trees, which stand at a distance of 5 meters, this is irrigated by a drip system and also here 50 chickens are kept with a chicken mobile. 
 
 As all the plantations in our model are irrigated the code below shows the calculation for irrigation in scenario 2 and 5.
 We assumed that the number of days in which irrigation is required does not exceed two months. In each run, numbers between 10 and 55 are randomly selected.
@@ -262,7 +262,7 @@ We assumed that the number of days in which irrigation is required does not exce
 ```
 
 ### Scenario 3
-Scenario 3 consists of 200 trees of different species, which are additionally infected with truffles and are not to be harvested. Also here 200 chickens are kept with a chicken mobile. As there is no nut harvest in this scenario we used a different way of calculating the cost for maintenance.
+Scenario 3 consists of 200 trees of different species, which are additionally infected with truffles and are not to be harvested. Also here 50 chickens are kept with a chicken mobile. As there is no nut harvest in this scenario we used a different way of calculating the cost for maintenance.
 ```{r eval= FALSE}
 # Version 3
   
@@ -608,59 +608,61 @@ The last part of our `model_function` is the `return` which stores our results i
 
 ## Explaining Results/Values
 
-Running the model produces a different outputs who are defined in the return list of the `model_function`. In this case it includes the accumulated income values for each scenario for the whole time-period, a vector with annual distribution of income for each scenario as well as different calculated decisions. Additionally the amount of sequestered CO2 is considered as an output.
-The raw model-results of each scenario, including the baseline, is shown in the Graph 1. 
-On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density how likely one certain amount of revenue is likely. If the Curve for a scenario is wide, it means that the the degree of uncertainty is high, the possible revenue range is large. The smaller the curve is, the scenario is more defined and it is of a higher certainty that the displayed revenue is reached.
-The baseline has the smallest curve, which means that this base-scenario is, compared to the other scenarios, well defined. This is because normal crop land is a well known and researched system with comparable few components who affect the income. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. This is also visible in Graph 1, the systems including nuts, chicken and truffle have the widest distribution curve. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue.
-Based on the Curves for every scenario, different decisions can be modeled and conclusions can be drawn. The `decisionSupport` [@luedeling_decisionsupport_2021] Package also allows provides additional in depth analysis tools. They were also used for the evaluation of the results in this chapter.
-=======
-# Results
-
-## Explaining Results/Values
-
 Running the model produces different outputs who are defined in the return list of the `model_function`. In this case it includes the accumulated income values for each scenario for the whole time-period, a vector with annual distribution of income for each scenario as well as different calculated decisions. Additionally the amount of sequestered CO2 is considered as an output.
 
-From these outputs four different graphs are calculated for each scenario. The first one displays the outcome distribution of the simulated incomes. The income is accumulated over 30 years. On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density how likely a certain amount of income is. If the Curve for a scenario is wide, it means that the degree of uncertainty is high, the possible income range is large. The smaller the curve is, the more is the scenario defined and it is of a higher certainty that a certain income is generated. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the  ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue. The truth will most likely lay somewhere in between.
+From these outputs four different graphs are calculated for each scenario. The first one displays the outcome distribution of the simulated incomes. The income is accumulated over 30 years. On the X-Axis the possible revenue distribution in € is displayed. The Y-Axis displays the probability density, how likely a certain amount of income is. If the Curve for a scenario is wide, it means that the degree of uncertainty is high, the possible income range is large. The smaller the curve is, the more is the scenario defined and it is of a higher certainty that a certain income is generated. The more aspects are added to a system, the uncertainty adds up and the distribution curve grows. Also single components with a high uncertainty, such as the truffles, add uncertainty to the whole system. The very left side of a curve is the chance of getting always the worst part of the range of every input factor. If the ranges for the input factors are chosen right, this is the point of the lowest possible income or highest possible loss. The very right side is the opposite, always the best part of the range of the input factors occur. So its the maximal possible revenue. The truth will most likely lay somewhere in between.
 The next graph models the annual cashflow over 30 years. It displays the median as well as the 50% and 90% confidence interval. Here the investment costs in the first year are visible and annual variations are displayed.
-The third graph is the Projection to Latent Structures (PLS) analysis.
-The fourth graph is the EVPI.
+The third graph is the Projection to Latent Structures (PLS) analysis. The PLS analysis determines the Variable Importance in the Projection (VIP). All input factors are tested on their importance on the output, which is the result of the simulation. All input factors with a VIP > 0.8 are then displayed in a graph. The lengths of the bars corresponds with the importance of the input factor and the color with the effect, red for negative and blue for positive.
+The fourth graph displays the Value of Information(VoI). The VoI is calculated  with the Expected Value of Perfect Information (EVPI). The EVPI calculates how much the it is worth to have perfect information about an input factor before choosing a decision. It is a useful tool to determine which input factors should be further researched and to which extend in order to always choose the best option/decision. The lengths of the bar on the X-Axis describes how valuable perfect information for the input factor would be. 
 
 ### Baseline
 
 ![Result Baseline after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/baseline.jpeg)
-
+The Baseline is the system that is currently run at the area of interest. In this case it is a conventional field with a crop rotation of wheat, winterbarley, summerbarley and rye. Since the field is just half a hectare big and of bad soil qualities, the accumulated income distribution over 30 years is comparable small. The Cashflow plot reveals that at least one part of the crop rotation, the rye, produces negative annual incomes in its median. The PLS analysis, plotted on the bottom left, shows that all parts of the crop rotation are important for the output. The differences are due to different yields, prices and costs for the crops. No input factors with a positive EVPI were found, so the bottom right stays blank. This baseline is the reference for all the simulated scenarios. The scenarios have to have a higher outcome distribution than the baseline. In order to test this, the outcome distribution of the baseline was subtracted from the outcome distribution of the scenarios. In the following plots for the scenarios is therefor the difference between baseline and scenario plotted. An overview where the outcome distribution for all five scenarios are plotted together is shown in the chapter "Conclusions".
 
 
 ### Results Scenario 1
 
 ![Result Scenario 1 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_1.jpeg)
 
-Scenario 1 has the narrowest distribution curve and in the median also the lowest simulated income. Because it uses only 70 hazelnut trees the yield uncertainty is lower than in the bigger plantations with 200 hazelnut trees. And while there is an additional factor, the hay making, this produces such small incomes that it does not widen the distribution curve. Even so the median is the lowest, because of its narrow distribution it is still most likely to produce more income compared to the baseline and is therefor a valid option to choose from. Especially since it is the system with the lowest initial investment costs. 
+Scenario 1 has the narrowest distribution curve of all scenarios and in the median also the lowest simulated income. Because it uses only 70 hazelnut trees the yield uncertainty is lower than in the bigger plantations with 200 hazelnut trees. And while there is an additional income source, the hay making, this produces such small incomes that it does not widen the distribution curve. Even so the median is the lowest, because of its narrow distribution it is still has mostly a positive difference compared to the baseline. Therefor it is a valid option to choose from when the goal is to improve the income of this piece of land. Additionally it is the system with the lowest investment costs and required working hours. The cashflow plot shows the typical form for perennials. In the first year high investment costs occur. These are mainly the chicken mobile house and the hazelnut bushes. In the first 5 to 7 years the hazelnut bushes produce no hazelnuts yet but produce costs for irrigation and tree care. These costs are compensated by selling eggs. After about 7 years the hazelnuts start to produce yield and the income increases. Due to the discount rate the income decreases slowly over time. The simulated random late frost do not massively effect the income in this system since the eggs still play a big role next to the hazelnuts. The late frosts are barely visible in year 11 and 21. From the point where the hazelnut yield starts to increase, in the 90% confidence interval no annual losses are produced.
+The PLS analysis shows that the most important positive input factors are the hazelnut yield and price before the price per egg and their amount. Since its a work intensive system, the costs per working hour are the most important input factor for the costs. The amount of working hours for the chicken is also an important costs factor. But as a disclaimer: the working hours for the chicken are all grouped together, whereas for the hazelnut production they are more split up, they are togather probably similar important. The only input factor with a positive EVPI is the Nut yield. But the EVPI is very low, so it is questionable if this is of any worth for this decision.
 
 ### Results Scenario 2
 
 ![Result Scenario 2 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_2.jpeg)
 
-Scenario 2 has a much wider distribution which extends to the left side, so the median is also higher. This is because here 200 hazelnut trees are planted and the scaling factor makes it more profitable. While the possibility off losses are similar to the first scenario, the possible income is higher. This makes it from a business standpoint a more promising choice. But with more hazelnut bushes the amount of working hours needed to sustain this system is also larger, which needs to be considered by the stakeholders. 
+Scenario 2 has a much wider distribution towards the right side of the graph. The left side remains slightly in the negative range, but the overall median is higher compared to scenario 1. This is because here 200 hazelnut trees are planted and the scaling factor makes it more profitable, but the uncertainty around the possible nut yield growth too. While the possibility off losses are similar to the first scenario, the possible income is higher. This makes it from a business standpoint a more promising choice. But with more hazelnut bushes the amount of working hours needed to sustain this system is also larger, which needs to be considered by the stakeholders.
+The Cashflow follows the same principles as in scenario 1. But it starts with bigger investment costs in the first year, also selling the eggs cannot compensate for the costs from irrigating and caring for the 200 hazelnut trees. In return, when the hazelnuts start to produce yield, the increase in income is larger. Because the hazelnuts make up a majority of the income, the late frost events decrease the annual income in these years a lot and losses are possible.
+The PLS analysis looks similar to scenario 1 as well. Except that the difference in importance from the hazelnut yield and price to the price per egg as important positive input factors grew larger. The VIP for the Nut Yield is here three times as big as for the price per egg. Consistently, the EVPI ofr Nut yield is larger than scenario 1.
 
 ### Results Scenario 3
 
 ![Result Scenario 3 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_3.jpeg)
 
-Scenario 3 is the first one using
+In scenario 3 no hazelnut bushes are planted, but instead 200 trees off different species are used to produce truffle. The outcome distribution is even wider and has a higher chance of producing losses. Net to the eggs the yield and price for the truffles determines the income. Since the truffle cultivation is connected with risks and high uncertainties, the distribution is very wide. This is also visible in the cashflow plot. After the investment costs small annual incomes are produced by selling the eggs until the truffles start to produce yield. At this point the 90% confidence interval gets very wide and incomes from 0 to 10.000€ can be produced annually. The PLS analysis confirms that truffle price and yield are the input factors who are mostly dominating the outcome of this scenario. The price per eggs play a much smaller role. The EVPI shows that it is worth to invest in additional knowledge about the truffles price and especially the truffle yield to decrease the uncertainty. This scenario has the lowest working hours and can be labeled as the "most extensive". Especially because this system has the highest potential for CO2 fixation it is an interesting option to chose from.
 
 ### Results Scenario 4
 
 ![Result Scenario 4 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_4.jpeg)
+Scenario 4, which adds truffles to scenario 1, has a similar, slightly wider and overall higher, outcome distribution as scenario 1. The added truffles lead to a very low chance of producing a negative outcome and also increase the median. The cashflow plot shows slightly higher investment costs due to the need of having hazelnut saplings who are infected with truffles. The rest of the cashflow follows the same order as in scenario 1, just slightly higher. In the PLS analysis the truffle yield and price is now the most important positive input factor, before the hazelnuts and eggs. The costs per working hour remain to be the most dominant negative input factor. The EVPI analysis found no input factors with a positive VoI. If the higher initial investment costs are not a problem, scenario 4 is similar but superior to scenario 1 and will more than compensate the higher investment costs over 30 years.
+
 
 ### Results Scenario 5
 
 ![Result Scenario 5 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_5.jpeg)
 
+Scenario 5 is the same as scenario 2, just with truffles. This system has the highest median and the widest outcome distribution. The uncertainties about hazelnut and truffle yields and prices are multiplied by 200 trees. Especially the high amount of truffles increases the distribution. The chashflow shows that this system has the highest investment costs. The first years the annual income is the same as scenario 2. The amount of eggs and the costs are the same, because the truffles only add investment costs and harvest costs, they need no additional care. But after the hazelnuts and truffles fruit, the income increases and the distribution widens. Still it is possible to experience losses in years with late frosts. The PLS analysis shows the usual ranking from truffles to hazelnuts to eggs as the most important input factors. No input factors with positive VoI where found in the EVPI analysis.
 
 ### CO2 Certificates
 
+![Outcome distribution of the amount of CO2 certifikates (1 certifikate = 1 ton CO2); Some scenarios are grouped as they have the same amount of trees.](report/co2_plot.jpeg)
+
+The decision maker woodify main motivation for developing an agroforestry system on this field is to have an alternative to afforestation for the sequestration of CO2. Therefor the net CO2 effect of the five scenarios where simulated. The CO2 sequestration by the trees and the landuse change are considered as well as the emissions from the egg production. The unit is CO2 certificates, one certificate is 1.000 kg CO2. This simple simulation results in positive emissions for the scenarios 1 and 4. Scenario 2 and 5, and especially scenario 3, have a good chance of having negative CO2 emissions and therefor are sequestering carbon out of the atmosphere. The differences are due to the differences between hazelnut bushes and proper trees as well as their quantity. Notice: this simulation only includes the scenarios, not the baseline, so no decision/comparison is done. The field in its current status has most likely a stable humus content, but due to its cultivation CO2 is emitted for example by fertilizers. So the baseline has a negative CO2 balance as well, but it is not modeled here. The reason is that the CO2 certificates should be sequestrated carbon and not avoided carbon.
+
 ## Conclusions
+
+![Overview of outcome distribution of decision for the five scenarios; dark blue string marks the median, light blue area the 50% confidence intervall](report/decisions_mcmc.jpeg)
 
 ### Improvements
 How the scenarios finally compare to each other.
