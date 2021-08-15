@@ -665,49 +665,49 @@ model_function <- function() {
   
   co2_per_year_1_4 <- 70 * kg_per_bush
   
-  certifikates_1_4 <- co2_per_year_1_4 / kg_per_certificate
+  certificates_1_4 <- co2_per_year_1_4 / kg_per_certificate
   
-  certifikates_1_4 <- certifikates_1_4 + annual_soc_increase - co2_emmiter_eggs
+  certificates_1_4 <- certificates_1_4 + annual_soc_increase - co2_emmiter_eggs
   
-  certifikates_1_4_vec <- rep(c(certifikates_1_4), times = years)
+  certificates_1_4_vec <- rep(c(certificates_1_4), times = years)
   
-  certifikates_1_4_final <- Reduce("+", certifikates_1_4_vec)
+  certificates_1_4_final <- Reduce("+", certificates_1_4_vec)
   
-  income_certifikates_1_4_vec <- certifikates_1_4_vec * co2_price_per_ton
+  income_certificates_1_4_vec <- certificates_1_4_vec * co2_price_per_ton
   
-  income_certifikates_1_4_final <- Reduce("+", income_certifikates_1_4_vec)
+  income_certificates_1_4_final <- Reduce("+", income_certificates_1_4_vec)
   
   # Version 2 and 5
   
   co2_per_year_2_5 <- 200 * kg_per_bush
   
-  certifikates_2_5 <- co2_per_year_2_5 / kg_per_certificate
+  certificates_2_5 <- co2_per_year_2_5 / kg_per_certificate
   
-  certifikates_2_5 <- certifikates_2_5 + annual_soc_increase - co2_emmiter_eggs
+  certificates_2_5 <- certificates_2_5 + annual_soc_increase - co2_emmiter_eggs
   
-  certifikates_2_5_vec <- rep(c(certifikates_2_5), times = years)
+  certificates_2_5_vec <- rep(c(certificates_2_5), times = years)
   
-  certifikates_2_5_final <- Reduce("+", certifikates_2_5_vec)
+  certificates_2_5_final <- Reduce("+", certificates_2_5_vec)
   
-  income_certifikates_2_5_vec <- certifikates_1_4_vec * co2_price_per_ton
+  income_certificates_2_5_vec <- certificates_1_4_vec * co2_price_per_ton
   
-  income_certifikates_2_5_final <- Reduce("+", income_certifikates_2_5_vec)
+  income_certificates_2_5_final <- Reduce("+", income_certificates_2_5_vec)
   
   # Version 3
   
   co2_per_year_3 <- 200 * kg_per_tree
   
-  certifikates_3 <- co2_per_year_3 / kg_per_certificate
+  certificates_3 <- co2_per_year_3 / kg_per_certificate
   
-  certifikates_3 <- certifikates_3 + annual_soc_increase - co2_emmiter_eggs
+  certificates_3 <- certificates_3 + annual_soc_increase - co2_emmiter_eggs
   
-  certifikates_3_vec <- rep(c(certifikates_3), times = years)
+  certificates_3_vec <- rep(c(certificates_3), times = years)
   
-  certifikates_3_final <- Reduce("+", certifikates_3_vec)
+  certificates_3_final <- Reduce("+", certificates_3_vec)
   
-  income_certifikates_3_vec <- certifikates_1_4_vec * co2_price_per_ton
+  income_certificates_3_vec <- certificates_1_4_vec * co2_price_per_ton
   
-  income_certifikates_3_final <- Reduce("+", income_certifikates_3_vec)
+  income_certificates_3_final <- Reduce("+", income_certificates_3_vec)
   
   # Decision / Final ----
   # discounting for inflation
@@ -805,9 +805,9 @@ model_function <- function() {
               decision_4 = decision_4,
               decision_5 = decision_5,
               d_5_inst_3 = d_5_inst_3,
-              certifikates_1_4 = certifikates_1_4_final,
-              certifikates_2_5 = certifikates_2_5_final,
-              certifikates_3 = certifikates_3_final,
+              certificates_1_4 = certificates_1_4_final,
+              certificates_2_5 = certificates_2_5_final,
+              certificates_3 = certificates_3_final,
               vec_outcome_1 = small_nut_chicken_profit_vec_1,
               vec_outcome_2 = big_nut_chicken_profit_vec_2,
               vec_outcome_3 = truffle_chicken_profit_vec_3,
