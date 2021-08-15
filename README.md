@@ -8,7 +8,7 @@ The idea behind our model, was to create an Agroforestry intervention for a smal
 
 # Conceptual Model
 We used this conceptual model to describe the system and to visualize the way we calculated the different outcomes.
-![](Bilder_präsi/Conceptual_model.png)
+![](Bilder_Präsi/Conceptual_model.png)
 
 # Methods
 We used the package [decisionSupport](https://cran.r-project.org/web/packages/decisionSupport/index.html) by Eike Luedeling to implement our model in R. It helps to model decisions that are mainly agriculture related but can also be used for other complex systems, that would be hard to study in real life.
