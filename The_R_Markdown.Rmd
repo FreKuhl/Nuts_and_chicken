@@ -656,10 +656,6 @@ Scenario 3 is the first one using
 ### Results Scenario 5
 
 ![Result Scenario 5 after 10.000 model runs, From top left to bottom right: Income Distribution accumulated values after 30 years; Annual cashflow with confidence interval; PLS analysis; EVPI analysis](report/scenario_5.jpeg)
-
-
-### CO2 Certificates
-
 ## Conclusions
 
 ### Improvements
